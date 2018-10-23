@@ -1,0 +1,6 @@
+# ignore backups of editors
+*~
+
+# ignore project files of IDEs
+.idea/
+.vscode/
