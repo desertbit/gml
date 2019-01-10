@@ -7,7 +7,7 @@
 #ifndef GML_APP_H
 #define GML_APP_H
 
-#include <headers/app.h>
+#include "../headers/app.h"
 
 #include <QUrl>
 #include <QString>
