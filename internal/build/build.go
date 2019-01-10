@@ -8,20 +8,18 @@ package build
 
 import (
 	"os"
-	"os/exec"
 
 	"github.com/desertbit/gml/internal/utils"
 )
 
-func Build(sourceDir, buildDir, destDir string) (err error) {
-	ctx, err := newContext(sourceDir, buildDir, destDir)
+func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error) {
+	ctx, err := newContext(sourceDir, buildDir, destDir, clean)
 	if err != nil {
 		return
 	}
 
-	// TODO: add clean flag or command.
-
 	// Prepare the qt project.
+	utils.PrintColorln("> preparing project")
 	err = prepareQtProject(ctx)
 	if err != nil {
 		return
@@ -34,22 +32,26 @@ func Build(sourceDir, buildDir, destDir string) (err error) {
 	}
 
 	// Build the static C lib.
+	utils.PrintColorln("> building C source")
 	err = buildCLib(ctx)
 	if err != nil {
 		return
 	}
 
 	// Run go build.
+	utils.PrintColorln("> building Go source")
 	err = buildGo(ctx)
 	if err != nil {
 		return
 	}
 
-	// TODO: make this optional.
 	// Finally strip the binary.
-	err = stripBinary(ctx)
-	if err != nil {
-		return
+	if !noStrip {
+		utils.PrintColorln("> stripping binary")
+		err = stripBinary(ctx)
+		if err != nil {
+			return
+		}
 	}
 
 	return
@@ -62,12 +64,12 @@ func prepareCSource(ctx *Context) (err error) {
 }
 
 func buildCLib(ctx *Context) (err error) {
-	err = utils.RunCommand(ctx.BuildDir, "qmake")
+	err = utils.RunCommand(ctx.Env(), ctx.BuildDir, "qmake")
 	if err != nil {
 		return
 	}
 
-	return utils.RunCommand(ctx.BuildDir, "make")
+	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
 func buildGo(ctx *Context) (err error) {
@@ -83,20 +85,14 @@ func buildGo(ctx *Context) (err error) {
 		}
 	}
 
-	cmd := exec.Command("go", "build", "-o", ctx.OutputFile)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Dir = ctx.SourceDir
-	cmd.Env = []string{
-		"CGO_LDFLAGS=" + ctx.StaticLibPath,
-	}
-
-	// Append the current environment variables.
-	cmd.Env = append(cmd.Env, os.Environ()...)
-
-	return cmd.Run()
+	err = utils.RunCommand(
+		ctx.Env("CGO_LDFLAGS="+ctx.StaticLibPath),
+		ctx.SourceDir,
+		"go", "build", "-o", ctx.OutputFile,
+	)
+	return
 }
 
 func stripBinary(ctx *Context) (err error) {
-	return utils.RunCommand(ctx.DestDir, "strip", ctx.OutputFile)
+	return utils.RunCommand(ctx.Env(), ctx.DestDir, "strip", ctx.OutputFile)
 }

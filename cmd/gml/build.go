@@ -17,6 +17,8 @@ func init() {
 		Help:      "build command",
 		AllowArgs: false,
 		Flags: func(f *grumble.Flags) {
+			f.Bool("c", "clean", false, "clean build files first")
+			f.BoolL("no-strip", false, "don't strip the final binary")
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
@@ -30,5 +32,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
+		c.Flags.Bool("clean"),
+		c.Flags.Bool("no-strip"),
 	)
 }

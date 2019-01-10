@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 
 	"github.com/desertbit/gml/internal/utils"
 )
@@ -33,7 +34,7 @@ type Context struct {
 	QtProFile     string
 }
 
-func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
+func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, err error) {
 	// Get absolute paths.
 	sourceDir, err = filepath.Abs(sourceDir)
 	if err != nil {
@@ -66,12 +67,61 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	// Obtain the current import path.
 	ctx.GMLBindingDir = filepath.Join(gopath, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
 
+	// Clean if set.
+	if clean {
+		err = ctx.cleanDirs()
+		if err != nil {
+			return
+		}
+
+	}
+
 	err = ctx.checkForRequiredDirs()
 	if err != nil {
 		return
 	}
 
 	err = ctx.createDirsIfNotExists()
+	return
+}
+
+func (c *Context) Env(optsEnv ...string) (env []string) {
+	// Use current context environment variables.
+	env = os.Environ()
+
+	// Our default variables.
+	env = append(env, []string{
+		fmt.Sprintf("MAKEFLAGS=-j%v", runtime.NumCPU()+1),
+		"CPPFLAGS=-D_FORTIFY_SOURCE=2",
+		"CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt",
+		"CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt",
+		"LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now",
+	}...)
+
+	// Add the optional ones.
+	if len(optsEnv) > 0 {
+		env = append(env, optsEnv...)
+	}
+
+	return
+}
+
+func (c *Context) cleanDirs() (err error) {
+	dirs := []string{
+		c.BuildDir,
+	}
+
+	for _, d := range dirs {
+		e, err := utils.Exists(d)
+		if err != nil {
+			return err
+		} else if e {
+			err = os.RemoveAll(c.BuildDir)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return
 }
 

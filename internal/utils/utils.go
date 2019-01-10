@@ -23,10 +23,16 @@ func Exists(path string) (bool, error) {
 	return false, err
 }
 
-func RunCommand(dir, cmd string, args ...string) (err error) {
+func RunCommand(env []string, dir, cmd string, args ...string) (err error) {
 	c := exec.Command(cmd, args...)
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
 	c.Dir = dir
+	c.Env = env
+
+	// TODO: also log to a log file.
+	c.Stderr = os.Stderr
+	if Verbose {
+		c.Stdout = os.Stdout
+	}
+
 	return c.Run()
 }

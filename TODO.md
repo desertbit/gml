@@ -1,4 +1,5 @@
 # TODO
+- finish verbose mode
 - set core.QCoreApplication_SetApplicationName("App") core.QCoreApplication_SetOrganizationName("Desertbit")
 
 

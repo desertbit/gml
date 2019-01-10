@@ -4,7 +4,7 @@
  *  Copyright (c) 2019 Sebastian Borchers [sebastian@deserbit.com]
  */
 
-package print
+package utils
 
 import (
 	"fmt"
@@ -12,9 +12,9 @@ import (
 	"github.com/fatih/color"
 )
 
-func SetNoColor(b bool) {
-	color.NoColor = b
-}
+var (
+	Verbose bool
+)
 
 func PrintColor(s string) {
 	color.Set(color.FgHiGreen)
@@ -22,6 +22,6 @@ func PrintColor(s string) {
 	color.Unset()
 }
 
-func printColorln(s string) {
+func PrintColorln(s string) {
 	PrintColor(s + "\n")
 }
