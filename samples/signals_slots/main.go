@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/desertbit/gml"
+	_ "github.com/desertbit/gml/samples/signals_slots/testy"
 )
 
 type Bridge struct {
