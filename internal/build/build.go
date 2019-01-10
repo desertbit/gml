@@ -25,8 +25,9 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 		return
 	}
 
-	// Prepare the c source files.
-	err = prepareCSource(ctx)
+	// Generate C, C++ and go files.
+	utils.PrintColorln("> generating source files")
+	err = generate(ctx)
 	if err != nil {
 		return
 	}
@@ -53,12 +54,6 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 			return
 		}
 	}
-
-	return
-}
-
-func prepareCSource(ctx *Context) (err error) {
-	// TODO: generate all files
 
 	return
 }

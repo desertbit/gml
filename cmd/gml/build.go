@@ -14,7 +14,7 @@ import (
 func init() {
 	App.AddCommand(&grumble.Command{
 		Name:      "build",
-		Help:      "build command",
+		Help:      "build a gml project",
 		AllowArgs: false,
 		Flags: func(f *grumble.Flags) {
 			f.Bool("c", "clean", false, "clean build files first")
