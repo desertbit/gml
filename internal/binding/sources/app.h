@@ -10,9 +10,11 @@
 #include "../headers/app.h"
 
 #include <QUrl>
+#include <QObject>
 #include <QString>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 class GmlApp {
 private:

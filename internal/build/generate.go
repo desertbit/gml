@@ -58,6 +58,7 @@ func generate(ctx *Context) (err error) {
 	return
 }
 
+// TODO: only create dummies if the direcotories are empty.
 // Create dummy files, because otherwise make fill fail if there are no sources files present.
 // QMake is configured with a *.cpp & *.h
 func generateDummyFiles(ctx *Context) (err error) {
@@ -155,7 +156,8 @@ func generateGoFile(gp *genPackage) (err error) {
 			}
 
 			f.WriteString(") {\n")
-			f.WriteString("    \n") // TODO:
+			f.WriteString("    _ptr := (C." + base + ")(_v.GMLObject_Pointer())\n")
+			f.WriteString("    C." + base + "_" + s.Name + "(_ptr)\n") // TODO: params + return type + error
 			f.WriteString("}\n\n")
 		}
 	}
@@ -202,11 +204,8 @@ func generateCHeaderFile(gp *genPackage, genDir string) (err error) {
 		// Add all signals.
 		if len(st.Signals) > 0 {
 			for _, s := range st.Signals {
-				f.WriteString("void " + base + "_" + s.Name + "(") // TODO: return value.
-				for i, p := range s.Params {
-					if i != 0 {
-						f.WriteString(", ")
-					}
+				f.WriteString("void " + base + "_" + s.Name + "(" + base + " _v") // TODO: return value.
+				for _, p := range s.Params {
 					f.WriteString(p.Type + " " + p.Name) // TODO: to C types.
 				}
 				f.WriteString(");\n")
@@ -268,14 +267,13 @@ func generateCPPSourceFile(gp *genPackage, genDir string) (err error) {
 		// Add all signals.
 		if len(st.Signals) > 0 {
 			for _, s := range st.Signals {
-				f.WriteString("void " + base + "_" + s.Name + "(") // TODO: return value.
-				for i, p := range s.Params {
-					if i != 0 {
-						f.WriteString(", ")
-					}
+				f.WriteString("void " + base + "_" + s.Name + "(" + base + " _v") // TODO: return value.
+				for _, p := range s.Params {
 					f.WriteString(p.Type + " " + p.Name) // TODO: to C types.
 				}
 				f.WriteString(") {\n")
+				f.WriteString("    auto _vv = (" + cppbase + "*)_v;\n")
+				f.WriteString("    emit _vv->" + s.Name + "();\n") // TODO: params
 				f.WriteString("}\n")
 			}
 		}

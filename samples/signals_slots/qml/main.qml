@@ -9,8 +9,16 @@ ApplicationWindow {
     visible: true
 
     Rectangle {
+        id: rect
         anchors.fill: parent
         color: "red"
+    }
+
+    Connections {
+        target: bridge
+        onConnected: function() {
+            rect.color = "blue"
+        }
     }
 }
 

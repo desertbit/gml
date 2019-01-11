@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+#include "object.h"
+
 typedef void* gml_app;
 
 gml_app gml_app_new (int argv, char** argc);
@@ -20,6 +22,8 @@ int     gml_app_quit(gml_app app);
 
 int     gml_app_load     (gml_app app, const char* url);
 int     gml_app_load_data(gml_app app, const char* data);
+
+int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj);
 
 #ifdef __cplusplus
 }

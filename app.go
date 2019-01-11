@@ -65,3 +65,12 @@ func (a *App) LoadData(data string) error {
 	_ = int(C.gml_app_load_data(a.app, dataC))
 	return nil
 }
+
+func (a *App) SetRootContextProperty(name string, obj *Object) error {
+	nameC := C.CString(name)
+	defer C.free(unsafe.Pointer(nameC))
+
+	// TODO:
+	_ = int(C.gml_app_set_root_context_property(a.app, nameC, obj.cObject()))
+	return nil
+}

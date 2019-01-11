@@ -10,5 +10,6 @@
 #include <stdlib.h>
 
 #include "app.h"
+#include "object.h"
 
 #endif

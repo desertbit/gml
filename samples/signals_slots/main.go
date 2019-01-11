@@ -9,6 +9,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -17,9 +18,9 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		State     int               `gml:"property"`
-		Connect   func(addr string) `gml:"slot"`
-		Connected func()            `gml:"signal"`
+		state     int               `gml:"property"`
+		connect   func(addr string) `gml:"slot"`
+		connected func()            `gml:"signal"`
 		//Sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
@@ -33,6 +34,15 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	b := &Bridge{}
+	b.GMLInit()
+	app.SetRootContextProperty("bridge", b.GMLObject()) // TODO: use a interface so b.GMLObject can be shortened?
+
+	go func() {
+		time.Sleep(time.Second)
+		b.connected() // TODO:
+	}()
 
 	err = app.Load("qml/main.qml")
 	if err != nil {
