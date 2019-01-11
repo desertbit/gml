@@ -20,7 +20,7 @@ type Bridge struct {
 	_ struct {
 		state     int               `gml:"property"`
 		connect   func(addr string) `gml:"slot"`
-		connected func()            `gml:"signal"`
+		Connected func()            `gml:"signal"`
 		//Sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
@@ -41,7 +41,7 @@ func main() {
 
 	go func() {
 		time.Sleep(time.Second)
-		b.connected() // TODO:
+		b.Connected() // TODO:
 	}()
 
 	err = app.Load("qml/main.qml")

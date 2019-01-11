@@ -273,7 +273,7 @@ func generateCPPSourceFile(gp *genPackage, genDir string) (err error) {
 				}
 				f.WriteString(") {\n")
 				f.WriteString("    auto _vv = (" + cppbase + "*)_v;\n")
-				f.WriteString("    emit _vv->" + s.Name + "();\n") // TODO: params
+				f.WriteString("    emit _vv->" + s.CName + "();\n") // TODO: params
 				f.WriteString("}\n")
 			}
 		}
@@ -318,7 +318,7 @@ func generateCPPHeaderFile(gp *genPackage, genDir string) (err error) {
 		if len(st.Signals) > 0 {
 			f.WriteString("signals:\n")
 			for _, s := range st.Signals {
-				f.WriteString("    void " + s.Name + "(") // TODO: return value.
+				f.WriteString("    void " + s.CName + "(") // TODO: return value.
 				for i, p := range s.Params {
 					if i != 0 {
 						f.WriteString(", ")

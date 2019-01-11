@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 type genTargets struct {
@@ -33,6 +34,7 @@ type genStruct struct {
 
 type genSignal struct {
 	Name   string
+	CName  string // first letter is always lower case
 	Params []*genParam
 }
 
@@ -181,6 +183,9 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 		}
 
 		name := f.Names[0].Name
+		if len(name) == 0 {
+			continue
+		}
 
 		switch tagValue {
 		case "signal":
@@ -211,6 +216,11 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		Name:   name,
 		Params: make([]*genParam, len(ft.Params.List)),
 	}
+
+	// Ensure first char is lower case.
+	cNameR := []rune(name)
+	cNameR[0] = unicode.ToLower(rune(cNameR[0]))
+	signal.CName = string(cNameR)
 
 	for i, p := range ft.Params.List {
 		ident, ok := p.Type.(*ast.Ident)
