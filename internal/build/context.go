@@ -18,9 +18,11 @@ import (
 )
 
 const (
-	staticLibName = "libgml.a"
-	proFileName   = "gml.pro"
-	cppGenDirName = "gen_cpp"
+	staticLibName      = "libgml.a"
+	proFileName        = "gml.pro"
+	cGenDirName        = "gen_c"
+	cGenIncludeDirName = "include"
+	cppGenDirName      = "gen_cpp"
 )
 
 type Context struct {
@@ -28,8 +30,10 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	GMLBindingDir string
-	CPPGenDir     string
+	GMLBindingDir  string
+	CGenDir        string
+	CGenIncludeDir string
+	CPPGenDir      string
 
 	OutputFile    string
 	StaticLibPath string
@@ -51,14 +55,18 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		return nil, err
 	}
 
+	cGenDir := filepath.Join(buildDir, cGenDirName)
+
 	ctx = &Context{
-		SourceDir:     sourceDir,
-		BuildDir:      buildDir,
-		DestDir:       destDir,
-		CPPGenDir:     filepath.Join(buildDir, cppGenDirName),
-		OutputFile:    filepath.Join(destDir, filepath.Base(sourceDir)),
-		StaticLibPath: filepath.Join(buildDir, staticLibName),
-		QtProFile:     filepath.Join(buildDir, proFileName),
+		SourceDir:      sourceDir,
+		BuildDir:       buildDir,
+		DestDir:        destDir,
+		CGenDir:        cGenDir,
+		CGenIncludeDir: filepath.Join(cGenDir, cGenIncludeDirName),
+		CPPGenDir:      filepath.Join(buildDir, cppGenDirName),
+		OutputFile:     filepath.Join(destDir, filepath.Base(sourceDir)),
+		StaticLibPath:  filepath.Join(buildDir, staticLibName),
+		QtProFile:      filepath.Join(buildDir, proFileName),
 	}
 
 	// Obtain the current GOPATH.
@@ -135,6 +143,8 @@ func (c *Context) cleanDirs() (err error) {
 
 func (c *Context) cleanupDirs() (err error) {
 	dirs := []string{
+		c.CGenDir,
+		c.CGenIncludeDir,
 		c.CPPGenDir,
 	}
 
@@ -156,6 +166,8 @@ func (c *Context) createDirsIfNotExists() (err error) {
 	dirs := []string{
 		c.BuildDir,
 		c.DestDir,
+		c.CGenDir,
+		c.CGenIncludeDir,
 		c.CPPGenDir,
 	}
 

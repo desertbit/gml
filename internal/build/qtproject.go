@@ -12,7 +12,6 @@ import (
 )
 
 func prepareQtProject(ctx *Context) (err error) {
-	// TODO: prepare in init()
 	tmpl, err := template.New("t").Parse(qtProData)
 	if err != nil {
 		return
@@ -39,8 +38,8 @@ QT += core qml quick
 TEMPLATE = lib
 CONFIG += staticlib
 
-HEADERS += {{.GMLBindingDir}}/headers/*.h
-SOURCES += {{.GMLBindingDir}}/sources/*.cpp
+HEADERS += {{.GMLBindingDir}}/headers/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
+SOURCES += {{.GMLBindingDir}}/sources/*.cpp {{.CPPGenDir}}/*.cpp
 
 OBJECTS_DIR = {{.BuildDir}}
 MOC_DIR = {{.BuildDir}}

@@ -16,10 +16,10 @@ import (
 
 type Bridge struct {
 	_ struct {
-		State     int                           `gml:"property"`
-		Connect   func(addr string)             `gml:"slot"`
-		Connected func()                        `gml:"signal"`
-		Sign      func(i int, s string, b bool) `gml:"signal"`
+		State     int               `gml:"property"`
+		Connect   func(addr string) `gml:"slot"`
+		Connected func()            `gml:"signal"`
+		//Sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
 
