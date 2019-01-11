@@ -15,6 +15,7 @@ import (
 )
 
 type Bridge struct {
+	gml.Object
 	_ struct {
 		State     int               `gml:"property"`
 		Connect   func(addr string) `gml:"slot"`

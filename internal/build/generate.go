@@ -124,10 +124,23 @@ func generateGoFile(gp *genPackage) (err error) {
 	f.WriteString("// #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick\n")
 	f.WriteString("// #cgo LDFLAGS: -lstdc++\n")
 	f.WriteString("// #include <gml_gen.h>\n")
-	f.WriteString("import \"C\"\n\n")
+	f.WriteString("import \"C\"\n")
+	f.WriteString("import (\n")
+	f.WriteString("    \"unsafe\"\n")
+	f.WriteString("    \"runtime\"\n")
+	f.WriteString(")\n\n")
 
 	for _, st := range gp.Structs {
 		base := "gml_gen_" + st.Name
+
+		// TODO: Error?
+		// GMLInit().
+		f.WriteString("func (_v *" + st.Name + ") GMLInit() {\n")
+		f.WriteString("    _v.GMLObject_SetPointer(unsafe.Pointer(C." + base + "_new()))\n")
+		f.WriteString("    runtime.SetFinalizer(_v, func(_v *" + st.Name + ") {\n")
+		f.WriteString("        C." + base + "_free((C." + base + ")(_v.GMLObject_Pointer()))\n")
+		f.WriteString("    })\n")
+		f.WriteString("}\n\n")
 
 		// Add all signals.
 		for _, s := range st.Signals {
@@ -142,7 +155,7 @@ func generateGoFile(gp *genPackage) (err error) {
 			}
 
 			f.WriteString(") {\n")
-			f.WriteString("    _ = C." + base + "_new()\n") // TODO:
+			f.WriteString("    \n") // TODO:
 			f.WriteString("}\n\n")
 		}
 	}
@@ -246,8 +259,10 @@ func generateCPPSourceFile(gp *genPackage, genDir string) (err error) {
 
 		// Destructor. TODO: try catch
 		f.WriteString("void " + base + "_free(" + base + " _v) {\n")
+		f.WriteString("    if (_v == NULL) return;\n")
 		f.WriteString("    auto _vv = (" + cppbase + "*)_v;\n")
 		f.WriteString("    delete _vv;\n")
+		f.WriteString("    _v = NULL;\n")
 		f.WriteString("}\n\n")
 
 		// Add all signals.
