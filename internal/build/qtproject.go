@@ -12,6 +12,7 @@ import (
 )
 
 func prepareQtProject(ctx *Context) (err error) {
+	// TODO: prepare in init()
 	tmpl, err := template.New("t").Parse(qtProData)
 	if err != nil {
 		return
@@ -23,7 +24,10 @@ func prepareQtProject(ctx *Context) (err error) {
 		return
 	}
 	defer func() {
-		err = f.Close()
+		derr := f.Close()
+		if derr != nil && err == nil {
+			err = derr
+		}
 	}()
 
 	return tmpl.Execute(f, &ctx)

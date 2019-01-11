@@ -20,6 +20,7 @@ import (
 const (
 	staticLibName = "libgml.a"
 	proFileName   = "gml.pro"
+	cppGenDirName = "gen_cpp"
 )
 
 type Context struct {
@@ -28,6 +29,7 @@ type Context struct {
 	DestDir   string
 
 	GMLBindingDir string
+	CPPGenDir     string
 
 	OutputFile    string
 	StaticLibPath string
@@ -53,6 +55,7 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		SourceDir:     sourceDir,
 		BuildDir:      buildDir,
 		DestDir:       destDir,
+		CPPGenDir:     filepath.Join(buildDir, cppGenDirName),
 		OutputFile:    filepath.Join(destDir, filepath.Base(sourceDir)),
 		StaticLibPath: filepath.Join(buildDir, staticLibName),
 		QtProFile:     filepath.Join(buildDir, proFileName),
@@ -74,6 +77,11 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 			return
 		}
 
+	}
+
+	err = ctx.cleanupDirs()
+	if err != nil {
+		return
 	}
 
 	err = ctx.checkForRequiredDirs()
@@ -125,10 +133,30 @@ func (c *Context) cleanDirs() (err error) {
 	return
 }
 
+func (c *Context) cleanupDirs() (err error) {
+	dirs := []string{
+		c.CPPGenDir,
+	}
+
+	for _, d := range dirs {
+		e, err := utils.Exists(d)
+		if err != nil {
+			return err
+		} else if e {
+			err = os.RemoveAll(c.BuildDir)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return
+}
+
 func (c *Context) createDirsIfNotExists() (err error) {
 	dirs := []string{
 		c.BuildDir,
 		c.DestDir,
+		c.CPPGenDir,
 	}
 
 	for _, d := range dirs {

@@ -6,6 +6,7 @@
 
 package testy
 
+/*
 type Bridge struct {
 	_ struct {
 		State     int                           `gml:"property"`
@@ -13,3 +14,4 @@ type Bridge struct {
 		Connected func(i int, s string, b bool) `gml:"signal"`
 	}
 }
+*/

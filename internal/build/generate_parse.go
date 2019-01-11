@@ -17,13 +17,23 @@ import (
 )
 
 type genTargets struct {
+	Packages []*genPackage
+}
+
+type genPackage struct {
+	Name    string
+	Dir     string
+	Structs []*genStruct
+}
+
+type genStruct struct {
+	Name    string
 	Signals []*genSignal
 }
 
 type genSignal struct {
-	Filename string
-	Name     string
-	Params   []*genParam
+	Name   string
+	Params []*genParam
 }
 
 type genParam struct {
@@ -31,6 +41,7 @@ type genParam struct {
 	Type string
 }
 
+// TODO: make concurrent with multiple goroutines.
 func parseDirRecursive(dir string) (gt *genTargets, err error) {
 	gt = &genTargets{}
 
@@ -70,24 +81,36 @@ func parseDirRecursive(dir string) (gt *genTargets, err error) {
 }
 
 func parseDir(gt *genTargets, dir string) (err error) {
+	gp := &genPackage{
+		Dir: dir,
+	}
+
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, dir, nil, 0)
 	if err != nil {
 		return
 	}
 
-	for _, pkg := range pkgs {
+	for pkgName, pkg := range pkgs {
+		// Set the package name.
+		gp.Name = pkgName
+
 		for _, f := range pkg.Files {
-			err = parseFile(gt, fset, f)
+			err = parseFile(gp, fset, f)
 			if err != nil {
 				return
 			}
 		}
 	}
+
+	// Skip if the package is empty.
+	if len(gp.Structs) > 0 {
+		gt.Packages = append(gt.Packages, gp)
+	}
 	return
 }
 
-func parseFile(gt *genTargets, fset *token.FileSet, f *ast.File) (err error) {
+func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
 	// Search for struct definitions.
 	for _, decl := range f.Decls {
 		// Must be a token: type
@@ -106,6 +129,10 @@ func parseFile(gt *genTargets, fset *token.FileSet, f *ast.File) (err error) {
 			continue
 		}
 
+		gs := &genStruct{
+			Name: typeSpec.Name.Name,
+		}
+
 		for _, f := range structDecl.Fields.List {
 			// Variable name must be "_".
 			if len(f.Names) == 0 || f.Names[0].Name != "_" {
@@ -117,17 +144,22 @@ func parseFile(gt *genTargets, fset *token.FileSet, f *ast.File) (err error) {
 				continue
 			}
 
-			err = parseInlineStruct(gt, fset, st)
+			err = parseInlineStruct(gs, fset, st)
 			if err != nil {
 				return
 			}
+		}
+
+		// Skip if the struct is empty.
+		if len(gs.Signals) > 0 { // TODO: add slots & properties
+			gp.Structs = append(gp.Structs, gs)
 		}
 	}
 
 	return
 }
 
-func parseInlineStruct(gt *genTargets, fset *token.FileSet, st *ast.StructType) (err error) {
+func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (err error) {
 	for _, f := range st.Fields.List {
 		// Ensure name is set.
 		if len(f.Names) == 0 {
@@ -152,7 +184,7 @@ func parseInlineStruct(gt *genTargets, fset *token.FileSet, st *ast.StructType) 
 
 		switch tagValue {
 		case "signal":
-			err = parseSignal(gt, fset, f, name)
+			err = parseSignal(gs, fset, f, name)
 			if err != nil {
 				return
 			}
@@ -168,7 +200,7 @@ func parseInlineStruct(gt *genTargets, fset *token.FileSet, st *ast.StructType) 
 	return
 }
 
-func parseSignal(gt *genTargets, fset *token.FileSet, f *ast.Field, name string) (err error) {
+func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
 	// Must be a function/
 	ft, ok := f.Type.(*ast.FuncType)
 	if !ok {
@@ -176,9 +208,8 @@ func parseSignal(gt *genTargets, fset *token.FileSet, f *ast.Field, name string)
 	}
 
 	signal := &genSignal{
-		Filename: fset.Position(f.Pos()).Filename,
-		Name:     name,
-		Params:   make([]*genParam, len(ft.Params.List)),
+		Name:   name,
+		Params: make([]*genParam, len(ft.Params.List)),
 	}
 
 	for i, p := range ft.Params.List {
@@ -187,9 +218,9 @@ func parseSignal(gt *genTargets, fset *token.FileSet, f *ast.Field, name string)
 			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
 		}
 
-		// Ensure names is not empty.
+		// Ensure a parameter name is set.
 		if len(p.Names) == 0 {
-			return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal function parameter: names is empty"))
+			return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal function parameter: name not set"))
 		}
 
 		signal.Params[i] = &genParam{
@@ -198,7 +229,7 @@ func parseSignal(gt *genTargets, fset *token.FileSet, f *ast.Field, name string)
 		}
 	}
 
-	gt.Signals = append(gt.Signals, signal)
+	gs.Signals = append(gs.Signals, signal)
 	return
 }
 
