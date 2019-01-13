@@ -209,7 +209,7 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 	signal := &genSignal{
 		Name:    name,
 		CPPName: utils.FirstCharToLower(name), // Qt signal names must be lower-case.
-		Params:  make([]*genParam, len(ft.Params.List)),
+		Params:  make([]*genParam, 0, len(ft.Params.List)),
 	}
 
 	// Prepare the emit name.
@@ -220,7 +220,7 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		signal.EmitName = "emit" + utils.FirstCharToUpper(signal.Name)
 	}
 
-	for i, p := range ft.Params.List {
+	for _, p := range ft.Params.List {
 		ident, ok := p.Type.(*ast.Ident)
 		if !ok {
 			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
@@ -231,10 +231,12 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal function parameter: name not set"))
 		}
 
-		signal.Params[i] = &genParam{
-			Name:  p.Names[0].Name,
-			Type:  ident.Name,
-			CType: goTypeToC(ident.Name),
+		for _, n := range p.Names {
+			signal.Params = append(signal.Params, &genParam{
+				Name:  n.Name,
+				Type:  ident.Name,
+				CType: goTypeToC(ident.Name),
+			})
 		}
 	}
 
@@ -254,10 +256,10 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 	slot := &genSlot{
 		Name:    name,
 		CPPName: utils.FirstCharToLower(name), // Qt slot names must be lower-case.
-		Params:  make([]*genParam, len(ft.Params.List)),
+		Params:  make([]*genParam, 0, len(ft.Params.List)),
 	}
 
-	for i, p := range ft.Params.List {
+	for _, p := range ft.Params.List {
 		ident, ok := p.Type.(*ast.Ident)
 		if !ok {
 			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
@@ -268,10 +270,12 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot function parameter: name not set"))
 		}
 
-		slot.Params[i] = &genParam{
-			Name:  p.Names[0].Name,
-			Type:  ident.Name,
-			CType: goTypeToC(ident.Name),
+		for _, n := range p.Names {
+			slot.Params = append(slot.Params, &genParam{
+				Name:  n.Name,
+				Type:  ident.Name,
+				CType: goTypeToC(ident.Name),
+			})
 		}
 	}
 
