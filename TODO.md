@@ -9,3 +9,5 @@
 // - RunInEventLoop
 // - signals & slots
 // - docker container
+// - dp for pixels
+// - document, that slot names must not overlap with QObject names!

@@ -139,7 +139,7 @@ func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
 		}
 
 		// Skip if the struct is empty.
-		if len(gs.Signals) > 0 { // TODO: add slots & properties
+		if len(gs.Signals) > 0 || len(gs.Slots) > 0 { // TODO: add slots & properties
 			gp.Structs = append(gp.Structs, gs)
 		}
 	}
@@ -180,7 +180,10 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 				return
 			}
 		case "slot":
-			// TODO:
+			err = parseSlot(gs, fset, f, name)
+			if err != nil {
+				return
+			}
 		case "property":
 			// TODO:
 		default:
@@ -205,7 +208,7 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 
 	signal := &genSignal{
 		Name:    name,
-		CPPName: utils.FirstCharToLower(name), // Qt signal names must be lower-case!
+		CPPName: utils.FirstCharToLower(name), // Qt signal names must be lower-case.
 		Params:  make([]*genParam, len(ft.Params.List)),
 	}
 
@@ -235,6 +238,42 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 	}
 
 	gs.Signals = append(gs.Signals, signal)
+	return
+}
+
+func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
+	// Must be a function/
+	ft, ok := f.Type.(*ast.FuncType)
+	if !ok {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: must be a function"))
+	}
+
+	// TODO: Handle return types!
+
+	slot := &genSlot{
+		Name:    name,
+		CPPName: utils.FirstCharToLower(name), // Qt slot names must be lower-case.
+		Params:  make([]*genParam, len(ft.Params.List)),
+	}
+
+	for i, p := range ft.Params.List {
+		ident, ok := p.Type.(*ast.Ident)
+		if !ok {
+			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
+		}
+
+		// Ensure a parameter name is set.
+		if len(p.Names) == 0 {
+			return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot function parameter: name not set"))
+		}
+
+		slot.Params[i] = &genParam{
+			Name: p.Names[0].Name,
+			Type: ident.Name,
+		}
+	}
+
+	gs.Slots = append(gs.Slots, slot)
 	return
 }
 

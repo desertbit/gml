@@ -31,6 +31,7 @@ type genStruct struct {
 	CBaseName   string
 	CPPBaseName string
 	Signals     []*genSignal
+	Slots       []*genSlot
 }
 
 type genSignal struct {
@@ -38,6 +39,12 @@ type genSignal struct {
 	EmitName string
 	CPPName  string
 	Params   []*genParam
+}
+
+type genSlot struct {
+	Name    string
+	CPPName string
+	Params  []*genParam
 }
 
 type genParam struct {

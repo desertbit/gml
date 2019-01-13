@@ -14,6 +14,15 @@ ApplicationWindow {
         color: "red"
     }
 
+    Button {
+        id: button
+        text: "Trigger Signal"
+        font.pixelSize: 100
+        Layout.topMargin: 100
+        Layout.alignment: Qt.AlignHCenter
+        onClicked: bridge.hello()
+    }
+
     Connections {
         target: bridge
         onConnected: function() {

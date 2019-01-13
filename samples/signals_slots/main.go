@@ -9,7 +9,6 @@ package main
 import (
 	"log"
 	"os"
-	"time"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -18,15 +17,16 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state     int               `gml:"property"`
-		connect   func(addr string) `gml:"slot"`
-		Connected func()            `gml:"signal"`
+		state     int    `gml:"property"`
+		hello     func() `gml:"slot"`
+		Connected func() `gml:"signal"`
 		//sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
 
-func (b *Bridge) Connect(addr string) {
-
+func (b *Bridge) hello() {
+	println("hello")
+	b.EmitConnected()
 }
 
 func main() {
@@ -39,10 +39,10 @@ func main() {
 	b.GMLInit()
 	app.SetRootContextProperty("bridge", b)
 
-	go func() {
+	/*go func() {
 		time.Sleep(time.Second)
-		b.Connected() // TODO: make to EmitConnected
-	}()
+		b.EmitConnected()
+	}()*/
 
 	err = app.Load("qml/main.qml")
 	if err != nil {

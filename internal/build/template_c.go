@@ -39,12 +39,18 @@ extern "C" {
 
 typedef void* {{$struct.CBaseName}};
 
-{{$struct.CBaseName}} {{$struct.CBaseName}}_new();
+{{$struct.CBaseName}} {{$struct.CBaseName}}_new(void* go_ptr);
 void {{$struct.CBaseName}}_free({{$struct.CBaseName}});
 
-{{/* Signals */ -}}
+{{- /* Signals */ -}}
 {{- range $signal := $struct.Signals }}
 void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $signal.Params false}});
+{{end}}
+
+{{- /* Slots */ -}}
+{{- range $slot := $struct.Slots }}
+typedef void (*{{$struct.CBaseName}}_{{$slot.Name}}_cb_t)(void* _go_ptr);
+void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$slot.Name}}_cb_t cb);
 {{end}}
 
 {{- /* End of struct loop */ -}}
