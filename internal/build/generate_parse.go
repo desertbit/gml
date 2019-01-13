@@ -233,9 +233,10 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 
 		for _, n := range p.Names {
 			signal.Params = append(signal.Params, &genParam{
-				Name:  n.Name,
-				Type:  ident.Name,
-				CType: goTypeToC(ident.Name),
+				Name:    n.Name,
+				Type:    ident.Name,
+				CType:   goTypeToC(ident.Name),
+				CPPType: goTypeToCPP(ident.Name),
 			})
 		}
 	}
@@ -272,9 +273,10 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 
 		for _, n := range p.Names {
 			slot.Params = append(slot.Params, &genParam{
-				Name:  n.Name,
-				Type:  ident.Name,
-				CType: goTypeToC(ident.Name),
+				Name:    n.Name,
+				Type:    ident.Name,
+				CType:   goTypeToC(ident.Name),
+				CPPType: goTypeToCPP(ident.Name),
 			})
 		}
 	}
@@ -289,14 +291,88 @@ func newParseError(fset *token.FileSet, p token.Pos, err error) error {
 }
 
 func goTypeToC(t string) string {
-	// TODO: add all missing.
 	switch t {
+	case "bool":
+		return "uint8_t"
+
+	case "byte":
+		return "char"
+	case "[]byte":
+		return "char*"
+
+	case "string":
+		return "char*"
+	case "rune":
+		return "int32_t"
+
+	case "float32":
+		return "float"
+	case "float64":
+		return "double"
+
 	case "int":
 		return "int"
+	case "int8":
+		return "int8_t"
+	case "uint8":
+		return "uint8_t"
+	case "int16":
+		return "int16_t"
+	case "uint16":
+		return "uint16_t"
+	case "int32":
+		return "int32_t"
+	case "uint32":
+		return "uint32_t"
+	case "int64":
+		return "int64_t"
+	case "uint64":
+		return "uint64_t"
+
+	default:
+		return "gml_variant" // TODO:
+	}
+}
+
+func goTypeToCPP(t string) string {
+	switch t {
 	case "bool":
-		return "int"
+		return "bool"
+
+	case "byte":
+		return "char"
+	case "[]byte":
+		return "QByteArray"
+
 	case "string":
-		return "*char"
+		return "QString"
+	case "rune":
+		return "QChar"
+
+	case "float32":
+		return "float"
+	case "float64":
+		return "double"
+
+	case "int":
+		return "int"
+	case "int8":
+		return "int8_t"
+	case "uint8":
+		return "uint8_t"
+	case "int16":
+		return "int16_t"
+	case "uint16":
+		return "uint16_t"
+	case "int32":
+		return "int32_t"
+	case "uint32":
+		return "uint32_t"
+	case "int64":
+		return "int64_t"
+	case "uint64":
+		return "uint64_t"
+
 	default:
 		return "gml_variant" // TODO:
 	}

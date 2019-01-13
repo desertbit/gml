@@ -17,9 +17,9 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state     int            `gml:"property"`
-		hello     func()         `gml:"slot"`
-		Connected func(i, j int) `gml:"signal"`
+		state     int                      `gml:"property"`
+		hello     func()                   `gml:"slot"`
+		Connected func(i, j int, s string) `gml:"signal"`
 		//sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }

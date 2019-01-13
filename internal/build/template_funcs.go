@@ -11,6 +11,7 @@ import "text/template"
 var tmplFuncMap = template.FuncMap{
 	"goParams":    tmplFuncGoParams,
 	"cParams":     tmplFuncCParams,
+	"cppParams":   tmplFuncCPPParams,
 	"goToCParams": tmplFuncGoToCParams,
 }
 
@@ -45,6 +46,19 @@ func tmplFuncCParams(params []*genParam, withType, skipFirstComma bool) (s strin
 	return
 }
 
+func tmplFuncCPPParams(params []*genParam, withType, skipFirstComma bool) (s string) {
+	for i, p := range params {
+		if !skipFirstComma || i != 0 {
+			s += ", "
+		}
+		if withType {
+			s += p.CPPType + " "
+		}
+		s += p.Name
+	}
+	return
+}
+
 func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (s string) {
 	var ident string
 	if len(optsIndent) > 0 {
@@ -57,19 +71,52 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 		s += "\n" + ident + l
 	}
 
-	// TODO: add all missing.
 	for _, p := range params {
+		cName := prefix + p.Name
+
 		switch p.Type {
-		case "int":
-			addLine(prefix + p.Name + " := C.int(" + p.Name + ")")
 		case "bool":
-			addLine(prefix + p.Name + " := C.int(" + p.Name + ")")
+			addLine(cName + " := C.uint8_t(" + p.Name + ")")
+
+		case "byte":
+			addLine(cName + " := C.char(" + p.Name + ")")
+		case "[]byte":
+			addLine(cName + " := (*C.char)(unsafe.Pointer(&" + p.Name + "[0]))")
+
 		case "string":
-			return "*char" // TODO:
+			addLine(cName + " := C.CString(" + p.Name + ")")
+			addLine("defer C.free(unsafe.Pointer(" + cName + "))")
+		case "rune":
+			addLine(cName + " := C.int32_t(" + p.Name + ")")
+
+		case "float32":
+			addLine(cName + " := C.float(" + p.Name + ")")
+		case "float64":
+			addLine(cName + " := C.double(" + p.Name + ")")
+
+		case "int":
+			addLine(cName + " := C.int(" + p.Name + ")")
+		case "int8":
+			addLine(cName + " := C.int8_t(" + p.Name + ")")
+		case "uint8":
+			addLine(cName + " := C.uint8_t(" + p.Name + ")")
+		case "int16":
+			addLine(cName + " := C.int16_t(" + p.Name + ")")
+		case "uint16":
+			addLine(cName + " := C.uint16_t(" + p.Name + ")")
+		case "int32":
+			addLine(cName + " := C.int32_t(" + p.Name + ")")
+		case "uint32":
+			addLine(cName + " := C.uint32_t(" + p.Name + ")")
+		case "int64":
+			addLine(cName + " := C.int64_t(" + p.Name + ")")
+		case "uint64":
+			addLine(cName + " := C.uint64_t(" + p.Name + ")")
+
 		default:
-			return "gml_variant" // TODO:
+			// TODO:
+			addLine("gml_variant")
 		}
 	}
-
 	return
 }
