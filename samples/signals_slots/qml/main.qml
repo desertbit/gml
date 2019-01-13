@@ -20,13 +20,13 @@ ApplicationWindow {
         font.pixelSize: 100
         Layout.topMargin: 100
         Layout.alignment: Qt.AlignHCenter
-        onClicked: bridge.hello()
+        onClicked: bridge.clicked()
     }
 
     Connections {
         target: bridge
-        onConnected: function(i, j) {
-            console.log(i, j)
+        onGreet: function(i1, i2, i3, s, r, b, bb, sb) {
+            console.log(i1, i2, i3, s, r, b, bb, sb)
             rect.color = "blue"
         }
     }

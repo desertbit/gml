@@ -9,7 +9,8 @@
 
 #include <stdlib.h>
 
-#include "app.h"
-#include "object.h"
+#include "gml_app.h"
+#include "gml_object.h"
+#include "gml_variant.h"
 
 #endif

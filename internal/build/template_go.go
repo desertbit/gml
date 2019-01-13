@@ -41,6 +41,7 @@ import (
     "unsafe"
     "runtime"
 
+	"github.com/desertbit/gml"
 	"github.com/desertbit/gml/pointer"
 )
 

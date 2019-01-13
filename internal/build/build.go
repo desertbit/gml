@@ -83,7 +83,7 @@ func buildGo(ctx *Context) (err error) {
 	err = utils.RunCommand(
 		ctx.Env(
 			"CGO_LDFLAGS="+ctx.StaticLibPath,
-			"CGO_CFLAGS=-I"+ctx.CGenIncludeDir,
+			"CGO_CFLAGS=-I"+ctx.CGenIncludeDir+" -I"+ctx.GMLBindingHeadersDir,
 		),
 		ctx.SourceDir,
 		"go", "build", "-o", ctx.OutputFile,

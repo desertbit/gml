@@ -30,7 +30,10 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	GMLBindingDir  string
+	GMLBindingDir        string
+	GMLBindingHeadersDir string
+	GMLBindingSourcesDir string
+
 	CGenDir        string
 	CGenIncludeDir string
 	CPPGenDir      string
@@ -77,6 +80,8 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 
 	// Obtain the current import path.
 	ctx.GMLBindingDir = filepath.Join(gopath, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
+	ctx.GMLBindingHeadersDir = filepath.Join(ctx.GMLBindingDir, "headers")
+	ctx.GMLBindingSourcesDir = filepath.Join(ctx.GMLBindingDir, "sources")
 
 	// Clean if set.
 	if clean {

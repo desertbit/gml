@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "object.h"
+#include "gml_object.h"
 
 typedef void* gml_app;
 

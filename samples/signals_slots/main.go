@@ -17,15 +17,14 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state     int                      `gml:"property"`
-		hello     func()                   `gml:"slot"`
-		Connected func(i, j int, s string) `gml:"signal"`
-		//sign      func(i int, s string, b bool) `gml:"signal"`
+		state   int                                                                            `gml:"property"`
+		clicked func()                                                                         `gml:"slot"`
+		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
 	}
 }
 
-func (b *Bridge) hello() {
-	b.EmitConnected(3, 4)
+func (b *Bridge) clicked() {
+	b.emitGreet(1, 2, 3, "foo", '本', 4, true, []byte{1, 2, 3})
 }
 
 func main() {

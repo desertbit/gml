@@ -221,10 +221,7 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 	}
 
 	for _, p := range ft.Params.List {
-		ident, ok := p.Type.(*ast.Ident)
-		if !ok {
-			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
-		}
+		typeStr := getTypeString(p.Type)
 
 		// Ensure a parameter name is set.
 		if len(p.Names) == 0 {
@@ -234,9 +231,9 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		for _, n := range p.Names {
 			signal.Params = append(signal.Params, &genParam{
 				Name:    n.Name,
-				Type:    ident.Name,
-				CType:   goTypeToC(ident.Name),
-				CPPType: goTypeToCPP(ident.Name),
+				Type:    typeStr,
+				CType:   goTypeToC(typeStr),
+				CPPType: goTypeToCPP(typeStr),
 			})
 		}
 	}
@@ -261,10 +258,7 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 	}
 
 	for _, p := range ft.Params.List {
-		ident, ok := p.Type.(*ast.Ident)
-		if !ok {
-			return newParseError(fset, f.Pos(), fmt.Errorf("failed to assert to *ast.Ident"))
-		}
+		typeStr := getTypeString(p.Type)
 
 		// Ensure a parameter name is set.
 		if len(p.Names) == 0 {
@@ -274,15 +268,37 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 		for _, n := range p.Names {
 			slot.Params = append(slot.Params, &genParam{
 				Name:    n.Name,
-				Type:    ident.Name,
-				CType:   goTypeToC(ident.Name),
-				CPPType: goTypeToCPP(ident.Name),
+				Type:    typeStr,
+				CType:   goTypeToC(typeStr),
+				CPPType: goTypeToCPP(typeStr),
 			})
 		}
 	}
 
 	gs.Slots = append(gs.Slots, slot)
 	return
+}
+
+// Returns "interface{}" if unknown.
+func getTypeString(t ast.Expr) string {
+	// Check if basic type.
+	ident, ok := t.(*ast.Ident)
+	if ok {
+		return ident.Name
+	}
+
+	// Not required, because QByteArray is not supported by QML.
+	// check if slice
+	/*a, ok := t.(*ast.ArrayType)
+	if ok && a.Len == nil {
+		// Check if basic type is within the slice.
+		ident, ok := a.Elt.(*ast.Ident)
+		if ok {
+			return "[]" + ident.Name
+		}
+	}*/
+
+	return "interface{}"
 }
 
 func newParseError(fset *token.FileSet, p token.Pos, err error) error {
@@ -294,12 +310,8 @@ func goTypeToC(t string) string {
 	switch t {
 	case "bool":
 		return "uint8_t"
-
 	case "byte":
 		return "char"
-	case "[]byte":
-		return "char*"
-
 	case "string":
 		return "char*"
 	case "rune":
@@ -330,7 +342,7 @@ func goTypeToC(t string) string {
 		return "uint64_t"
 
 	default:
-		return "gml_variant" // TODO:
+		return "gml_variant"
 	}
 }
 
@@ -338,12 +350,8 @@ func goTypeToCPP(t string) string {
 	switch t {
 	case "bool":
 		return "bool"
-
 	case "byte":
 		return "char"
-	case "[]byte":
-		return "QByteArray"
-
 	case "string":
 		return "QString"
 	case "rune":
@@ -354,26 +362,29 @@ func goTypeToCPP(t string) string {
 	case "float64":
 		return "double"
 
+	// QML only supports int.
 	case "int":
 		return "int"
 	case "int8":
-		return "int8_t"
+		return "int"
 	case "uint8":
-		return "uint8_t"
+		return "int"
 	case "int16":
-		return "int16_t"
+		return "int"
 	case "uint16":
-		return "uint16_t"
+		return "int"
 	case "int32":
-		return "int32_t"
+		return "int"
 	case "uint32":
-		return "uint32_t"
+		return "int"
+
+	// TODO: support int64 & uint64.
 	case "int64":
-		return "int64_t"
+		panic("currently int64 is not supported")
 	case "uint64":
-		return "uint64_t"
+		panic("currently uint64 is not supported")
 
 	default:
-		return "gml_variant" // TODO:
+		return "QVariant"
 	}
 }

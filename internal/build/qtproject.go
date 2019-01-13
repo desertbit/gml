@@ -38,8 +38,10 @@ QT += core qml quick
 TEMPLATE = lib
 CONFIG += staticlib
 
-HEADERS += {{.GMLBindingDir}}/headers/*.h {{.GMLBindingDir}}/sources/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
-SOURCES += {{.GMLBindingDir}}/sources/*.cpp {{.CPPGenDir}}/*.cpp
+INCLUDEPATH += {{.GMLBindingDir}}/headers
+
+HEADERS += {{.GMLBindingHeadersDir}}/*.h {{.GMLBindingSourcesDir}}/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
+SOURCES += {{.GMLBindingSourcesDir}}/*.cpp {{.CPPGenDir}}/*.cpp
 
 OBJECTS_DIR = {{.BuildDir}}
 MOC_DIR = {{.BuildDir}}

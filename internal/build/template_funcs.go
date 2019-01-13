@@ -9,10 +9,11 @@ package build
 import "text/template"
 
 var tmplFuncMap = template.FuncMap{
-	"goParams":    tmplFuncGoParams,
-	"cParams":     tmplFuncCParams,
-	"cppParams":   tmplFuncCPPParams,
-	"goToCParams": tmplFuncGoToCParams,
+	"goParams":     tmplFuncGoParams,
+	"cParams":      tmplFuncCParams,
+	"cppParams":    tmplFuncCPPParams,
+	"goToCParams":  tmplFuncGoToCParams,
+	"cToCPPParams": tmplFuncCToCPPParams,
 }
 
 func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {
@@ -76,13 +77,10 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 
 		switch p.Type {
 		case "bool":
-			addLine(cName + " := C.uint8_t(" + p.Name + ")")
-
+			addLine("var " + cName + " C.uint8_t")
+			addLine("if " + p.Name + " { " + cName + " = 1 }")
 		case "byte":
 			addLine(cName + " := C.char(" + p.Name + ")")
-		case "[]byte":
-			addLine(cName + " := (*C.char)(unsafe.Pointer(&" + p.Name + "[0]))")
-
 		case "string":
 			addLine(cName + " := C.CString(" + p.Name + ")")
 			addLine("defer C.free(unsafe.Pointer(" + cName + "))")
@@ -114,8 +112,54 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 			addLine(cName + " := C.uint64_t(" + p.Name + ")")
 
 		default:
-			// TODO:
-			addLine("gml_variant")
+			addLine(cName + " := (C.gml_variant)(gml.ToVariant(" + p.Name + ").Pointer())")
+		}
+	}
+	return
+}
+
+func tmplFuncCToCPPParams(params []*genParam, skipFirstComma bool) (s string) {
+	for i, p := range params {
+		if !skipFirstComma || i != 0 {
+			s += ", "
+		}
+
+		switch p.Type {
+		case "bool":
+			s += "bool(" + p.Name + ")"
+		case "byte":
+			s += p.Name
+		case "string":
+			s += "QString(" + p.Name + ")"
+		case "rune":
+			s += "QChar(" + p.Name + ")"
+
+		case "float32":
+			s += p.Name
+		case "float64":
+			s += p.Name
+
+		case "int":
+			s += p.Name
+		case "int8":
+			s += p.Name
+		case "uint8":
+			s += p.Name
+		case "int16":
+			s += p.Name
+		case "uint16":
+			s += p.Name
+		case "int32":
+			s += p.Name
+		case "uint32":
+			s += p.Name
+		case "int64":
+			s += p.Name
+		case "uint64":
+			s += p.Name
+
+		default:
+			s += "QVariant(*((QVariant*)" + p.Name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
 		}
 	}
 	return
