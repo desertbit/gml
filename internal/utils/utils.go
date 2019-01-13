@@ -9,6 +9,7 @@ package utils
 import (
 	"os"
 	"os/exec"
+	"syscall"
 	"unicode"
 )
 
@@ -58,4 +59,9 @@ func FirstCharToUpper(s string) string {
 	sr := []rune(s)
 	sr[0] = unicode.ToUpper(rune(sr[0]))
 	return string(sr)
+}
+
+func GetThreadID() int {
+	// TODO: check if this is supported in MaxOSX and Windows. Also create a unit test!
+	return syscall.Gettid()
 }

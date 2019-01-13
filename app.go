@@ -19,6 +19,7 @@ import (
 	"runtime"
 	"unsafe"
 
+	"github.com/desertbit/gml/internal/utils"
 	"github.com/desertbit/gml/pointer"
 )
 
@@ -54,7 +55,7 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 	runtime.LockOSThread()
 
 	a = &App{
-		threadID: getThreadID(),
+		threadID: utils.GetThreadID(),
 		argc:     len(args),
 		argv:     toCharArray(args),
 		gcMap:    make(map[string]interface{}),
@@ -66,7 +67,7 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 // RunMain runs the function on the applications main thread.
 func (a *App) RunMain(f func()) {
 	// Check if already running on the main thread.
-	if getThreadID() == a.threadID {
+	if utils.GetThreadID() == a.threadID {
 		f()
 		return
 	}

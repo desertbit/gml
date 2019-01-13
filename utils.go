@@ -7,26 +7,25 @@
 package gml
 
 /*
- #include <stdlib.h>
+  #include <stdlib.h>
 
- static char** makeCharArray(int size) {
-	 return (char**)(malloc(size * sizeof(char*)));
- }
+  static char** makeCharArray(int size) {
+	  return (char**)(malloc(size * sizeof(char*)));
+  }
 
- static void setCharArrayString(char **a, char *s, int n) {
-	 a[n] = s;
- }
+  static void setCharArrayString(char **a, char *s, int n) {
+	  a[n] = s;
+  }
 
- static void freeCharArray(char **a, int size) {
-	 int i;
-	 for (i = 0; i < size; i++) {
-		 free(a[i]);
-	 }
-	 free(a);
- }
+  static void freeCharArray(char **a, int size) {
+	  int i;
+	  for (i = 0; i < size; i++) {
+		  free(a[i]);
+	  }
+	  free(a);
+  }
 */
 import "C"
-import "syscall"
 
 //###############//
 //### Private ###//
@@ -42,9 +41,4 @@ func toCharArray(ss []string) **C.char {
 
 func freeCharArray(a **C.char, size int) {
 	C.freeCharArray(a, C.int(size))
-}
-
-func getThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows. Also create a unit test!
-	return syscall.Gettid()
 }
