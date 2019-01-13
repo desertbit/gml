@@ -7,8 +7,8 @@
 package build
 
 import (
-	"html/template"
 	"os"
+	"text/template"
 )
 
 func prepareQtProject(ctx *Context) (err error) {

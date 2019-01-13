@@ -15,33 +15,14 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	"github.com/desertbit/gml/internal/utils"
 )
 
-type genTargets struct {
-	Packages []*genPackage
-}
-
-type genPackage struct {
-	Name    string
-	Dir     string
-	Structs []*genStruct
-}
-
-type genStruct struct {
-	Name    string
-	Signals []*genSignal
-}
-
-type genSignal struct {
-	Name   string
-	CName  string // first letter is always lower case
-	Params []*genParam
-}
-
-type genParam struct {
-	Name string
-	Type string
-}
+const (
+	cBasePrefix   = "gml_gen_"
+	cppBasePrefix = "GMLGen"
+)
 
 // TODO: make concurrent with multiple goroutines.
 func parseDirRecursive(dir string) (gt *genTargets, err error) {
@@ -93,9 +74,11 @@ func parseDir(gt *genTargets, dir string) (err error) {
 		return
 	}
 
+	// Actually there should be only one package in the map,
+	// if the go source is valid and correct.
 	for pkgName, pkg := range pkgs {
 		// Set the package name.
-		gp.Name = pkgName
+		gp.PackageName = pkgName
 
 		for _, f := range pkg.Files {
 			err = parseFile(gp, fset, f)
@@ -131,8 +114,11 @@ func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
 			continue
 		}
 
+		structName := typeSpec.Name.Name
 		gs := &genStruct{
-			Name: typeSpec.Name.Name,
+			Name:        structName,
+			CBaseName:   cBasePrefix + structName,
+			CPPBaseName: cppBasePrefix + structName,
 		}
 
 		for _, f := range structDecl.Fields.List {
@@ -212,15 +198,24 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: must be a function"))
 	}
 
-	signal := &genSignal{
-		Name:   name,
-		Params: make([]*genParam, len(ft.Params.List)),
+	// Ensure the function does not contain any return value.
+	if ft.Results != nil && len(ft.Results.List) > 0 {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: must not contain a return value"))
 	}
 
-	// Ensure first char is lower case.
-	cNameR := []rune(name)
-	cNameR[0] = unicode.ToLower(rune(cNameR[0]))
-	signal.CName = string(cNameR)
+	signal := &genSignal{
+		Name:    name,
+		CPPName: utils.FirstCharToLower(name), // Qt signal names must be lower-case!
+		Params:  make([]*genParam, len(ft.Params.List)),
+	}
+
+	// Prepare the emit name.
+	// Prefix with emit and ensure it is private or public as specified.
+	if unicode.IsUpper(rune(signal.Name[0])) {
+		signal.EmitName = "Emit" + signal.Name
+	} else {
+		signal.EmitName = "emit" + utils.FirstCharToUpper(signal.Name)
+	}
 
 	for i, p := range ft.Params.List {
 		ident, ok := p.Type.(*ast.Ident)

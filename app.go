@@ -9,6 +9,7 @@ package gml
 // #include <gml.h>
 import "C"
 import (
+	"errors"
 	"os"
 	"runtime"
 	"unsafe"
@@ -24,12 +25,15 @@ type App struct {
 	app  C.gml_app
 	argc int
 	argv **C.char // TODO: free
+
+	gcMap map[string]interface{}
 }
 
 func NewApp() (a *App, err error) {
 	a = &App{
-		argc: len(os.Args), // TODO: really pass all arguments?
-		argv: toCharArray(os.Args),
+		argc:  len(os.Args), // TODO: really pass all arguments?
+		argv:  toCharArray(os.Args),
+		gcMap: make(map[string]interface{}),
 	}
 	a.app = C.gml_app_new(C.int(a.argc), a.argv)
 	return
@@ -66,11 +70,28 @@ func (a *App) LoadData(data string) error {
 	return nil
 }
 
-func (a *App) SetRootContextProperty(name string, obj *Object) error {
+func (a *App) SetRootContextProperty(name string, v interface{}) (err error) {
+	if len(name) == 0 {
+		return errors.New("property name is empty")
+	}
+
+	// TODO: call this within the main thread!
+
+	// Try to obtain the object from the interface.
+	obj, err := toObject(v)
+	if err != nil {
+		return
+	}
+
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 
 	// TODO:
 	_ = int(C.gml_app_set_root_context_property(a.app, nameC, obj.cObject()))
+
+	// Add to map to ensure it gets not garbage collected.
+	// It is in use by the C++ context;
+	a.gcMap[name] = v
+
 	return nil
 }

@@ -21,7 +21,7 @@ type Bridge struct {
 		state     int               `gml:"property"`
 		connect   func(addr string) `gml:"slot"`
 		Connected func()            `gml:"signal"`
-		//Sign      func(i int, s string, b bool) `gml:"signal"`
+		//sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
 
@@ -37,11 +37,11 @@ func main() {
 
 	b := &Bridge{}
 	b.GMLInit()
-	app.SetRootContextProperty("bridge", b.GMLObject()) // TODO: use a interface so b.GMLObject can be shortened?
+	app.SetRootContextProperty("bridge", b)
 
 	go func() {
 		time.Sleep(time.Second)
-		b.Connected() // TODO:
+		b.Connected() // TODO: make to EmitConnected
 	}()
 
 	err = app.Load("qml/main.qml")

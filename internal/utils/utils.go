@@ -9,6 +9,7 @@ package utils
 import (
 	"os"
 	"os/exec"
+	"unicode"
 )
 
 // Exists returns whether the given file or directory exists.
@@ -35,4 +36,26 @@ func RunCommand(env []string, dir, cmd string, args ...string) (err error) {
 	}
 
 	return c.Run()
+}
+
+func FirstCharToLower(s string) string {
+	if len(s) == 0 {
+		return ""
+	}
+
+	// Ensure first char is lower case.
+	sr := []rune(s)
+	sr[0] = unicode.ToLower(rune(sr[0]))
+	return string(sr)
+}
+
+func FirstCharToUpper(s string) string {
+	if len(s) == 0 {
+		return ""
+	}
+
+	// Ensure first char is lower case.
+	sr := []rune(s)
+	sr[0] = unicode.ToUpper(rune(sr[0]))
+	return string(sr)
 }
