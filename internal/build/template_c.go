@@ -44,7 +44,7 @@ void {{$struct.CBaseName}}_free({{$struct.CBaseName}});
 
 {{- /* Signals */ -}}
 {{- range $signal := $struct.Signals }}
-void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $signal.Params false}});
+void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $signal.Params true false}});
 {{end}}
 
 {{- /* Slots */ -}}

@@ -62,6 +62,6 @@ func FirstCharToUpper(s string) string {
 }
 
 func GetThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows. Also create a unit test!
+	// TODO: check if this is supported in MaxOSX and Windows.
 	return syscall.Gettid()
 }

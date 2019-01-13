@@ -17,15 +17,15 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state     int    `gml:"property"`
-		hello     func() `gml:"slot"`
-		Connected func() `gml:"signal"`
+		state     int         `gml:"property"`
+		hello     func()      `gml:"slot"`
+		Connected func(i int) `gml:"signal"`
 		//sign      func(i int, s string, b bool) `gml:"signal"`
 	}
 }
 
 func (b *Bridge) hello() {
-	b.EmitConnected()
+	b.EmitConnected(3)
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 
 	b := &Bridge{}
 	b.GMLInit()
-	app.SetRootContextProperty("bridge", b)
+	app.SetContextProperty("bridge", b)
 
 	err = app.Load("qml/main.qml")
 	if err != nil {

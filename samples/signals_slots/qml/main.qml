@@ -25,7 +25,8 @@ ApplicationWindow {
 
     Connections {
         target: bridge
-        onConnected: function() {
+        onConnected: function(i) {
+            console.log(i)
             rect.color = "blue"
         }
     }

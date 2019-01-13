@@ -37,13 +37,13 @@ public:
 {{/* Signals */ -}}
 signals:
 {{- range $signal := $struct.Signals }}
-    void {{$signal.CPPName}}({{cParams $signal.Params true}});
+    void {{$signal.CPPName}}({{cParams $signal.Params true true}});
 {{- end}}
 
 {{/* Slots */ -}}
 public slots:
 {{- range $slot := $struct.Slots }}
-    void {{$slot.CPPName}}({{cParams $slot.Params true}});
+    void {{$slot.CPPName}}({{cParams $slot.Params true true}});
 {{end}}
 };
 
@@ -82,9 +82,9 @@ void {{$struct.CBaseName}}_free({{$struct.CBaseName}} _v) {
 
 {{/* Signals */ -}}
 {{- range $signal := $struct.Signals }}
-void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $signal.Params false}}) {
+void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $signal.Params true false}}) {
     auto _vv = ({{$struct.CPPBaseName}}*)_v;
-    emit _vv->{{$signal.CPPName}}();
+    emit _vv->{{$signal.CPPName}}({{cParams $signal.Params false true}});
 }
 {{end}}
 
@@ -96,7 +96,7 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
     {{$struct.CBaseName}}_{{$slot.Name}}_cb = cb;
 }
 
-void {{$struct.CPPBaseName}}::{{$slot.CPPName}}({{cParams $slot.Params true}}) {
+void {{$struct.CPPBaseName}}::{{$slot.CPPName}}({{cParams $slot.Params true true}}) {
     try {
         {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr);
     }

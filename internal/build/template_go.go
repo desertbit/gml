@@ -64,9 +64,10 @@ func (_v *{{$struct.Name}}) GMLInit() {
 
 {{- /* Signals */}}
 {{range $signal := $struct.Signals }}
-func (_v *{{$struct.Name}}) {{$signal.EmitName}}({{goParams $signal.Params true}}) {
+func (_v *{{$struct.Name}}) {{$signal.EmitName}}({{goParams $signal.Params true true}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
-    C.{{$struct.CBaseName}}_{{$signal.Name}}(_ptr)
+    {{- goToCParams $signal.Params "_c_" 4}}
+    C.{{$struct.CBaseName}}_{{$signal.Name}}(_ptr{{goParams $signal.Params false false "_c_"}})
 }
 {{end}}
 

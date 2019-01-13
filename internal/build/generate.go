@@ -48,8 +48,9 @@ type genSlot struct {
 }
 
 type genParam struct {
-	Name string
-	Type string
+	Name  string
+	Type  string
+	CType string
 }
 
 // TODO: make concurrent with multiple goroutines.

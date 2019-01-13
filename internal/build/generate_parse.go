@@ -232,8 +232,9 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		}
 
 		signal.Params[i] = &genParam{
-			Name: p.Names[0].Name,
-			Type: ident.Name,
+			Name:  p.Names[0].Name,
+			Type:  ident.Name,
+			CType: goTypeToC(ident.Name),
 		}
 	}
 
@@ -268,8 +269,9 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 		}
 
 		slot.Params[i] = &genParam{
-			Name: p.Names[0].Name,
-			Type: ident.Name,
+			Name:  p.Names[0].Name,
+			Type:  ident.Name,
+			CType: goTypeToC(ident.Name),
 		}
 	}
 
@@ -280,4 +282,18 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 func newParseError(fset *token.FileSet, p token.Pos, err error) error {
 	pos := fset.Position(p)
 	return fmt.Errorf("%s: line %v: %v", pos.Filename, pos.Line, err)
+}
+
+func goTypeToC(t string) string {
+	// TODO: add all missing.
+	switch t {
+	case "int":
+		return "int"
+	case "bool":
+		return "int"
+	case "string":
+		return "*char"
+	default:
+		return "gml_variant" // TODO:
+	}
 }

@@ -127,7 +127,7 @@ func (a *App) Quit() (retCode int) {
 	return
 }
 
-func (a *App) SetRootContextProperty(name string, v interface{}) (err error) {
+func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	if len(name) == 0 {
 		return errors.New("property name is empty")
 	}
