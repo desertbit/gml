@@ -17,7 +17,6 @@ import (
 	"errors"
 	"os"
 	"runtime"
-	"syscall"
 	"unsafe"
 
 	"github.com/desertbit/gml/pointer"
@@ -42,6 +41,7 @@ type App struct {
 }
 
 func NewApp() (a *App, err error) {
+	// Only pass the executable name.
 	args := os.Args
 	if len(args) > 1 {
 		args = args[:1]
@@ -54,7 +54,7 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 	runtime.LockOSThread()
 
 	a = &App{
-		threadID: syscall.Gettid(), // TODO: check if this is supported in MaxOSX and Windows. Create a test unit!
+		threadID: getThreadID(),
 		argc:     len(args),
 		argv:     toCharArray(args),
 		gcMap:    make(map[string]interface{}),
@@ -66,7 +66,7 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 // RunMain runs the function on the applications main thread.
 func (a *App) RunMain(f func()) {
 	// Check if already running on the main thread.
-	if syscall.Gettid() == a.threadID {
+	if getThreadID() == a.threadID {
 		f()
 		return
 	}

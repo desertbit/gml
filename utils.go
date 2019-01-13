@@ -26,6 +26,7 @@ package gml
  }
 */
 import "C"
+import "syscall"
 
 //###############//
 //### Private ###//
@@ -41,4 +42,9 @@ func toCharArray(ss []string) **C.char {
 
 func freeCharArray(a **C.char, size int) {
 	C.freeCharArray(a, C.int(size))
+}
+
+func getThreadID() int {
+	// TODO: check if this is supported in MaxOSX and Windows. Also create a unit test!
+	return syscall.Gettid()
 }
