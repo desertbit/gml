@@ -7,8 +7,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"syscall"
+	"time"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -25,6 +28,7 @@ type Bridge struct {
 }
 
 func (b *Bridge) hello() {
+	fmt.Println(syscall.Gettid()) // TODO:
 	println("hello")
 	b.EmitConnected()
 }
@@ -39,15 +43,22 @@ func main() {
 	b.GMLInit()
 	app.SetRootContextProperty("bridge", b)
 
-	/*go func() {
+	go func() {
 		time.Sleep(time.Second)
 		b.EmitConnected()
-	}()*/
+		fmt.Println(syscall.Gettid()) // TODO:
+
+		app.RunMain(func() {
+			fmt.Println(syscall.Gettid())
+		})
+	}()
 
 	err = app.Load("qml/main.qml")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	fmt.Println(syscall.Gettid()) // TODO:
 
 	os.Exit(app.Exec())
 }

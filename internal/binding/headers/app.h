@@ -15,10 +15,14 @@ extern "C" {
 
 typedef void* gml_app;
 
+typedef void (*gml_app_run_main_cb_t)(void* _go_ptr);
+void gml_app_run_main_cb_register(gml_app_run_main_cb_t cb);
+
 gml_app gml_app_new (int argv, char** argc);
 void    gml_app_free(gml_app app);
 int     gml_app_exec(gml_app app);
 int     gml_app_quit(gml_app app);
+int     gml_app_run_main(gml_app app, void* goPtr);
 
 int     gml_app_load     (gml_app app, const char* url);
 int     gml_app_load_data(gml_app app, const char* data);

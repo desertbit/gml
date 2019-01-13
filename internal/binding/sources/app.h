@@ -9,14 +9,22 @@
 
 #include "../headers/app.h"
 
-#include <QUrl>
+#include <iostream>
+
 #include <QObject>
+#include <QUrl>
 #include <QString>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-class GmlApp {
+using std::cout;
+using std::cerr;
+using std::endl;
+
+class GmlApp : public QObject
+{
+    Q_OBJECT
 private:
     int argc;
 
@@ -25,6 +33,12 @@ public:
     QQmlApplicationEngine engine;
 
     GmlApp(int& argc, char** argv);
+
+signals:
+    void requestRunMain(void* goPtr);
+
+private slots:
+    void runMain(void* goPtr);
 };
 
 #endif
