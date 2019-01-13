@@ -13,6 +13,9 @@ extern "C" {
 
 typedef void* gml_variant;
 
+gml_variant gml_variant_new ();
+void        gml_variant_free(gml_variant v);
+
 #ifdef __cplusplus
 }
 #endif
