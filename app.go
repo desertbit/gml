@@ -133,6 +133,15 @@ func (a *App) LoadData(data string) error {
 	return nil
 }
 
+func (a *App) AddImportPath(path string) error {
+	pathC := C.CString(path)
+	defer C.free(unsafe.Pointer(pathC))
+
+	// TODO:
+	_ = int(C.gml_app_add_import_path(a.app, pathC))
+	return nil
+}
+
 // Exec executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.

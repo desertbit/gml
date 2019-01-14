@@ -25,14 +25,8 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+package gml
 
-#include <stdlib.h>
-#include <stdint.h>
-
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-
-#endif
+// TODO: this is currently only supported for Variant. Add support to the code generation (signals, slots... args).
+// A Char is an alias for a rune which is converted to a QChar when used within a Variant.
+type Char int32

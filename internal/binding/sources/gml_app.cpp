@@ -57,8 +57,12 @@ gml_app gml_app_new(int argc, char** argv) {
 }
 
 void gml_app_free(gml_app app) {
+    if (app == NULL) {
+        return;
+    }
     GmlApp* a = (GmlApp*)app;
     delete a;
+    app = NULL;
 }
 
 int gml_app_exec(gml_app app) {
@@ -128,6 +132,22 @@ int gml_app_load_data(gml_app app, const char* data) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->engine.loadData(data);
+        return 0; // TODO:
+    }
+    catch (std::exception& e) {
+        //api_error_set_msg(err, e.what()); TODO:
+        return -1; // TODO:
+    }
+    catch (...) {
+        //api_error_set_unknown_msg(err); TODO:
+        return -1; // TODO:
+    }
+}
+
+int gml_app_add_import_path(gml_app app, const char* path) {
+    try {
+        GmlApp* a = (GmlApp*)app;
+        a->engine.addImportPath(path);
         return 0; // TODO:
     }
     catch (std::exception& e) {

@@ -34,8 +34,26 @@ extern "C" {
 
 typedef void* gml_variant;
 
-gml_variant gml_variant_new ();
 void        gml_variant_free(gml_variant v);
+gml_variant gml_variant_new();
+
+gml_variant gml_variant_new_from_bool(u_int8_t b);
+
+gml_variant gml_variant_new_from_float (float f);
+gml_variant gml_variant_new_from_double(double d);
+
+gml_variant gml_variant_new_from_int   (int i);
+gml_variant gml_variant_new_from_int8  (int8_t i);
+gml_variant gml_variant_new_from_uint8 (u_int8_t i);
+gml_variant gml_variant_new_from_int16 (int16_t i);
+gml_variant gml_variant_new_from_uint16(u_int16_t i);
+gml_variant gml_variant_new_from_int32 (int32_t i);
+gml_variant gml_variant_new_from_uint32(u_int32_t i);
+gml_variant gml_variant_new_from_int64 (int64_t i);
+gml_variant gml_variant_new_from_uint64(u_int64_t i);
+
+gml_variant gml_variant_new_from_qchar (int32_t r);
+gml_variant gml_variant_new_from_string(char* s);
 
 #ifdef __cplusplus
 }

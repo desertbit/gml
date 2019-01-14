@@ -98,7 +98,7 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 
 		switch p.Type {
 		case "bool":
-			addLine("var " + cName + " C.uint8_t")
+			addLine("var " + cName + " C.u_int8_t")
 			addLine("if " + p.Name + " { " + cName + " = 1 }")
 		case "byte":
 			addLine(cName + " := C.char(" + p.Name + ")")
@@ -118,19 +118,19 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 		case "int8":
 			addLine(cName + " := C.int8_t(" + p.Name + ")")
 		case "uint8":
-			addLine(cName + " := C.uint8_t(" + p.Name + ")")
+			addLine(cName + " := C.u_int8_t(" + p.Name + ")")
 		case "int16":
 			addLine(cName + " := C.int16_t(" + p.Name + ")")
 		case "uint16":
-			addLine(cName + " := C.uint16_t(" + p.Name + ")")
+			addLine(cName + " := C.u_int16_t(" + p.Name + ")")
 		case "int32":
 			addLine(cName + " := C.int32_t(" + p.Name + ")")
 		case "uint32":
-			addLine(cName + " := C.uint32_t(" + p.Name + ")")
+			addLine(cName + " := C.u_int32_t(" + p.Name + ")")
 		case "int64":
 			addLine(cName + " := C.int64_t(" + p.Name + ")")
 		case "uint64":
-			addLine(cName + " := C.uint64_t(" + p.Name + ")")
+			addLine(cName + " := C.u_int64_t(" + p.Name + ")")
 
 		default:
 			addLine(cName + " := (C.gml_variant)(gml.ToVariant(" + p.Name + ").Pointer())")
