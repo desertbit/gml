@@ -48,19 +48,21 @@ func init() {
 
 type ImageProvider struct {
 	freed bool
-	ptr   C.gml_imageprovider
+	ip    C.gml_imageprovider
+	ptr   unsafe.Pointer
 }
 
 func NewImageProvider() *ImageProvider {
 	ip := &ImageProvider{}
-	ip.ptr = C.gml_imageprovider_new()
+	ip.ptr = pointer.Save(&ip)
+	ip.ip = C.gml_imageprovider_new(ip.ptr)
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(ip, freeImageProvider)
 
 	// Check if something failed.
 	// This should never happen is signalizes a fatal error.
-	if ip.ptr == nil {
+	if ip.ip == nil {
 		panic(fmt.Errorf("failed to create gml imageprovider: C pointer is nil"))
 	}
 
@@ -72,7 +74,8 @@ func freeImageProvider(ip *ImageProvider) {
 		return
 	}
 	ip.freed = true
-	C.gml_imageprovider_free(ip.ptr)
+	C.gml_imageprovider_free(ip.ip)
+	pointer.Unref(ip.ptr)
 }
 
 func (ip *ImageProvider) Free() {
@@ -84,7 +87,8 @@ func (ip *ImageProvider) Free() {
 //#####################//
 
 //export gml_imageprovider_request_go_slot
-func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, id *C.char) {
-	f := (pointer.Restore(goPtr)).(func())
-	f()
+func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, idc *C.char) {
+	_ = (pointer.Restore(goPtr)).(*ImageProvider)
+	id := C.GoString(idc)
+	println(id)
 }

@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2019 Roland Singer <roland.singer[at]desertbit.com>
  * Copyright (c) 2019 Sebastian Borchers <sebastian[at]desertbit.com>
- *  
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -49,7 +49,7 @@ func Save(v interface{}) unsafe.Pointer {
 	// This pointer will not store any data, but will bi used for indexing purposes.
 	// Since Go doest allow to cast dangling pointer to unsafe.Pointer, we do rally allocate one byte.
 	// Why we need indexing, because Go doest allow C code to store pointers to Go data.
-	var ptr unsafe.Pointer = C.malloc(C.size_t(1))
+	ptr := C.malloc(C.size_t(1))
 	if ptr == nil {
 		panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")
 	}

@@ -34,10 +34,10 @@ extern "C" {
 
 typedef void* gml_imageprovider;
 
-typedef void (*gml_imageprovider_request_cb_t)(void* _go_ptr, char* id);
+typedef void (*gml_imageprovider_request_cb_t)(void* go_ptr, char* id);
 void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb);
 
-gml_imageprovider gml_imageprovider_new();
+gml_imageprovider gml_imageprovider_new(void* go_ptr);
 void              gml_imageprovider_free(gml_imageprovider ip);
 
 #ifdef __cplusplus

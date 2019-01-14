@@ -29,6 +29,7 @@
 #define GML_APP_H
 
 #include "gml_includes.h"
+#include "gml_imageprovider.h"
 
 class GmlApp : public QObject
 {

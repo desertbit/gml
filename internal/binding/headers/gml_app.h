@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 #include "gml_object.h"
+#include "gml_imageprovider.h"
 
 typedef void* gml_app;
 
@@ -48,6 +49,7 @@ int     gml_app_run_main(gml_app app, void* goPtr);
 int     gml_app_load     (gml_app app, const char* url);
 int     gml_app_load_data(gml_app app, const char* data);
 int     gml_app_add_import_path(gml_app app, const char* path);
+int     gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip);
 
 int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj);
 

@@ -26,7 +26,7 @@ ApplicationWindow {
     Image {
         width: 100
         height: 100
-        source: "qrc:/resources/menu.png"
+        source: "image://imgprov/test/15"
     }
 
     Connections {

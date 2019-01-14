@@ -59,7 +59,8 @@ type App struct {
 	argc int
 	argv **C.char // TODO: free
 
-	gcMap map[string]interface{}
+	gcMap      map[string]interface{}
+	imgProvMap map[string]interface{}
 }
 
 func NewApp() (a *App, err error) {
@@ -76,10 +77,11 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 	runtime.LockOSThread()
 
 	a = &App{
-		threadID: utils.GetThreadID(),
-		argc:     len(args),
-		argv:     toCharArray(args),
-		gcMap:    make(map[string]interface{}),
+		threadID:   utils.GetThreadID(),
+		argc:       len(args),
+		argv:       toCharArray(args),
+		gcMap:      make(map[string]interface{}),
+		imgProvMap: make(map[string]interface{}),
 	}
 	a.app = C.gml_app_new(C.int(a.argc), a.argv)
 	return
@@ -133,12 +135,25 @@ func (a *App) LoadData(data string) error {
 	return nil
 }
 
+// AddImportPath adds the given import path to the app engine.
+// Hint: Must be called within main thread.
 func (a *App) AddImportPath(path string) error {
 	pathC := C.CString(path)
 	defer C.free(unsafe.Pointer(pathC))
 
 	// TODO:
 	_ = int(C.gml_app_add_import_path(a.app, pathC))
+	return nil
+}
+
+// AddImageProvider adds the image provider to the app engine for the given id.
+// Hint: Must be called within main thread.
+func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
+	idC := C.CString(id)
+	defer C.free(unsafe.Pointer(idC))
+
+	// TODO:
+	_ = int(C.gml_app_add_imageprovider(a.app, idC, ip.ip))
 	return nil
 }
 

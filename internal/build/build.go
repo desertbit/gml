@@ -69,7 +69,7 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 
 	// Run go build.
 	utils.PrintColorln("> building Go source")
-	err = buildGo(ctx)
+	err = buildGo(ctx, clean)
 	if err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func buildCLib(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
-func buildGo(ctx *Context) (err error) {
+func buildGo(ctx *Context, clean bool) (err error) {
 	// Delete the output binary to force relinking.
 	// This is faster than building with the -a option.
 	e, err := utils.Exists(ctx.OutputFile)
@@ -108,13 +108,18 @@ func buildGo(ctx *Context) (err error) {
 		}
 	}
 
+	args := []string{"build", "-o", ctx.OutputFile}
+	if clean {
+		args = append(args, "-a")
+	}
+
 	err = utils.RunCommand(
 		ctx.Env(
 			"CGO_LDFLAGS="+ctx.StaticLibPath,
 			"CGO_CFLAGS=-I"+ctx.CGenIncludeDir+" -I"+ctx.GMLBindingHeadersDir,
 		),
 		ctx.SourceDir,
-		"go", "build", "-o", ctx.OutputFile,
+		"go", args...,
 	)
 	return
 }

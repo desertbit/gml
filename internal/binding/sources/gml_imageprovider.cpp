@@ -41,9 +41,9 @@ void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb) {
     gml_imageprovider_request_cb = cb;
 }
 
-gml_imageprovider gml_imageprovider_new() {
+gml_imageprovider gml_imageprovider_new(void* go_ptr) {
     try {
-        GmlImageProvider* gip = new GmlImageProvider();
+        GmlImageProvider* gip = new GmlImageProvider(go_ptr);
         return (void*)gip;
     }
     catch (std::exception& e) {
@@ -70,11 +70,20 @@ void gml_imageprovider_free(gml_imageprovider ip) {
 //###################################//
 
 GmlAsyncImageResponse::GmlAsyncImageResponse(
+    void*         ipGoPtr,
     const QString &id,
-    const QSize &requestedSize
-) {
+    const QSize   &requestedSize
+) : ipGoPtr(ipGoPtr) {
     // Call to go.
-
+    try {
+        gml_imageprovider_request_cb(ipGoPtr, id.toLocal8Bit().data());
+    }
+    catch (std::exception& e) {
+        cerr << "gml: catched GmlAsyncImageResponse exception: " << e.what() << endl;
+    }
+    catch (...) {
+        cerr << "gml: catched GmlAsyncImageResponse exception: " << endl;
+    }
 }
 
 QQuickTextureFactory* GmlAsyncImageResponse::textureFactory() const {
@@ -85,9 +94,12 @@ QQuickTextureFactory* GmlAsyncImageResponse::textureFactory() const {
 //### ImageProvider Class ###//
 //###########################//
 
+GmlImageProvider::GmlImageProvider(void* goPtr) :
+    goPtr(goPtr) {}
+
 QQuickImageResponse* GmlImageProvider::requestImageResponse(
     const QString &id,
-    const QSize &requestedSize
+    const QSize   &requestedSize
 ) {
-   return new GmlAsyncImageResponse(id, requestedSize);
+   return new GmlAsyncImageResponse(goPtr, id, requestedSize);
 };
