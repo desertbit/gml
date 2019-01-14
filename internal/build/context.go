@@ -41,6 +41,9 @@ import (
 const (
 	staticLibName      = "libgml.a"
 	proFileName        = "gml.pro"
+	qmlDir             = "qml"
+	qmlResDir          = "resources"
+	qmlResFile         = "gml_gen_resources.qrc"
 	cGenDirName        = "gen_c"
 	cGenIncludeDirName = "include"
 	cppGenDirName      = "gen_cpp"
@@ -54,6 +57,10 @@ type Context struct {
 	GMLBindingDir        string
 	GMLBindingHeadersDir string
 	GMLBindingSourcesDir string
+
+	QMLDir     string
+	QMLResDir  string
+	QMLResFile string
 
 	CGenDir        string
 	CGenIncludeDir string
@@ -85,6 +92,9 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		SourceDir:      sourceDir,
 		BuildDir:       buildDir,
 		DestDir:        destDir,
+		QMLDir:         filepath.Join(sourceDir, qmlDir),
+		QMLResDir:      filepath.Join(sourceDir, qmlResDir),
+		QMLResFile:     filepath.Join(sourceDir, qmlResFile),
 		CGenDir:        cGenDir,
 		CGenIncludeDir: filepath.Join(cGenDir, cGenIncludeDirName),
 		CPPGenDir:      filepath.Join(buildDir, cppGenDirName),
@@ -118,12 +128,12 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		return
 	}
 
-	err = ctx.checkForRequiredDirs()
+	err = ctx.createDirsIfNotExists()
 	if err != nil {
 		return
 	}
 
-	err = ctx.createDirsIfNotExists()
+	err = ctx.checkForRequiredDirs()
 	return
 }
 
@@ -192,6 +202,8 @@ func (c *Context) createDirsIfNotExists() (err error) {
 	dirs := []string{
 		c.BuildDir,
 		c.DestDir,
+		c.QMLDir,
+		c.QMLResDir,
 		c.CGenDir,
 		c.CGenIncludeDir,
 		c.CPPGenDir,
@@ -209,6 +221,8 @@ func (c *Context) createDirsIfNotExists() (err error) {
 func (c *Context) checkForRequiredDirs() (err error) {
 	dirs := []string{
 		c.SourceDir,
+		c.QMLDir,
+		c.QMLResDir,
 	}
 
 	for _, d := range dirs {

@@ -46,6 +46,13 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 		return
 	}
 
+	// Prepare the resources.
+	utils.PrintColorln("> preparing resources")
+	err = prepareResources(ctx)
+	if err != nil {
+		return
+	}
+
 	// Generate C, C++ and go files.
 	utils.PrintColorln("> generating source files")
 	err = generate(ctx)

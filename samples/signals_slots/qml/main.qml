@@ -23,6 +23,12 @@ ApplicationWindow {
         onClicked: bridge.clicked()
     }
 
+    Image {
+        width: 100
+        height: 100
+        source: "qrc:/resources/menu.png"
+    }
+
     Connections {
         target: bridge
         onGreet: function(i1, i2, i3, s, r, b, bb, sb) {

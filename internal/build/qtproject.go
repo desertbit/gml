@@ -32,12 +32,9 @@ import (
 	"text/template"
 )
 
-func prepareQtProject(ctx *Context) (err error) {
-	tmpl, err := template.New("t").Parse(qtProData)
-	if err != nil {
-		return
-	}
+var qtProTmpl = template.Must(template.New("t").Funcs(tmplFuncMap).Parse(qtProData))
 
+func prepareQtProject(ctx *Context) (err error) {
 	// Create or open the config file.
 	f, err := os.Create(ctx.QtProFile)
 	if err != nil {
@@ -50,7 +47,7 @@ func prepareQtProject(ctx *Context) (err error) {
 		}
 	}()
 
-	return tmpl.Execute(f, &ctx)
+	return qtProTmpl.Execute(f, &ctx)
 }
 
 const qtProData = `
@@ -63,6 +60,7 @@ INCLUDEPATH += {{.GMLBindingDir}}/headers
 
 HEADERS += {{.GMLBindingHeadersDir}}/*.h {{.GMLBindingSourcesDir}}/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
 SOURCES += {{.GMLBindingSourcesDir}}/*.cpp {{.CPPGenDir}}/*.cpp
+RESOURCES += {{.QMLResFile}}
 
 OBJECTS_DIR = {{.BuildDir}}
 MOC_DIR = {{.BuildDir}}
