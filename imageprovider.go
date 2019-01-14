@@ -36,6 +36,7 @@ package gml
 import "C"
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"unsafe"
 
@@ -46,14 +47,20 @@ func init() {
 	C.gml_imageprovider_init()
 }
 
+type ImageProviderCallback func(id string, img *Image) error
+
 type ImageProvider struct {
 	freed bool
 	ip    C.gml_imageprovider
 	ptr   unsafe.Pointer
+
+	callback ImageProviderCallback
 }
 
-func NewImageProvider() *ImageProvider {
-	ip := &ImageProvider{}
+func NewImageProvider(callback ImageProviderCallback) *ImageProvider {
+	ip := &ImageProvider{
+		callback: callback,
+	}
 	ip.ptr = pointer.Save(ip)
 	ip.ip = C.gml_imageprovider_new(ip.ptr)
 
@@ -87,9 +94,21 @@ func (ip *ImageProvider) Free() {
 //#####################//
 
 //export gml_imageprovider_request_go_slot
-func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, idc *C.char, img C.gml_image) {
-	_ = (pointer.Restore(goPtr)).(*ImageProvider)
+func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, idc *C.char, imgC C.gml_image) {
+	ip := (pointer.Restore(goPtr)).(*ImageProvider)
 	id := C.GoString(idc)
-	// TODO: start go routine
-	println(id)
+
+	// Don't free the image.
+	// We are not the owner of the pointer.
+	img, err := newImage(imgC, false)
+	if err != nil {
+		log.Println("image provider request: failed to create new image: %v", err)
+		return
+	}
+
+	// Run in a new goroutine.
+	go func() {
+		gerr := ip.callback(id, img)
+		_ = gerr // TODO:
+	}()
 }

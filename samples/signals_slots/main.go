@@ -61,7 +61,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = app.AddImageProvider("imgprov", gml.NewImageProvider())
+	err = app.AddImageProvider("imgprov", gml.NewImageProvider(func(id string, img *gml.Image) error {
+		// TODO:
+		return nil
+	}))
 	if err != nil {
 		log.Fatalln(err)
 	}
