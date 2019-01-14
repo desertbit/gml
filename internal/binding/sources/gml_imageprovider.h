@@ -41,7 +41,7 @@ public:
 
     QQuickTextureFactory* textureFactory() const override;
     QString 	          errorString() const override;
-    void                  setError(QString error);
+    void                  setError(const QString& error);
 
 private:
     void*   ipGoPtr;

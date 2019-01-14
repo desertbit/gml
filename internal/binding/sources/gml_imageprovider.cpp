@@ -65,7 +65,7 @@ void gml_imageprovider_free(gml_imageprovider ip) {
     ip = NULL;
 }
 
-void gml_image_response_emit_finished(gml_image_response img_resp char* err) {
+void gml_image_response_emit_finished(gml_image_response img_resp, char* err) {
     try {
         GmlAsyncImageResponse* gimg_resp = (GmlAsyncImageResponse*)img_resp;
         gimg_resp->setError(QString(err));
@@ -107,9 +107,9 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
 
 QString GmlAsyncImageResponse::errorString() const {
     return errStr;
-};
+}
 
-void GmlAsyncImageResponse::setError(QString error) {
+void GmlAsyncImageResponse::setError(const QString& error) {
     errStr = error;
 }
 
@@ -129,4 +129,4 @@ QQuickImageResponse* GmlImageProvider::requestImageResponse(
     const QSize   &requestedSize
 ) {
    return new GmlAsyncImageResponse(goPtr, id, requestedSize);
-};
+}
