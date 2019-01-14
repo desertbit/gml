@@ -54,15 +54,6 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = app.AddImportPath("qrc://qml/")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = app.AddImportPath("qrc://resources/")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	b := &Bridge{}
 	b.GMLInit()
 	err = app.SetContextProperty("bridge", b)
@@ -70,7 +61,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = app.Load("qrc:/main.qml")
+	err = app.Load("qrc:/qml/main.qml")
 	if err != nil {
 		log.Fatalln(err)
 	}

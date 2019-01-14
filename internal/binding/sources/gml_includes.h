@@ -40,6 +40,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QImage>
+#include <QQuickTextureFactory>
+#include <QQuickAsyncImageProvider>
+#include <QQuickImageResponse>
 
 using std::cout;
 using std::cerr;

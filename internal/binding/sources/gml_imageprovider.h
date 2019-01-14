@@ -25,15 +25,32 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#ifndef GML_IMAGEPROVIDER_H
+#define GML_IMAGEPROVIDER_H
 
-#include <stdlib.h>
-#include <stdint.h>
+#include "gml_includes.h"
 
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_imageprovider.h"
+class GmlAsyncImageResponse : public QQuickImageResponse
+{
+public:
+    GmlAsyncImageResponse(
+        const QString &id,
+        const QSize &requestedSize
+    );
+
+    QQuickTextureFactory *textureFactory() const override;
+
+private:
+    QImage img;
+};
+
+class GmlImageProvider : public QQuickAsyncImageProvider
+{
+public:
+    QQuickImageResponse* requestImageResponse(
+        const QString &id,
+        const QSize &requestedSize
+    ) override;
+};
 
 #endif

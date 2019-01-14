@@ -25,15 +25,66 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+package gml
 
-#include <stdlib.h>
-#include <stdint.h>
+// #include <gml.h>
+//
+// extern void gml_imageprovider_request_go_slot(void* goPtr, char* id);
+// static void gml_imageprovider_init() {
+//      gml_imageprovider_request_cb_register(gml_imageprovider_request_go_slot);
+// }
+import "C"
+import (
+	"fmt"
+	"runtime"
+	"unsafe"
 
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_imageprovider.h"
+	"github.com/desertbit/gml/pointer"
+)
 
-#endif
+func init() {
+	C.gml_imageprovider_init()
+}
+
+type ImageProvider struct {
+	freed bool
+	ptr   C.gml_imageprovider
+}
+
+func NewImageProvider() *ImageProvider {
+	ip := &ImageProvider{}
+	ip.ptr = C.gml_imageprovider_new()
+
+	// Always free the C++ value.
+	runtime.SetFinalizer(ip, freeImageProvider)
+
+	// Check if something failed.
+	// This should never happen is signalizes a fatal error.
+	if ip.ptr == nil {
+		panic(fmt.Errorf("failed to create gml imageprovider: C pointer is nil"))
+	}
+
+	return ip
+}
+
+func freeImageProvider(ip *ImageProvider) {
+	if ip.freed {
+		return
+	}
+	ip.freed = true
+	C.gml_imageprovider_free(ip.ptr)
+}
+
+func (ip *ImageProvider) Free() {
+	freeImageProvider(ip)
+}
+
+//#####################//
+//### Exported to C ###//
+//#####################//
+
+//export gml_imageprovider_request_go_slot
+func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, id *C.char) {
+	f := (pointer.Restore(goPtr)).(func())
+	f()
+}
