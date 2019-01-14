@@ -144,6 +144,22 @@ int gml_app_load_data(gml_app app, const char* data) {
     }
 }
 
+int gml_app_add_import_path(gml_app app, const char* path) {
+    try {
+        GmlApp* a = (GmlApp*)app;
+        a->engine.addImportPath(path);
+        return 0; // TODO:
+    }
+    catch (std::exception& e) {
+        //api_error_set_msg(err, e.what()); TODO:
+        return -1; // TODO:
+    }
+    catch (...) {
+        //api_error_set_unknown_msg(err); TODO:
+        return -1; // TODO:
+    }
+}
+
 int gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj) {
     try {
         GmlApp* a  = (GmlApp*)app;
