@@ -42,6 +42,21 @@ import (
 	"github.com/desertbit/gml/pointer"
 )
 
+type AspectRatioMode int
+
+const (
+	IgnoreAspectRatio          AspectRatioMode = C.GML_IGNORE_ASPECT_RATIO
+	KeepAspectRatio            AspectRatioMode = C.GML_KEEP_ASPECT_RATIO
+	KeepAspectRatioByExpanding AspectRatioMode = C.GML_KEEP_ASPECT_RATIO_BY_EXPANDING
+)
+
+type TransformationMode int
+
+const (
+	FastTransformation   TransformationMode = C.GML_FAST_TRANSFORMATION
+	SmoothTransformation TransformationMode = C.GML_SMOOTH_TRANSFORMATION
+)
+
 func init() {
 	C.gml_imageprovider_init()
 }
@@ -56,12 +71,16 @@ type ImageProvider struct {
 	callback ImageProviderCallback
 }
 
-func NewImageProvider(callback ImageProviderCallback) *ImageProvider {
+func NewImageProvider(
+	aspectRatioMode AspectRatioMode,
+	transformMode TransformationMode,
+	callback ImageProviderCallback,
+) *ImageProvider {
 	ip := &ImageProvider{
 		callback: callback,
 	}
 	ip.ptr = pointer.Save(ip)
-	ip.ip = C.gml_imageprovider_new(ip.ptr)
+	ip.ip = C.gml_imageprovider_new(ip.ptr, C.int(aspectRatioMode), C.int(transformMode))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(ip, freeImageProvider)
@@ -120,6 +139,7 @@ func gml_imageprovider_request_go_slot(
 
 		// Emit the finished signal on the image response.
 		// Must always be triggered!
+		// TODO: should run on main?
 		C.gml_image_response_emit_finished(imgResp, errStrC)
 	}()
 }

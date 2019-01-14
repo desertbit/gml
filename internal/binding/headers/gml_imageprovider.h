@@ -28,6 +28,13 @@
 #ifndef GML_HEADER_IMAGEPROVIDER_H
 #define GML_HEADER_IMAGEPROVIDER_H
 
+#define GML_IGNORE_ASPECT_RATIO            0
+#define GML_KEEP_ASPECT_RATIO              1
+#define GML_KEEP_ASPECT_RATIO_BY_EXPANDING 2
+
+#define GML_FAST_TRANSFORMATION   0
+#define GML_SMOOTH_TRANSFORMATION 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,10 +52,17 @@ typedef void (*gml_imageprovider_request_cb_t)(
 );
 void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb);
 
-gml_imageprovider gml_imageprovider_new(void* go_ptr);
-void              gml_imageprovider_free(gml_imageprovider ip);
+gml_imageprovider gml_imageprovider_new(
+    void* go_ptr,
+    int   aspect_ratio_mode,
+    int   transformation_mode
+);
+void gml_imageprovider_free(gml_imageprovider ip);
 
-void gml_image_response_emit_finished(gml_image_response img_resp, char* err);
+void gml_image_response_emit_finished(
+    gml_image_response img_resp,
+    char* error_string
+);
 
 #ifdef __cplusplus
 }

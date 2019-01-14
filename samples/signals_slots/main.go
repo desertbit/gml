@@ -28,6 +28,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -61,10 +62,17 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = app.AddImageProvider("imgprov", gml.NewImageProvider(func(id string, img *gml.Image) error {
-		// TODO:
-		return nil
-	}))
+	err = app.AddImageProvider(
+		"imgprov",
+		gml.NewImageProvider(
+			gml.KeepAspectRatio,
+			gml.FastTransformation,
+			func(id string, img *gml.Image) error {
+				data, _ := ioutil.ReadFile("/tmp/a.png")
+				return img.LoadFromData(data)
+			},
+		),
+	)
 	if err != nil {
 		log.Fatalln(err)
 	}

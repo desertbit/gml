@@ -34,35 +34,45 @@ class GmlAsyncImageResponse : public QQuickImageResponse
 {
 public:
     GmlAsyncImageResponse(
-        void*         ipGoPtr,
-        const QString &id,
-        const QSize   &requestedSize
+        void*                  ipGoPtr,
+        const QString          &id,
+        const QSize            &requestedSize,
+        Qt::AspectRatioMode    aspectRatioMode,
+        Qt::TransformationMode transformMode
     );
 
     QQuickTextureFactory* textureFactory() const override;
     QString 	          errorString() const override;
-    void                  setError(const QString& error);
+
+    void finalize(const QString& errorString);
 
 private:
-    void*   ipGoPtr;
-    QImage  img;
-    QString errStr;
+    void*                  ipGoPtr;
+    QImage                 img;
+    QSize                  requestedSize;
+    QString                errorStr;
+    Qt::AspectRatioMode    aspectRatioMode;
+    Qt::TransformationMode transformMode;
 };
 
 class GmlImageProvider : public QQuickAsyncImageProvider
 {
 public:
     GmlImageProvider(
-        void* goPtr
+        void*                  goPtr,
+        Qt::AspectRatioMode    aspectRatioMode,
+        Qt::TransformationMode transformMode
     );
 
     QQuickImageResponse* requestImageResponse(
-        const QString &id,
-        const QSize &requestedSize
+        const QString& id,
+        const QSize& requestedSize
     ) override;
 
 private:
-    void* goPtr;
+    void*                  goPtr;
+    Qt::AspectRatioMode    aspectRatioMode;
+    Qt::TransformationMode transformMode;
 };
 
 #endif

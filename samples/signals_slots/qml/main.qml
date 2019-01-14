@@ -24,9 +24,12 @@ ApplicationWindow {
     }
 
     Image {
-        width: 100
+        width: 500
         height: 100
         source: "image://imgprov/test/15"
+        sourceSize.width: 100
+        sourceSize.height: 100
+        fillMode: Image.PreserveAspectFit
     }
 
     Connections {

@@ -41,9 +41,17 @@ void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb) {
     gml_imageprovider_request_cb = cb;
 }
 
-gml_imageprovider gml_imageprovider_new(void* go_ptr) {
+gml_imageprovider gml_imageprovider_new(
+    void* go_ptr,
+    int   aspect_ratio_mode,
+    int   transformation_mode
+) {
     try {
-        GmlImageProvider* gip = new GmlImageProvider(go_ptr);
+        GmlImageProvider* gip = new GmlImageProvider(
+            go_ptr,
+            static_cast<Qt::AspectRatioMode>(aspect_ratio_mode),
+            static_cast<Qt::TransformationMode>(transformation_mode)
+        );
         return (void*)gip;
     }
     catch (std::exception& e) {
@@ -65,11 +73,10 @@ void gml_imageprovider_free(gml_imageprovider ip) {
     ip = NULL;
 }
 
-void gml_image_response_emit_finished(gml_image_response img_resp, char* err) {
+void gml_image_response_emit_finished(gml_image_response img_resp, char* error_string) {
     try {
         GmlAsyncImageResponse* gimg_resp = (GmlAsyncImageResponse*)img_resp;
-        gimg_resp->setError(QString(err));
-        emit gimg_resp->finished();
+        gimg_resp->finalize(QString(error_string));
     }
     catch (std::exception& e) {
         cerr << "gml: catched image response exception: emit finished: " << e.what() << endl;
@@ -84,10 +91,17 @@ void gml_image_response_emit_finished(gml_image_response img_resp, char* err) {
 //###################################//
 
 GmlAsyncImageResponse::GmlAsyncImageResponse(
-    void*              ipGoPtr,
-    const QString      &id,
-    const QSize        &requestedSize
-) : ipGoPtr(ipGoPtr) {
+    void*                  ipGoPtr,
+    const QString          &id,
+    const QSize            &requestedSize,
+    Qt::AspectRatioMode    aspectRatioMode,
+    Qt::TransformationMode transformMode
+) :
+    ipGoPtr(ipGoPtr),
+    requestedSize(requestedSize),
+    aspectRatioMode(aspectRatioMode),
+    transformMode(transformMode)
+{
     // Call to go.
     try {
         gml_imageprovider_request_cb(
@@ -106,27 +120,44 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
 }
 
 QString GmlAsyncImageResponse::errorString() const {
-    return errStr;
-}
-
-void GmlAsyncImageResponse::setError(const QString& error) {
-    errStr = error;
+    return errorStr;
 }
 
 QQuickTextureFactory* GmlAsyncImageResponse::textureFactory() const {
     return QQuickTextureFactory::textureFactoryForImage(img);
 }
 
+void GmlAsyncImageResponse::finalize(const QString& errorString) {
+    // Check for an error.
+    if (!errorString.isEmpty()) {
+        errorStr = errorString;
+    } else if (!requestedSize.isNull() && requestedSize.isValid()) {
+        // Resize the image to the requested size
+        cout << requestedSize.width() << ", " << requestedSize.height() << endl;
+        img = img.scaled(requestedSize, Qt::IgnoreAspectRatio, transformMode);
+    }
+
+    // Emit the finished signal.
+    emit finished();
+}
+
 //###########################//
 //### ImageProvider Class ###//
 //###########################//
 
-GmlImageProvider::GmlImageProvider(void* goPtr) :
-    goPtr(goPtr) {}
+GmlImageProvider::GmlImageProvider(
+    void*                  goPtr,
+    Qt::AspectRatioMode    aspectRatioMode,
+    Qt::TransformationMode transformMode
+) :
+    goPtr(goPtr),
+    aspectRatioMode(aspectRatioMode),
+    transformMode(transformMode)
+{}
 
 QQuickImageResponse* GmlImageProvider::requestImageResponse(
     const QString &id,
     const QSize   &requestedSize
 ) {
-   return new GmlAsyncImageResponse(goPtr, id, requestedSize);
+    return new GmlAsyncImageResponse(goPtr, id, requestedSize, aspectRatioMode, transformMode);
 }
