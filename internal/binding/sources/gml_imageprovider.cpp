@@ -132,8 +132,7 @@ void GmlAsyncImageResponse::finalize(const QString& errorString) {
     if (!errorString.isEmpty()) {
         errorStr = errorString;
     } else if (!requestedSize.isNull() && requestedSize.isValid()) {
-        // Resize the image to the requested size
-        cout << requestedSize.width() << ", " << requestedSize.height() << endl;
+        // Resize the image to the requested size.
         img = img.scaled(requestedSize, Qt::IgnoreAspectRatio, transformMode);
     }
 
