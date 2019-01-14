@@ -25,16 +25,20 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#ifndef GML_HEADER_IMAGE_H
+#define GML_HEADER_IMAGE_H
 
-#include <stdlib.h>
-#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "gml_app.h"
-#include "gml_image.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_imageprovider.h"
+typedef void* gml_image;
+
+gml_image gml_image_new_from_data(char* data, int size);
+void      gml_image_free(gml_image img);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

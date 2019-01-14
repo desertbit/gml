@@ -76,7 +76,7 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
 ) : ipGoPtr(ipGoPtr) {
     // Call to go.
     try {
-        gml_imageprovider_request_cb(ipGoPtr, id.toLocal8Bit().data());
+        gml_imageprovider_request_cb(ipGoPtr, id.toLocal8Bit().data(), (gml_image)(&img));
     }
     catch (std::exception& e) {
         cerr << "gml: catched GmlAsyncImageResponse exception: " << e.what() << endl;

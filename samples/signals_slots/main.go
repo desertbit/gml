@@ -61,12 +61,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = app.Load("qrc:/qml/main.qml")
+	err = app.AddImageProvider("imgprov", gml.NewImageProvider())
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = app.AddImageProvider("imgprov", gml.NewImageProvider())
+	err = app.Load("qrc:/qml/main.qml")
 	if err != nil {
 		log.Fatalln(err)
 	}

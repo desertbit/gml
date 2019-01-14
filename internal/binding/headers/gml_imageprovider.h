@@ -32,9 +32,11 @@
 extern "C" {
 #endif
 
+#include "gml_image.h"
+
 typedef void* gml_imageprovider;
 
-typedef void (*gml_imageprovider_request_cb_t)(void* go_ptr, char* id);
+typedef void (*gml_imageprovider_request_cb_t)(void* go_ptr, char* id, gml_image img);
 void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb);
 
 gml_imageprovider gml_imageprovider_new(void* go_ptr);

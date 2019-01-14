@@ -25,16 +25,33 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#include "gml_includes.h"
 
-#include <stdlib.h>
-#include <stdint.h>
+//#############//
+//### C API ###//
+//#############//
 
-#include "gml_app.h"
-#include "gml_image.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_imageprovider.h"
+gml_image gml_image_new_from_data(char* data, int size) {
+    try {
+        QImage* qImg = new QImage();
+        qImg->loadFromData((const unsigned char*)(data), size);
+        return (void*)qImg;
+    }
+    catch (std::exception& e) {
+        cerr << "gml: catched variant exception: " << e.what() << endl;
+        return NULL;
+    }
+    catch (...) {
+        cerr << "gml: catched variant exception" << endl;
+        return NULL;
+    }
+}
 
-#endif
+void gml_image_free(gml_image img) {
+    if (img == NULL) {
+        return;
+    }
+    QImage* qImg = (QImage*)img;
+    delete qImg;
+    img = NULL;
+}
