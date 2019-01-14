@@ -56,9 +56,12 @@ func main() {
 
 	b := &Bridge{}
 	b.GMLInit()
-	app.SetContextProperty("bridge", b)
+	err = app.SetContextProperty("bridge", b)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	err = app.Load("qml/main.qml")
+	err = app.Load("qrc:///qml/main.qml")
 	if err != nil {
 		log.Fatalln(err)
 	}
