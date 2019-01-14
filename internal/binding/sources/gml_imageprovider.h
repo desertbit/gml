@@ -35,15 +35,19 @@ class GmlAsyncImageResponse : public QQuickImageResponse
 public:
     GmlAsyncImageResponse(
         void*         ipGoPtr,
+        gml_image_request 
         const QString &id,
         const QSize   &requestedSize
     );
 
-    QQuickTextureFactory *textureFactory() const override;
+    QQuickTextureFactory* textureFactory() const override;
+    QString 	          errorString() const override;
+    void                  setError(QString error);
 
 private:
-    QImage img;
-    void*  ipGoPtr;
+    void*   ipGoPtr;
+    QImage  img;
+    QString errStr;
 };
 
 class GmlImageProvider : public QQuickAsyncImageProvider

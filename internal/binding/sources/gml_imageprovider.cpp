@@ -65,6 +65,22 @@ void gml_imageprovider_free(gml_imageprovider ip) {
     ip = NULL;
 }
 
+void gml_imageprovider_emit_finished(gml_imageprovider ip, char* err) {
+    try {
+        GmlImageProvider* gip = (GmlImageProvider*)ip;
+        gip->setError(QString(err));
+        emit gip->finished();
+    }
+    catch (std::exception& e) {
+        //api_error_set_msg(err, e.what()); TODO:
+        return NULL;
+    }
+    catch (...) {
+        //api_error_set_unknown_msg(err); TODO:
+        return NULL;
+    }
+}
+
 //###################################//
 //### GmlAsyncImageResponse Class ###//
 //###################################//
@@ -84,6 +100,14 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
     catch (...) {
         cerr << "gml: catched GmlAsyncImageResponse exception: " << endl;
     }
+}
+
+QString GmlAsyncImageResponse::errorString() const {
+    return errStr;
+};
+
+void GmlAsyncImageResponse::setError(QString error) {
+    errStr = error;
 }
 
 QQuickTextureFactory* GmlAsyncImageResponse::textureFactory() const {

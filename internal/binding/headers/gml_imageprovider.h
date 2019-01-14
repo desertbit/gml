@@ -35,12 +35,15 @@ extern "C" {
 #include "gml_image.h"
 
 typedef void* gml_imageprovider;
+typedef void* gml_image_response;
 
 typedef void (*gml_imageprovider_request_cb_t)(void* go_ptr, char* id, gml_image img);
 void gml_imageprovider_request_cb_register(gml_imageprovider_request_cb_t cb);
 
 gml_imageprovider gml_imageprovider_new(void* go_ptr);
 void              gml_imageprovider_free(gml_imageprovider ip);
+
+void gml_imageprovider_emit_finished(gml_imageprovider ip, char* err);
 
 #ifdef __cplusplus
 }
