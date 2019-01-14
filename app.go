@@ -38,6 +38,7 @@ import (
 	"errors"
 	"os"
 	"runtime"
+	"sync"
 	"unsafe"
 
 	"github.com/desertbit/gml/internal/utils"
@@ -59,8 +60,9 @@ type App struct {
 	argc int
 	argv **C.char // TODO: free
 
-	gcMap      map[string]interface{}
-	imgProvMap map[string]interface{}
+	mutex      sync.Mutex
+	ctxPropMap map[string]interface{}
+	imgProvMap map[string]*ImageProvider
 }
 
 func NewApp() (a *App, err error) {
@@ -80,8 +82,8 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 		threadID:   utils.GetThreadID(),
 		argc:       len(args),
 		argv:       toCharArray(args),
-		gcMap:      make(map[string]interface{}),
-		imgProvMap: make(map[string]interface{}),
+		ctxPropMap: make(map[string]interface{}),
+		imgProvMap: make(map[string]*ImageProvider),
 	}
 	a.app = C.gml_app_new(C.int(a.argc), a.argv)
 	return
@@ -147,13 +149,20 @@ func (a *App) AddImportPath(path string) error {
 }
 
 // AddImageProvider adds the image provider to the app engine for the given id.
-// Hint: Must be called within main thread.
 func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
 	idC := C.CString(id)
 	defer C.free(unsafe.Pointer(idC))
 
-	// TODO:
-	_ = int(C.gml_app_add_imageprovider(a.app, idC, ip.ip))
+	a.RunMain(func() {
+		_ = int(C.gml_app_add_imageprovider(a.app, idC, ip.ip))
+	})
+
+	// Add to map to ensure it gets not garbage collected.
+	// It is in use by the C++ context;
+	a.mutex.Lock()
+	a.imgProvMap[id] = ip
+	a.mutex.Unlock()
+
 	return nil
 }
 
@@ -193,7 +202,9 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 
 	// Add to map to ensure it gets not garbage collected.
 	// It is in use by the C++ context;
-	a.gcMap[name] = v
+	a.mutex.Lock()
+	a.ctxPropMap[name] = v
+	a.mutex.Unlock()
 
 	return nil
 }
