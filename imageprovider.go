@@ -46,7 +46,7 @@ func init() {
 	C.gml_imageprovider_init()
 }
 
-type ImageProviderCallback func(imgResp C.gml_image_response, id string, img *Image) error
+type ImageProviderCallback func(id string, img *Image) error
 
 type ImageProvider struct {
 	freed bool
@@ -109,7 +109,7 @@ func gml_imageprovider_request_go_slot(
 		var errStr string
 
 		// Call the callback.
-		err := ip.callback(imgResp, id, img)
+		err := ip.callback(id, img)
 		if err != nil {
 			errStr = err.Error()
 		}
@@ -120,6 +120,6 @@ func gml_imageprovider_request_go_slot(
 
 		// Emit the finished signal on the image response.
 		// Must always be triggered!
-		C.image_response_emit_finished(imgResp, errStrC)
+		C.gml_image_response_emit_finished(imgResp, errStrC)
 	}()
 }
