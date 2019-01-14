@@ -31,19 +31,87 @@ package gml
 import "C"
 
 import (
+	"fmt"
+	"runtime"
 	"unsafe"
 )
 
 type Variant struct {
-	ptr C.gml_variant
+	freed bool
+	ptr   C.gml_variant
 }
 
 // TODO: free variant again. also add Free method and free as soon as possible within the gen code.
 func ToVariant(i interface{}) (v *Variant) {
-	// TODO: always create a valid QVariant
 	v = &Variant{}
-	v.ptr = C.gml_variant_new()
+
+	// Always free the C++ value.
+	runtime.SetFinalizer(v, freeVariant)
+
+	switch d := i.(type) {
+	case nil:
+		v.ptr = C.gml_variant_new() // Always create a valid QVariant.
+
+	case bool:
+		var b C.u_int8_t
+		if d {
+			b = 1
+		}
+		v.ptr = C.gml_variant_new_from_bool(b)
+
+	case float32:
+		v.ptr = C.gml_variant_new_from_float(C.float(d))
+	case float64:
+		v.ptr = C.gml_variant_new_from_double(C.double(d))
+
+	case int:
+		v.ptr = C.gml_variant_new_from_int(C.int(d))
+	case int8:
+		v.ptr = C.gml_variant_new_from_int8(C.int8_t(d))
+	case uint8: // Alias for byte
+		v.ptr = C.gml_variant_new_from_uint8(C.u_int8_t(d))
+	case int16:
+		v.ptr = C.gml_variant_new_from_int16(C.int16_t(d))
+	case uint16:
+		v.ptr = C.gml_variant_new_from_uint16(C.u_int16_t(d))
+	case int32:
+		v.ptr = C.gml_variant_new_from_int32(C.int32_t(d))
+	case uint32:
+		v.ptr = C.gml_variant_new_from_uint32(C.u_int32_t(d))
+	case int64:
+		v.ptr = C.gml_variant_new_from_int64(C.int64_t(d))
+	case uint64:
+		v.ptr = C.gml_variant_new_from_uint64(C.u_int64_t(d))
+
+	case Char:
+		v.ptr = C.gml_variant_new_from_qchar(C.int32_t(d))
+	case string:
+		cstr := C.CString(d)
+		defer C.free(unsafe.Pointer(cstr))
+		v.ptr = C.gml_variant_new_from_string(cstr)
+
+	default:
+		v.ptr = C.gml_variant_new() // Always create a valid QVariant.
+	}
+
+	// Check if something failed.
+	// This should never happen is signalizes a fatal error.
+	if v.ptr == nil {
+		panic(fmt.Errorf("failed to create gml variant: C pointer is nil"))
+	}
 	return
+}
+
+func freeVariant(v *Variant) {
+	if v.freed {
+		return
+	}
+	v.freed = true
+	C.gml_variant_free(v.ptr)
+}
+
+func (v *Variant) Free() {
+	freeVariant(v)
 }
 
 func (v *Variant) Pointer() unsafe.Pointer {

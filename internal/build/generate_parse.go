@@ -330,7 +330,7 @@ func newParseError(fset *token.FileSet, p token.Pos, err error) error {
 func goTypeToC(t string) string {
 	switch t {
 	case "bool":
-		return "uint8_t"
+		return "u_int8_t"
 	case "byte":
 		return "char"
 	case "string":
@@ -348,19 +348,19 @@ func goTypeToC(t string) string {
 	case "int8":
 		return "int8_t"
 	case "uint8":
-		return "uint8_t"
+		return "u_int8_t"
 	case "int16":
 		return "int16_t"
 	case "uint16":
-		return "uint16_t"
+		return "u_int16_t"
 	case "int32":
 		return "int32_t"
 	case "uint32":
-		return "uint32_t"
+		return "u_int32_t"
 	case "int64":
 		return "int64_t"
 	case "uint64":
-		return "uint64_t"
+		return "u_int64_t"
 
 	default:
 		return "gml_variant"

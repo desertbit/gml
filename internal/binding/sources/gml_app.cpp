@@ -57,8 +57,12 @@ gml_app gml_app_new(int argc, char** argv) {
 }
 
 void gml_app_free(gml_app app) {
+    if (app == NULL) {
+        return;
+    }
     GmlApp* a = (GmlApp*)app;
     delete a;
+    app = NULL;
 }
 
 int gml_app_exec(gml_app app) {
