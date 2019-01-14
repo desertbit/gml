@@ -48,7 +48,7 @@ package {{.PackageName}}
 {{range $struct := .Structs}}
 // 
 {{- range $slot := $struct.Slots }}
-// extern void {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(void* goPtr);
+// extern void {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(void* goPtr{{cParams $slot.Params true false}});
 {{end -}}
 // static void {{$struct.CBaseName}}_register_slots() {
 {{- range $slot := $struct.Slots }}
@@ -98,9 +98,10 @@ func (_v *{{$struct.Name}}) {{$signal.EmitName}}({{goParams $signal.Params true 
 {{- /* Slots */ -}}
 {{range $slot := $struct.Slots }}
 //export {{$struct.CBaseName}}_{{$slot.Name}}_go_slot
-func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(goPtr unsafe.Pointer) {
+func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(goPtr unsafe.Pointer{{goCParams $slot.Params true false}}) {
 	_v := (pointer.Restore(goPtr)).(*{{$struct.Name}})
-    _v.{{$slot.Name}}()
+    {{- cToGoParams $slot.Params "_go_" 4}}
+    _v.{{$slot.Name}}({{goParams $slot.Params false true "_go_"}})
 }
 {{end}}
 

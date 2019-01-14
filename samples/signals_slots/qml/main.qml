@@ -20,7 +20,7 @@ ApplicationWindow {
         font.pixelSize: 100
         Layout.topMargin: 100
         Layout.alignment: Qt.AlignHCenter
-        onClicked: bridge.clicked()
+        onClicked: bridge.clicked(1, "Hallo")
     }
 
     Image {

@@ -31,10 +31,13 @@ import "text/template"
 
 var tmplFuncMap = template.FuncMap{
 	"goParams":     tmplFuncGoParams,
+	"goCParams":    tmplFuncGoCParams,
 	"cParams":      tmplFuncCParams,
 	"cppParams":    tmplFuncCPPParams,
 	"goToCParams":  tmplFuncGoToCParams,
+	"cToGoParams":  tmplFuncCToGoParams,
 	"cToCPPParams": tmplFuncCToCPPParams,
+	"cppToCParams": tmplFuncCPPToCParams,
 }
 
 func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {
@@ -50,6 +53,24 @@ func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPref
 		s += prefix + p.Name
 		if withType {
 			s += " " + p.Type
+		}
+	}
+	return
+}
+
+func tmplFuncGoCParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {
+	var prefix string
+	if len(optPrefix) > 0 {
+		prefix = optPrefix[0]
+	}
+
+	for i, p := range params {
+		if !skipFirstComma || i != 0 {
+			s += ", "
+		}
+		s += prefix + p.Name
+		if withType {
+			s += " " + p.CGoType
 		}
 	}
 	return
@@ -139,6 +160,63 @@ func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (
 	return
 }
 
+func tmplFuncCToGoParams(params []*genParam, prefix string, optsIndent ...int) (s string) {
+	var ident string
+	if len(optsIndent) > 0 {
+		for i := 0; i < optsIndent[0]; i++ {
+			ident += " "
+		}
+	}
+
+	addLine := func(l string) {
+		s += "\n" + ident + l
+	}
+
+	for _, p := range params {
+		goName := prefix + p.Name
+
+		switch p.Type {
+		case "bool":
+			addLine("var " + goName + " bool")
+			addLine("if " + p.Name + " != 0 { " + goName + " = true }")
+		case "byte":
+			addLine(goName + " := byte(" + p.Name + ")")
+		case "string":
+			addLine(goName + " := C.GoString(" + p.Name + ")")
+		case "rune":
+			addLine(goName + " := rune(" + p.Name + ")")
+
+		case "float32":
+			addLine(goName + " := float32(" + p.Name + ")")
+		case "float64":
+			addLine(goName + " := float64(" + p.Name + ")")
+
+		case "int":
+			addLine(goName + " := int(" + p.Name + ")")
+		case "int8":
+			addLine(goName + " := int8(" + p.Name + ")")
+		case "uint8":
+			addLine(goName + " := uint8(" + p.Name + ")")
+		case "int16":
+			addLine(goName + " := int16(" + p.Name + ")")
+		case "uint16":
+			addLine(goName + " := uint16(" + p.Name + ")")
+		case "int32":
+			addLine(goName + " := int32(" + p.Name + ")")
+		case "uint32":
+			addLine(goName + " := uint32(" + p.Name + ")")
+		case "int64":
+			addLine(goName + " := int64(" + p.Name + ")")
+		case "uint64":
+			addLine(goName + " := uint64(" + p.Name + ")")
+
+		default:
+			addLine(goName + " := gml.NewVariantFromPointer((unsafe.Pointer)(" + p.Name + "))")
+		}
+	}
+	return
+}
+
 func tmplFuncCToCPPParams(params []*genParam, skipFirstComma bool) (s string) {
 	for i, p := range params {
 		if !skipFirstComma || i != 0 {
@@ -181,6 +259,53 @@ func tmplFuncCToCPPParams(params []*genParam, skipFirstComma bool) (s string) {
 
 		default:
 			s += "QVariant(*((QVariant*)" + p.Name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
+		}
+	}
+	return
+}
+
+func tmplFuncCPPToCParams(params []*genParam, skipFirstComma bool) (s string) {
+	for i, p := range params {
+		if !skipFirstComma || i != 0 {
+			s += ", "
+		}
+
+		switch p.Type {
+		case "bool":
+			s += "u_int8_t(" + p.Name + ")"
+		case "byte":
+			s += "char(" + p.Name + ")"
+		case "string":
+			s += p.Name + ".toLocal8Bit().data()" // Be careful! Only as long as the object lives.
+		case "rune":
+			s += "int32_t(" + p.Name + ")"
+
+		case "float32":
+			s += p.Name
+		case "float64":
+			s += p.Name
+
+		case "int":
+			s += p.Name
+		case "int8":
+			s += "int8_t(" + p.Name + ")"
+		case "uint8":
+			s += "u_int8_t(" + p.Name + ")"
+		case "int16":
+			s += "int16_t(" + p.Name + ")"
+		case "uint16":
+			s += "u_int16_t(" + p.Name + ")"
+		case "int32":
+			s += "int32_t(" + p.Name + ")"
+		case "uint32":
+			s += "u_int32_t(" + p.Name + ")"
+		case "int64":
+			s += "int64_t(" + p.Name + ")"
+		case "uint64":
+			s += "u_int64_t(" + p.Name + ")"
+
+		default:
+			s += "(gml_variant*)(new QVariant(" + p.Name + "))" // Hint: Always free the object.
 		}
 	}
 	return

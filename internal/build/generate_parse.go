@@ -207,6 +207,7 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 			}
 		case "property":
 			// TODO:
+			return newParseError(fset, f.Pos(), fmt.Errorf("properties are currently not supported"))
 		default:
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid struct tag value: %v", tagValue))
 		}
@@ -291,6 +292,7 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 				Name:    n.Name,
 				Type:    typeStr,
 				CType:   goTypeToC(typeStr),
+				CGoType: goTypeToCGo(typeStr),
 				CPPType: goTypeToCPP(typeStr),
 			})
 		}
@@ -407,5 +409,45 @@ func goTypeToCPP(t string) string {
 
 	default:
 		return "QVariant"
+	}
+}
+
+func goTypeToCGo(t string) string {
+	switch t {
+	case "bool":
+		return "C.u_int8_t"
+	case "byte":
+		return "C.char"
+	case "string":
+		return "*C.char"
+	case "rune":
+		return "C.int32_t"
+
+	case "float32":
+		return "C.float"
+	case "float64":
+		return "C.double"
+
+	case "int":
+		return "C.int"
+	case "int8":
+		return "C.int8_t"
+	case "uint8":
+		return "C.u_int8_t"
+	case "int16":
+		return "C.int16_t"
+	case "uint16":
+		return "C.u_int16_t"
+	case "int32":
+		return "C.int32_t"
+	case "uint32":
+		return "C.u_int32_t"
+	case "int64":
+		return "C.int64_t"
+	case "uint64":
+		return "C.u_int64_t"
+
+	default:
+		return "C.gml_variant"
 	}
 }

@@ -72,6 +72,7 @@ type genParam struct {
 	Name    string
 	Type    string
 	CType   string
+	CGoType string
 	CPPType string
 }
 

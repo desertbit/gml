@@ -35,6 +35,8 @@ import (
 	"unsafe"
 )
 
+// TODO: add LoadFromBuffer & LoadFromGoImage
+
 type Image struct {
 	freed bool
 	img   C.gml_image

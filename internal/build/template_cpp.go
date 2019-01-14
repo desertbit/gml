@@ -128,7 +128,7 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
 
 void {{$struct.CPPBaseName}}::{{$slot.CPPName}}({{cppParams $slot.Params true true}}) {
     try {
-        {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr);
+        {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr{{cppToCParams $slot.Params false}});
     }
     catch (std::exception& e) {
         std::cerr << "gml: catched slot exception: " << e.what() << std::endl;
