@@ -185,6 +185,7 @@ GmlApp::GmlApp(int& argc, char** argv) :
     argc(argc),
     app(this->argc, argv) // use this->argc, because QGuiApplication uses an int reference. https://bugreports.qt.io/browse/QTBUG-59510
 {
+    Q_INIT_RESOURCE(gml_gen_resources);
     QObject::connect(this, &GmlApp::requestRunMain,
                      this, &GmlApp::runMain);
 }
