@@ -78,8 +78,17 @@ func (img *Image) Free() {
 	freeImage(img)
 }
 
-func (img *Image) LoadFromData(data []byte) (err error) {
-	// TODO:
-	_ = C.gml_image_load_from_data(img.img, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)))
-	return
+func (img *Image) LoadFromData(data []byte) error {
+	if len(data) == 0 {
+		return fmt.Errorf("empty data")
+	}
+
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	ret := C.gml_image_load_from_data(img.img, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), apiErr.err)
+	if ret != 0 {
+		return apiErr.Err("failed to load from data")
+	}
+	return nil
 }

@@ -25,30 +25,44 @@
  * SOFTWARE.
  */
 
-#ifndef GML_APP_H
-#define GML_APP_H
+package gml
 
-#include "gml_includes.h"
-#include "gml_error.h"
-#include "gml_imageprovider.h"
+// #include <gml.h>
+import "C"
+import "errors"
 
-class GmlApp : public QObject
-{
-    Q_OBJECT
-private:
-    int argc;
+type apiError struct {
+	err C.gml_error
+}
 
-public:
-    QGuiApplication       app;
-    QQmlApplicationEngine engine;
+func newAPIError() *apiError {
+	return &apiError{
+		err: C.gml_error_new(),
+	}
+}
 
-    GmlApp(int& argc, char** argv);
+func (e *apiError) Free() {
+	C.gml_error_free(e.err)
+}
 
-signals:
-    void requestRunMain(void* goPtr);
+func (e *apiError) String() string {
+	return C.GoString(C.gml_error_get_msg(e.err))
+}
 
-private slots:
-    void runMain(void* goPtr);
-};
+func (e *apiError) Reset() {
+	C.gml_error_reset(e.err)
+}
 
-#endif
+func (e *apiError) Err(prefix ...string) error {
+	s := e.String()
+	if len(prefix) > 0 {
+		if len(s) == 0 {
+			s = prefix[0]
+		} else {
+			s = prefix[0] + ": " + s
+		}
+	} else if len(s) == 0 {
+		s = "unknown error"
+	}
+	return errors.New(s)
+}

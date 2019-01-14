@@ -26,6 +26,7 @@
  */
 
 #include "gml_imageprovider.h"
+#include "gml_error.h"
 
 //########################//
 //### Static Variables ###//
@@ -55,11 +56,11 @@ gml_imageprovider gml_imageprovider_new(
         return (void*)gip;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
+        gml_error_log_exception(e.what());
         return NULL;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
+        gml_error_log_exception();
         return NULL;
     }
 }
@@ -79,10 +80,10 @@ void gml_image_response_emit_finished(gml_image_response img_resp, char* error_s
         gimg_resp->finalize(QString(error_string));
     }
     catch (std::exception& e) {
-        cerr << "gml: catched image response exception: emit finished: " << e.what() << endl;
+        gml_error_log_exception("image response: emit finished: " + string(e.what()));
     }
     catch (...) {
-        cerr << "gml: catched image response exception: emit finished: " << endl;
+        gml_error_log_exception("image response: emit finished");
     }
 }
 
@@ -112,10 +113,10 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
         );
     }
     catch (std::exception& e) {
-        cerr << "gml: catched GmlAsyncImageResponse exception: " << e.what() << endl;
+        gml_error_log_exception("image async response: request: " + string(e.what()));
     }
     catch (...) {
-        cerr << "gml: catched GmlAsyncImageResponse exception: " << endl;
+        gml_error_log_exception("image async response: request");
     }
 }
 
@@ -133,7 +134,6 @@ void GmlAsyncImageResponse::finalize(const QString& errorString) {
         errorStr = errorString;
     } else if (!requestedSize.isNull() && requestedSize.isValid()) {
         // Resize the image to the requested size
-        cout << requestedSize.width() << ", " << requestedSize.height() << endl;
         img = img.scaled(requestedSize, Qt::IgnoreAspectRatio, transformMode);
     }
 

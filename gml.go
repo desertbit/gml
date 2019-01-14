@@ -32,3 +32,17 @@ package gml
 // #cgo LDFLAGS: -lstdc++
 // #include <gml.h>
 import "C"
+import (
+	"fmt"
+	"os"
+)
+
+// Exec executes the app, prints errors and exits
+// the application with the specific exit code.
+func Exec(a *App) {
+	ret, err := a.Exec()
+	if err != nil {
+		fmt.Println(err)
+	}
+	os.Exit(ret)
+}

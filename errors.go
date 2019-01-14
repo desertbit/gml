@@ -25,30 +25,59 @@
  * SOFTWARE.
  */
 
-#ifndef GML_APP_H
-#define GML_APP_H
+package gml
 
-#include "gml_includes.h"
-#include "gml_error.h"
-#include "gml_imageprovider.h"
+const (
+	errorPoolSize = 50
+)
 
-class GmlApp : public QObject
-{
-    Q_OBJECT
-private:
-    int argc;
+var (
+	errorPool = newAPIErrorPool(errorPoolSize)
+)
 
-public:
-    QGuiApplication       app;
-    QQmlApplicationEngine engine;
+type apiErrorPool struct {
+	pool chan *apiError
+}
 
-    GmlApp(int& argc, char** argv);
+func newAPIErrorPool(poolSize int) *apiErrorPool {
+	return &apiErrorPool{
+		pool: make(chan *apiError, poolSize),
+	}
+}
 
-signals:
-    void requestRunMain(void* goPtr);
+// Get an error from the pool.
+// Allocates new memory if the pool is empty.
+func (p *apiErrorPool) Get() (e *apiError) {
+	select {
+	case e = <-p.pool:
+	default:
+		e = newAPIError()
+	}
+	return
+}
 
-private slots:
-    void runMain(void* goPtr);
-};
+// Put an error back to the pool.
+func (p *apiErrorPool) Put(e *apiError) {
+	// Reset the error message.
+	e.Reset()
 
-#endif
+	select {
+	case p.pool <- e:
+	default:
+		// Just let it go. The pool is full.
+		e.Free()
+	}
+}
+
+// Reset empties the pool.
+func (p *apiErrorPool) Reset() {
+	var e *apiError
+	for {
+		select {
+		case e = <-p.pool:
+			e.Free()
+		default:
+			return
+		}
+	}
+}

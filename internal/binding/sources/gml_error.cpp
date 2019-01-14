@@ -25,49 +25,81 @@
  * SOFTWARE.
  */
 
-#include "gml_includes.h"
 #include "gml_error.h"
 
 //#############//
 //### C API ###//
 //#############//
 
-gml_image gml_image_new() {
+gml_error gml_error_new() {
     try {
-        QImage* qImg = new QImage();
-        return (void*)qImg;
+        GmlError* gerr = new GmlError();
+        return (void*)gerr;
     }
     catch (std::exception& e) {
-        gml_error_log_exception(e.what());
+        gml_error_log_exception("new gml_error: " + string(e.what()));
         return NULL;
     }
     catch (...) {
-        gml_error_log_exception();
+        gml_error_log_exception("new gml_error");
         return NULL;
     }
 }
 
-void gml_image_free(gml_image img) {
-    if (img == NULL) {
+void gml_error_free(gml_error err) {
+    if (err == NULL) {
         return;
     }
-    QImage* qImg = (QImage*)img;
-    delete qImg;
-    img = NULL;
+    GmlError* gerr = (GmlError*)err;
+    delete gerr;
+    err = NULL;
 }
 
-int gml_image_load_from_data(gml_image img, char* data, int size, gml_error err) {
+void gml_error_reset(gml_error err) {
     try {
-        QImage* qImg = (QImage*)img;
-        qImg->loadFromData((const unsigned char*)(data), size);
-        return 0;
+        GmlError* gerr = (GmlError*)err;
+        gerr->msg = "";
     }
     catch (std::exception& e) {
-        gml_error_set_msg(err, e.what());
-        return -1;
+        gml_error_log_exception("reset error message: " + string(e.what()));
     }
     catch (...) {
-         gml_error_set_catched_exception_msg(err);
-        return -1;
+        gml_error_log_exception("reset error message");
+    }
+}
+
+const char* gml_error_get_msg(gml_error err) {
+    try {
+        GmlError* gerr = (GmlError*)err;
+        return gerr->msg.c_str();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("get error message: " + string(e.what()));
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception("get error message");
+        return NULL;
+    }
+}
+
+//################//
+//### Internal ###//
+//################//
+
+void gml_error_set_msg(gml_error err, const std::string& msg) {
+    GmlError* gerr = (GmlError*)err;
+    gerr->msg = msg;
+}
+
+void gml_error_set_catched_exception_msg(gml_error err) {
+    gml_error_set_msg(err, "catched unknown exception");
+}
+
+void gml_error_log_exception(const string& msg) {
+    if (msg == "") {
+        cerr << "gml: catched unknown exception" << endl;
+    } else {
+        cerr << "gml: catched exception: " << msg << endl;
     }
 }

@@ -29,7 +29,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/desertbit/gml"
 )
@@ -45,7 +44,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	os.Exit(app.Exec())
+	gml.Exec(app)
 }
 
 const qmlData = `

@@ -30,7 +30,6 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"os"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -82,5 +81,5 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	os.Exit(app.Exec())
+	gml.Exec(app)
 }

@@ -1,9 +1,10 @@
 # TODO
-- finish verbose mode
 - set core.QCoreApplication_SetApplicationName("App") core.QCoreApplication_SetOrganizationName("Desertbit")
-- ImageProvider
-- signals & slots
+- slots return values
 - docker container
-- call qml slots directly from go
+- properties
+- models
 - dp for pixels
+- add catch exception also to free methods.
 - document, that slot names must not overlap with QObject names!
+- call qml slots directly from go?

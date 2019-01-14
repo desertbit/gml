@@ -41,17 +41,17 @@ void gml_app_run_main_cb_register(gml_app_run_main_cb_t cb) {
     gml_app_run_main_cb = cb;
 }
 
-gml_app gml_app_new(int argc, char** argv) {
+gml_app gml_app_new(int argc, char** argv, gml_error err) {
     try {
         GmlApp* a = new GmlApp(argc, argv);
         return (void*)a;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
+        gml_error_set_msg(err, e.what());
         return NULL;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
+        gml_error_set_catched_exception_msg(err);
         return NULL;
     }
 }
@@ -65,34 +65,31 @@ void gml_app_free(gml_app app) {
     app = NULL;
 }
 
-int gml_app_exec(gml_app app) {
+int gml_app_exec(gml_app app, gml_error err) {
     try {
         GmlApp* a = (GmlApp*)app;
         return a->app.exec();
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_set_msg(err, e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 
-int gml_app_quit(gml_app app) {
+void gml_app_quit(gml_app app) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->app.quit();
-        return 0; // TODO:
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_log_exception(e.what());
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_log_exception();
     }
 }
 
@@ -100,97 +97,94 @@ int gml_app_run_main(gml_app app, void* go_ptr) {
     try {
         GmlApp* a = (GmlApp*)app;
         emit a->requestRunMain(go_ptr);
-        return 0; // TODO:
+        return 0;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_log_exception(e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_log_exception();
+        return -1;
     }
 }
 
-int gml_app_load(gml_app app, const char* url) {
+int gml_app_load(gml_app app, const char* url, gml_error err) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->engine.load(QUrl(url));
-        return 0; // TODO:
+        return 0;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_set_msg(err, e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 
-int gml_app_load_data(gml_app app, const char* data) {
+int gml_app_load_data(gml_app app, const char* data, gml_error err) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->engine.loadData(data);
-        return 0; // TODO:
+        return 0;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_set_msg(err, e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 
-int gml_app_add_import_path(gml_app app, const char* path) {
+void gml_app_add_import_path(gml_app app, const char* path) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->engine.addImportPath(path);
-        return 0; // TODO:
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_log_exception(e.what());
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_log_exception();
     }
 }
 
-int gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip) {
+int gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip, gml_error err) {
     try {
         GmlApp* a = (GmlApp*)app;
         GmlImageProvider* gip = (GmlImageProvider*)ip;
         a->engine.addImageProvider(id, gip);
-        return 0; // TODO:
+        return 0; 
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_set_msg(err, e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 
-int gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj) {
+int gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj, gml_error err) {
     try {
         GmlApp* a  = (GmlApp*)app;
         QObject* o = (QObject*)obj;
         a->engine.rootContext()->setContextProperty(name, o);
-        return 0; // TODO:
+        return 0;
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return -1; // TODO:
+        gml_error_set_msg(err, e.what());
+        return -1;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return -1; // TODO:
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 

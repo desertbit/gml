@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <string>
 
 #include <QObject>
 #include <QUrl>
@@ -45,6 +46,7 @@
 #include <QQuickAsyncImageProvider>
 #include <QQuickImageResponse>
 
+using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;

@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+#include "gml_error.h"
 #include "gml_object.h"
 #include "gml_imageprovider.h"
 
@@ -40,18 +41,18 @@ typedef void* gml_app;
 typedef void (*gml_app_run_main_cb_t)(void* go_ptr);
 void gml_app_run_main_cb_register(gml_app_run_main_cb_t cb);
 
-gml_app gml_app_new (int argv, char** argc);
+gml_app gml_app_new (int argv, char** argc, gml_error err);
 void    gml_app_free(gml_app app);
-int     gml_app_exec(gml_app app);
-int     gml_app_quit(gml_app app);
+int     gml_app_exec(gml_app app, gml_error err);
+void    gml_app_quit(gml_app app);
 int     gml_app_run_main(gml_app app, void* go_ptr);
 
-int     gml_app_load     (gml_app app, const char* url);
-int     gml_app_load_data(gml_app app, const char* data);
-int     gml_app_add_import_path(gml_app app, const char* path);
-int     gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip);
+int     gml_app_load     (gml_app app, const char* url, gml_error err);
+int     gml_app_load_data(gml_app app, const char* data, gml_error err);
+void    gml_app_add_import_path(gml_app app, const char* path);
+int     gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip, gml_error err);
 
-int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj);
+int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj, gml_error err);
 
 #ifdef __cplusplus
 }

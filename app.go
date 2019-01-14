@@ -52,13 +52,13 @@ func init() {
 	C.gml_app_init()
 }
 
-// TODO: free
 type App struct {
+	freed    bool
 	threadID int
 
 	app  C.gml_app
 	argc int
-	argv **C.char // TODO: free
+	argv **C.char
 
 	mutex      sync.Mutex
 	ctxPropMap map[string]interface{}
@@ -78,6 +78,9 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 	// Ensure the thread is locked within this context of app creation.
 	runtime.LockOSThread()
 
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
 	a = &App{
 		threadID:   utils.GetThreadID(),
 		argc:       len(args),
@@ -85,8 +88,29 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 		ctxPropMap: make(map[string]interface{}),
 		imgProvMap: make(map[string]*ImageProvider),
 	}
-	a.app = C.gml_app_new(C.int(a.argc), a.argv)
+
+	a.app = C.gml_app_new(C.int(a.argc), a.argv, apiErr.err)
+	if a.app == nil {
+		err = apiErr.Err("failed to create new app")
+		return
+	}
+
+	// Always free the C value.
+	runtime.SetFinalizer(a, freeApp)
 	return
+}
+
+func freeApp(a *App) {
+	if a.freed {
+		return
+	}
+	a.freed = true
+	C.gml_app_free(a.app)
+	freeCharArray(a.argv, a.argc)
+}
+
+func (a *App) Free() {
+	freeApp(a)
 }
 
 // RunMain runs the function on the applications main thread.
@@ -106,11 +130,10 @@ func (a *App) RunMain(f func()) {
 	ptr := pointer.Save(cb)
 	defer pointer.Unref(ptr)
 
-	// TODO:
-	_ = C.gml_app_run_main(a.app, ptr)
-	/*if error {
+	ret := C.gml_app_run_main(a.app, ptr)
+	if ret != 0 {
 		return
-	}*/
+	}
 
 	<-doneChan
 }
@@ -121,31 +144,39 @@ func (a *App) Load(url string) error {
 	urlC := C.CString(url)
 	defer C.free(unsafe.Pointer(urlC))
 
-	// TODO:
-	_ = int(C.gml_app_load(a.app, urlC))
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	ret := C.gml_app_load(a.app, urlC, apiErr.err)
+	if ret != 0 {
+		return apiErr.Err("failed to load url")
+	}
 	return nil
 }
 
-// Load the QML given in data.
+// LoadData loads the QML given in data.
 // Hint: Must be called within main thread.
 func (a *App) LoadData(data string) error {
 	dataC := C.CString(data)
 	defer C.free(unsafe.Pointer(dataC))
 
-	// TODO:
-	_ = int(C.gml_app_load_data(a.app, dataC))
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	ret := C.gml_app_load_data(a.app, dataC, apiErr.err)
+	if ret != 0 {
+		return apiErr.Err("failed to load data")
+	}
 	return nil
 }
 
 // AddImportPath adds the given import path to the app engine.
 // Hint: Must be called within main thread.
-func (a *App) AddImportPath(path string) error {
+func (a *App) AddImportPath(path string) {
 	pathC := C.CString(path)
 	defer C.free(unsafe.Pointer(pathC))
 
-	// TODO:
-	_ = int(C.gml_app_add_import_path(a.app, pathC))
-	return nil
+	C.gml_app_add_import_path(a.app, pathC)
 }
 
 // AddImageProvider adds the image provider to the app engine for the given id.
@@ -153,9 +184,16 @@ func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
 	idC := C.CString(id)
 	defer C.free(unsafe.Pointer(idC))
 
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	var ret C.int
 	a.RunMain(func() {
-		_ = int(C.gml_app_add_imageprovider(a.app, idC, ip.ip))
+		ret = C.gml_app_add_imageprovider(a.app, idC, ip.ip, apiErr.err)
 	})
+	if ret != 0 {
+		return apiErr.Err("failed to add image provider")
+	}
 
 	// Add to map to ensure it gets not garbage collected.
 	// It is in use by the C++ context;
@@ -169,16 +207,23 @@ func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
 // Exec executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.
-func (a *App) Exec() int {
-	return int(C.gml_app_exec(a.app))
+func (a *App) Exec() (retCode int, err error) {
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	retCode = int(C.gml_app_exec(a.app, apiErr.err))
+	if retCode != 0 {
+		err = apiErr.Err("app execution failed")
+		return
+	}
+	return
 }
 
 // Quit the application.
-func (a *App) Quit() (retCode int) {
+func (a *App) Quit() {
 	a.RunMain(func() {
-		retCode = int(C.gml_app_quit(a.app))
+		C.gml_app_quit(a.app)
 	})
-	return
 }
 
 func (a *App) SetContextProperty(name string, v interface{}) (err error) {
@@ -195,10 +240,16 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	var ret C.int
 	a.RunMain(func() {
-		// TODO:
-		_ = int(C.gml_app_set_root_context_property(a.app, nameC, obj.cObject()))
+		ret = C.gml_app_set_root_context_property(a.app, nameC, obj.cObject(), apiErr.err)
 	})
+	if ret != 0 {
+		return apiErr.Err("failed to set context property")
+	}
 
 	// Add to map to ensure it gets not garbage collected.
 	// It is in use by the C++ context;

@@ -32,7 +32,7 @@ import (
 	"text/template"
 )
 
-var qtProTmpl = template.Must(template.New("t").Funcs(tmplFuncMap).Parse(qtProData))
+var qtProTmpl = template.Must(template.New("t").Parse(qtProData))
 
 func prepareQtProject(ctx *Context) (err error) {
 	// Create or open the config file.

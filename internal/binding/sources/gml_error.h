@@ -25,13 +25,17 @@
  * SOFTWARE.
  */
 
-#ifndef GML_APP_H
-#define GML_APP_H
+#ifndef GML_ERROR_H
+#define GML_ERROR_H
 
 #include "gml_includes.h"
 
-struct GmlError struct {
+struct GmlError {
     string msg;
 };
+
+void gml_error_set_msg(gml_error err, const string& msg);
+void gml_error_set_catched_exception_msg(gml_error err);
+void gml_error_log_exception(const string& msg = "");
 
 #endif

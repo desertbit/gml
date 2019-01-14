@@ -32,7 +32,12 @@
 extern "C" {
 #endif
 
-typedef void* gml_object;
+typedef void* gml_error;
+
+gml_error   gml_error_new();
+void        gml_error_free   (gml_error err);
+void        gml_error_reset  (gml_error err);
+const char* gml_error_get_msg(gml_error err);
 
 #ifdef __cplusplus
 }

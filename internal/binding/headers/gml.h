@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "gml_error.h"
 #include "gml_app.h"
 #include "gml_image.h"
 #include "gml_object.h"

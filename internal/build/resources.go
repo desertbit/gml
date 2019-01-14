@@ -34,7 +34,7 @@ import (
 	"text/template"
 )
 
-var qmlResTmpl = template.Must(template.New("t").Funcs(tmplFuncMap).Parse(qmlResData))
+var qmlResTmpl = template.Must(template.New("t").Parse(qmlResData))
 
 func prepareResources(ctx *Context) (err error) {
 	// Create the resources file.
