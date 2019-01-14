@@ -36,7 +36,6 @@ package gml
 import "C"
 import (
 	"fmt"
-	"log"
 	"runtime"
 	"unsafe"
 
@@ -103,13 +102,7 @@ func gml_imageprovider_request_go_slot(
 	ip := (pointer.Restore(goPtr)).(*ImageProvider)
 	id := C.GoString(idc)
 
-	// Don't free the image.
-	// We are not the owner of the pointer.
-	img, err := newImage(imgC, false)
-	if err != nil {
-		log.Printf("image provider request: failed to create new image: %v", err)
-		return
-	}
+	img := newImage(imgC, false) // Don't free the image. We are not the owner of the pointer.
 
 	// Run in a new goroutine.
 	go func() {

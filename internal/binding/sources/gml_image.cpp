@@ -31,10 +31,9 @@
 //### C API ###//
 //#############//
 
-gml_image gml_image_new_from_data(char* data, int size) {
+gml_image gml_image_new() {
     try {
         QImage* qImg = new QImage();
-        qImg->loadFromData((const unsigned char*)(data), size);
         return (void*)qImg;
     }
     catch (std::exception& e) {
@@ -54,4 +53,20 @@ void gml_image_free(gml_image img) {
     QImage* qImg = (QImage*)img;
     delete qImg;
     img = NULL;
+}
+
+int gml_image_load_from_data(gml_image img, char* data, int size) {
+    try {
+        QImage* qImg = (QImage*)img;
+        qImg->loadFromData((const unsigned char*)(data), size);
+        return 0; // TODO:
+    }
+    catch (std::exception& e) {
+        cerr << "gml: catched variant exception: " << e.what() << endl;
+        return -1; // TODO:
+    }
+    catch (...) {
+        cerr << "gml: catched variant exception" << endl;
+        return -1; // TODO:
+    }
 }
