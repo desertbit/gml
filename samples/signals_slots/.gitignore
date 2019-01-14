@@ -1,5 +1,6 @@
 /build
 /signals_slots
 /gml_gen.go
+/gml_gen_resources.qrc
 *.qrc
 

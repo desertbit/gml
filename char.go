@@ -29,4 +29,4 @@ package gml
 
 // TODO: this is currently only supported for Variant. Add support to the code generation (signals, slots... args).
 // A Char is an alias for a rune which is converted to a QChar when used within a Variant.
-type Char int32
+type Char rune

@@ -96,10 +96,10 @@ int gml_app_quit(gml_app app) {
     }
 }
 
-int gml_app_run_main(gml_app app, void* goPtr) {
+int gml_app_run_main(gml_app app, void* go_ptr) {
     try {
         GmlApp* a = (GmlApp*)app;
-        emit a->requestRunMain(goPtr);
+        emit a->requestRunMain(go_ptr);
         return 0; // TODO:
     }
     catch (std::exception& e) {
