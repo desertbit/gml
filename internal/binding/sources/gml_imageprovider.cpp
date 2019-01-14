@@ -65,19 +65,17 @@ void gml_imageprovider_free(gml_imageprovider ip) {
     ip = NULL;
 }
 
-void gml_imageprovider_emit_finished(gml_imageprovider ip, char* err) {
+void gml_image_response_emit_finished(gml_image_response img_resp char* err) {
     try {
-        GmlImageProvider* gip = (GmlImageProvider*)ip;
-        gip->setError(QString(err));
-        emit gip->finished();
+        GmlAsyncImageResponse* gimg_resp = (GmlAsyncImageResponse*)img_resp;
+        gimg_resp->setError(QString(err));
+        emit gimg_resp->finished();
     }
     catch (std::exception& e) {
-        //api_error_set_msg(err, e.what()); TODO:
-        return NULL;
+        cerr << "gml: catched image response exception: emit finished: " << e.what() << endl;
     }
     catch (...) {
-        //api_error_set_unknown_msg(err); TODO:
-        return NULL;
+        cerr << "gml: catched image response exception: emit finished: " << endl;
     }
 }
 
@@ -86,13 +84,18 @@ void gml_imageprovider_emit_finished(gml_imageprovider ip, char* err) {
 //###################################//
 
 GmlAsyncImageResponse::GmlAsyncImageResponse(
-    void*         ipGoPtr,
-    const QString &id,
-    const QSize   &requestedSize
+    void*              ipGoPtr,
+    const QString      &id,
+    const QSize        &requestedSize
 ) : ipGoPtr(ipGoPtr) {
     // Call to go.
     try {
-        gml_imageprovider_request_cb(ipGoPtr, id.toLocal8Bit().data(), (gml_image)(&img));
+        gml_imageprovider_request_cb(
+            ipGoPtr,
+            (gml_image_response)(this),
+            id.toLocal8Bit().data(),
+            (gml_image)(&img)
+        );
     }
     catch (std::exception& e) {
         cerr << "gml: catched GmlAsyncImageResponse exception: " << e.what() << endl;

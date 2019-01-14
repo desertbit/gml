@@ -35,7 +35,6 @@ class GmlAsyncImageResponse : public QQuickImageResponse
 public:
     GmlAsyncImageResponse(
         void*         ipGoPtr,
-        gml_image_request 
         const QString &id,
         const QSize   &requestedSize
     );

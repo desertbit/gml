@@ -29,7 +29,7 @@ package gml
 
 // #include <gml.h>
 //
-// extern void gml_imageprovider_request_go_slot(void* goPtr, char* id, gml_image img);
+// extern void gml_imageprovider_request_go_slot(void* goPtr, gml_image_response, char* id, gml_image img);
 // static void gml_imageprovider_init() {
 //      gml_imageprovider_request_cb_register(gml_imageprovider_request_go_slot);
 // }
@@ -47,7 +47,7 @@ func init() {
 	C.gml_imageprovider_init()
 }
 
-type ImageProviderCallback func(id string, img *Image) error
+type ImageProviderCallback func(imgResp C.gml_image_response, id string, img *Image) error
 
 type ImageProvider struct {
 	freed bool
@@ -94,7 +94,12 @@ func (ip *ImageProvider) Free() {
 //#####################//
 
 //export gml_imageprovider_request_go_slot
-func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, idc *C.char, imgC C.gml_image) {
+func gml_imageprovider_request_go_slot(
+	goPtr unsafe.Pointer,
+	imgResp C.gml_image_response,
+	idc *C.char,
+	imgC C.gml_image,
+) {
 	ip := (pointer.Restore(goPtr)).(*ImageProvider)
 	id := C.GoString(idc)
 
@@ -102,13 +107,26 @@ func gml_imageprovider_request_go_slot(goPtr unsafe.Pointer, idc *C.char, imgC C
 	// We are not the owner of the pointer.
 	img, err := newImage(imgC, false)
 	if err != nil {
-		log.Println("image provider request: failed to create new image: %v", err)
+		log.Printf("image provider request: failed to create new image: %v", err)
 		return
 	}
 
 	// Run in a new goroutine.
 	go func() {
-		gerr := ip.callback(id, img)
-		_ = gerr // TODO:
+		var errStr string
+
+		// Call the callback.
+		err := ip.callback(imgResp, id, img)
+		if err != nil {
+			errStr = err.Error()
+		}
+
+		// Convert the go string to a C string.
+		errStrC := C.CString(errStr)
+		defer C.free(unsafe.Pointer(errStrC))
+
+		// Emit the finished signal on the image response.
+		// Must always be triggered!
+		C.image_response_emit_finished(imgResp, errStrC)
 	}()
 }
