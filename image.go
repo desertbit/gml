@@ -40,12 +40,17 @@ type Image struct {
 	img   C.gml_image
 }
 
-func NewImageFromData(data []byte) (img *Image, err error) {
-	imgC := C.gml_image_new_from_data((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)))
-	return newImage(imgC, true)
+func NewImage() (img *Image) {
+	return newImage(C.gml_image_new(), true)
 }
 
-func newImage(imgC C.gml_image, free bool) (img *Image, err error) {
+func newImage(imgC C.gml_image, free bool) (img *Image) {
+	// Check if something failed.
+	// This should never happen is signalizes a fatal error.
+	if imgC == nil {
+		panic(fmt.Errorf("gml image: C pointer is nil"))
+	}
+
 	img = &Image{
 		freed: !free,
 		img:   imgC,
@@ -56,12 +61,6 @@ func newImage(imgC C.gml_image, free bool) (img *Image, err error) {
 		runtime.SetFinalizer(img, freeImage)
 	}
 
-	// TODO:
-	// Check if something failed.
-	// This should never happen is signalizes a fatal error.
-	if img.img == nil {
-		err = fmt.Errorf("failed to create gml image: C pointer is nil")
-	}
 	return
 }
 
@@ -75,4 +74,10 @@ func freeImage(img *Image) {
 
 func (img *Image) Free() {
 	freeImage(img)
+}
+
+func (img *Image) LoadFromData(data []byte) (err error) {
+	// TODO:
+	_ = C.gml_image_load_from_data(img.img, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	return
 }

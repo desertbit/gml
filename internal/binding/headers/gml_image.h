@@ -34,8 +34,9 @@ extern "C" {
 
 typedef void* gml_image;
 
-gml_image gml_image_new_from_data(char* data, int size);
+gml_image gml_image_new();
 void      gml_image_free(gml_image img);
+int       gml_image_load_from_data(gml_image img, char* data, int size);
 
 #ifdef __cplusplus
 }
