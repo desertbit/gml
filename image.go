@@ -41,18 +41,27 @@ type Image struct {
 }
 
 func NewImageFromData(data []byte) (img *Image, err error) {
-	img = &Image{}
-	img.img = C.gml_image_new_from_data((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	imgC := C.gml_image_new_from_data((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	return newImage(imgC, true)
+}
 
-	// Always free the C++ value.
-	runtime.SetFinalizer(img, freeImage)
+func newImage(imgC C.gml_image, free bool) (img *Image, err error) {
+	img = &Image{
+		freed: !free,
+		img:   imgC,
+	}
 
+	// Always free the C++ value if defined so.
+	if free {
+		runtime.SetFinalizer(img, freeImage)
+	}
+
+	// TODO:
 	// Check if something failed.
 	// This should never happen is signalizes a fatal error.
 	if img.img == nil {
 		err = fmt.Errorf("failed to create gml image: C pointer is nil")
 	}
-
 	return
 }
 
