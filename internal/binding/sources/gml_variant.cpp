@@ -264,3 +264,18 @@ gml_variant gml_variant_new_from_string(char* s) {
         return NULL;
     }
 }
+
+gml_variant gml_variant_new_from_bytes(char* b, int size) {
+    try {
+        QVariant* v = new QVariant(QByteArray(b, size));
+        return (void*)v;
+    }
+    catch (std::exception& e) {
+        cerr << "gml: catched variant exception: " << e.what() << endl;
+        return NULL;
+    }
+    catch (...) {
+        cerr << "gml: catched variant exception" << endl;
+        return NULL;
+    }
+}

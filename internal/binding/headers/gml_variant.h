@@ -54,6 +54,7 @@ gml_variant gml_variant_new_from_uint64(u_int64_t i);
 
 gml_variant gml_variant_new_from_qchar (int32_t r);
 gml_variant gml_variant_new_from_string(char* s);
+gml_variant gml_variant_new_from_bytes (char* b, int size);
 
 #ifdef __cplusplus
 }

@@ -88,7 +88,11 @@ func ToVariant(i interface{}) (v *Variant) {
 	case string:
 		cstr := C.CString(d)
 		defer C.free(unsafe.Pointer(cstr))
-		v.ptr = C.gml_variant_new_from_string(cstr)
+		v.ptr = C.gml_variant_new_from_string(cstr) // Makes a deep copy.
+	case []byte:
+		v.ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&d[0])), C.int(len(d))) // Makes a deep copy.
+
+	// TODO: QStringList?
 
 	default:
 		v.ptr = C.gml_variant_new() // Always create a valid QVariant.
