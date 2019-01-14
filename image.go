@@ -47,7 +47,8 @@ func NewImageFromData(data []byte) (img *Image, err error) {
 
 func newImage(imgC C.gml_image, free bool) (img *Image, err error) {
 	img = &Image{
-		img: imgC,
+		freed: !free,
+		img:   imgC,
 	}
 
 	// Always free the C++ value if defined so.
