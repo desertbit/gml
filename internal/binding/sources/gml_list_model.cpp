@@ -80,20 +80,8 @@ GmlListModel::GmlListModel(
     goPtr(goPtr) {}
 
 int GmlListModel::rowCount(const QModelIndex& /*parent = QModelIndex()*/) const {
-    int rowCount = 0;
-
     // Call to go.
-    try {
-        rowCount = gml_list_model_row_count_cb(goPtr);
-    }
-    catch (std::exception& e) {
-        gml_error_log_exception("list model row count: " + string(e.what()));
-    }
-    catch (...) {
-        gml_error_log_exception("list model row count");
-    }
-
-    return rowCount;
+    return gml_list_model_row_count_cb(goPtr);
 }
 
 QVariant GmlListModel::data(const QModelIndex& index, int /*role = Qt::DisplayRole*/) const {
