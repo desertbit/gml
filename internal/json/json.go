@@ -25,6 +25,11 @@
  * SOFTWARE.
  */
 
+/*
+json-iterator (https://github.com/json-iterator/go) seems to be even faster
+than easyjson (https://github.com/mailru/easyjson) and does not require code
+generation, but is in fact a 100% drop-in replacement for encoding/json.
+*/
 package json
 
 import (
