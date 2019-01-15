@@ -45,6 +45,7 @@
 #include <QQuickTextureFactory>
 #include <QQuickAsyncImageProvider>
 #include <QQuickImageResponse>
+#include <QAbstractListModel>
 
 using std::string;
 using std::cout;

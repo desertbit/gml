@@ -44,7 +44,7 @@ void gml_app_run_main_cb_register(gml_app_run_main_cb_t cb) {
 gml_app gml_app_new(int argc, char** argv, gml_error err) {
     try {
         GmlApp* a = new GmlApp(argc, argv);
-        return (void*)a;
+        return (gml_app)a;
     }
     catch (std::exception& e) {
         gml_error_set_msg(err, e.what());

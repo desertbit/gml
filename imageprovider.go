@@ -29,7 +29,7 @@ package gml
 
 // #include <gml.h>
 //
-// extern void gml_image_provider_request_go_slot(void* goPtr, gml_image_response, char* id, gml_image img);
+// extern void gml_image_provider_request_go_slot(void* goPtr, gml_image_response img_resp, char* id, gml_image img);
 // static void gml_image_provider_init() {
 //      gml_image_provider_request_cb_register(gml_image_provider_request_go_slot);
 // }

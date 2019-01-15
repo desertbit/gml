@@ -27,17 +27,84 @@
 
 #include "gml_list_model.h"
 
+//########################//
+//### Static Variables ###//
+//########################//
+
+gml_list_model_row_count_cb_t gml_list_model_row_count_cb = NULL;
+gml_list_model_data_cb_t      gml_list_model_data_cb      = NULL;
+
 //#############//
 //### C API ###//
 //#############//
 
 gml_list_model gml_list_model_new(void* go_ptr) {
-
+    try {
+        GmlListModel* glm = new GmlListModel(go_ptr);
+        return (gml_list_model)glm;
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
 }
 
 void gml_list_model_free(gml_list_model lm) {
     if (lm == NULL) {
         return;
     }
+    GmlListModel* glm = (GmlListModel*)lm;
+    delete glm;
+    lm = NULL;
+}
 
+void gml_list_model_cb_register(
+    gml_list_model_row_count_cb_t rc_cb,
+    gml_list_model_data_cb_t      d_cb
+) {
+    gml_list_model_row_count_cb = rc_cb;
+    gml_list_model_data_cb      = d_cb;
+}
+
+//##########################//
+//### GmlListModel Class ###//
+//##########################//
+
+GmlListModel::GmlListModel(
+    void* goPtr
+) :
+    goPtr(goPtr) {}
+
+int GmlListModel::rowCount(const QModelIndex& /*parent = QModelIndex()*/) const {
+    int rowCount = 0;
+
+    // Call to go.
+    try {
+        rowCount = gml_list_model_row_count_cb(goPtr);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("list model row count: " + string(e.what()));
+    }
+    catch (...) {
+        gml_error_log_exception("list model row count");
+    }
+
+    return rowCount;
+}
+
+QVariant GmlListModel::data(const QModelIndex& index, int /*role = Qt::DisplayRole*/) const {
+    // Call to go.
+    gml_variant gmlV = gml_list_model_data_cb(goPtr, index.row());
+
+    // Create a copy.
+    QVariant v(*((QVariant*)gmlV));
+
+    // Delete, because Go is not responsible for memory anymore.
+    gml_variant_free(gmlV);
+
+    return v;
 }

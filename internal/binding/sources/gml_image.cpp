@@ -35,7 +35,7 @@
 gml_image gml_image_new() {
     try {
         QImage* qImg = new QImage();
-        return (void*)qImg;
+        return (gml_image)qImg;
     }
     catch (std::exception& e) {
         gml_error_log_exception(e.what());

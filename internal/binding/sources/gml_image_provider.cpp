@@ -53,7 +53,7 @@ gml_image_provider gml_image_provider_new(
             static_cast<Qt::AspectRatioMode>(aspect_ratio_mode),
             static_cast<Qt::TransformationMode>(transformation_mode)
         );
-        return (void*)gip;
+        return (gml_image_provider)gip;
     }
     catch (std::exception& e) {
         gml_error_log_exception(e.what());

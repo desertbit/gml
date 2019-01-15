@@ -46,9 +46,9 @@ func Save(v interface{}) unsafe.Pointer {
 	}
 
 	// Generate real fake C pointer.
-	// This pointer will not store any data, but will bi used for indexing purposes.
-	// Since Go doest allow to cast dangling pointer to unsafe.Pointer, we do rally allocate one byte.
-	// Why we need indexing, because Go doest allow C code to store pointers to Go data.
+	// This pointer will not store any data, but will be used for indexing purposes.
+	// Since Go does not allow to cast dangling pointer to unsafe.Pointer, we do really allocate one byte.
+	// Why we need indexing, because Go does not allow C code to store pointers to Go data.
 	ptr := C.malloc(C.size_t(1))
 	if ptr == nil {
 		panic("can't allocate 'cgo-pointer hack index pointer': ptr == nil")

@@ -44,6 +44,13 @@ extern "C" {
 typedef void* gml_image_provider;
 typedef void* gml_image_response;
 
+gml_image_provider gml_image_provider_new(
+    void* go_ptr,
+    int   aspect_ratio_mode,
+    int   transformation_mode
+);
+void gml_image_provider_free(gml_image_provider ip);
+
 typedef void (*gml_image_provider_request_cb_t)(
     void*              go_ptr,
     gml_image_response img_resp,
@@ -51,13 +58,6 @@ typedef void (*gml_image_provider_request_cb_t)(
     gml_image          img
 );
 void gml_image_provider_request_cb_register(gml_image_provider_request_cb_t cb);
-
-gml_image_provider gml_image_provider_new(
-    void* go_ptr,
-    int   aspect_ratio_mode,
-    int   transformation_mode
-);
-void gml_image_provider_free(gml_image_provider ip);
 
 void gml_image_response_emit_finished(
     gml_image_response img_resp,

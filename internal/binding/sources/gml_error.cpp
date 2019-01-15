@@ -34,7 +34,7 @@
 gml_error gml_error_new() {
     try {
         GmlError* gerr = new GmlError();
-        return (void*)gerr;
+        return (gml_error)gerr;
     }
     catch (std::exception& e) {
         gml_error_log_exception("new gml_error: " + string(e.what()));
