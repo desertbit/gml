@@ -70,11 +70,12 @@ type genSlot struct {
 }
 
 type genProperty struct {
-	Name    string
-	CPPName string
-	Type    string
-	CType   string
-	CPPType string
+	Name        string
+	PrivateName string
+	CPPName     string
+	Type        string
+	CType       string
+	CPPType     string
 }
 
 type genParam struct {

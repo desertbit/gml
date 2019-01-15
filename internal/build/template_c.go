@@ -80,8 +80,11 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
 
 {{- /* Properties */ -}}
 {{- range $prop := $struct.Properties }}
-typedef {{$prop.CType}} (*{{$struct.CBaseName}}_{{$prop.Name}}_read_cb_t)(void* go_ptr);
-void {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_read_cb_t read_cb);
+typedef void (*{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t)(void* go_ptr);
+void {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t cb);
+
+{{$prop.CType}} {{$struct.CBaseName}}_{{$prop.Name}}_get({{$struct.CBaseName}} c);
+void {{$struct.CBaseName}}_{{$prop.Name}}_set({{$struct.CBaseName}} c, {{$prop.CType}} v);
 {{end}}
 
 {{- /* End of struct loop */ -}}

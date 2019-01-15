@@ -315,12 +315,15 @@ func parseProperty(gs *genStruct, fset *token.FileSet, f *ast.Field, name string
 	}
 	typeStr := ident.Name
 
+	privName := utils.FirstCharToLower(name)
+
 	prop := &genProperty{
-		Name:    name,
-		CPPName: utils.FirstCharToLower(name),
-		Type:    typeStr,
-		CType:   goTypeToC(typeStr),
-		CPPType: goTypeToCPP(typeStr),
+		Name:        name,
+		PrivateName: privName,
+		CPPName:     privName,
+		Type:        typeStr,
+		CType:       goTypeToC(typeStr),
+		CPPType:     goTypeToCPP(typeStr),
 	}
 
 	gs.Properties = append(gs.Properties, prop)

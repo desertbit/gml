@@ -30,14 +30,19 @@ package build
 import "text/template"
 
 var tmplFuncMap = template.FuncMap{
-	"goParams":     tmplFuncGoParams,
-	"goCParams":    tmplFuncGoCParams,
-	"cParams":      tmplFuncCParams,
-	"cppParams":    tmplFuncCPPParams,
+	"goParams":  tmplFuncGoParams,
+	"goCParams": tmplFuncGoCParams,
+	"cParams":   tmplFuncCParams,
+	"cppParams": tmplFuncCPPParams,
+
 	"goToCParams":  tmplFuncGoToCParams,
 	"cToGoParams":  tmplFuncCToGoParams,
 	"cToCPPParams": tmplFuncCToCPPParams,
 	"cppToCParams": tmplFuncCPPToCParams,
+
+	"cToCPPValue": tmplFuncCToCPPValue,
+	"cppToCValue": tmplFuncCPPToCValue,
+	"goToCValue":  tmplFuncGoToCValue,
 }
 
 func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {
@@ -103,59 +108,8 @@ func tmplFuncCPPParams(params []*genParam, withType, skipFirstComma bool) (s str
 }
 
 func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (s string) {
-	var ident string
-	if len(optsIndent) > 0 {
-		for i := 0; i < optsIndent[0]; i++ {
-			ident += " "
-		}
-	}
-
-	addLine := func(l string) {
-		s += "\n" + ident + l
-	}
-
 	for _, p := range params {
-		cName := prefix + p.Name
-
-		switch p.Type {
-		case "bool":
-			addLine("var " + cName + " C.u_int8_t")
-			addLine("if " + p.Name + " { " + cName + " = 1 }")
-		case "byte":
-			addLine(cName + " := C.char(" + p.Name + ")")
-		case "string":
-			addLine(cName + " := C.CString(" + p.Name + ")")
-			addLine("defer C.free(unsafe.Pointer(" + cName + "))")
-		case "rune":
-			addLine(cName + " := C.int32_t(" + p.Name + ")")
-
-		case "float32":
-			addLine(cName + " := C.float(" + p.Name + ")")
-		case "float64":
-			addLine(cName + " := C.double(" + p.Name + ")")
-
-		case "int":
-			addLine(cName + " := C.int(" + p.Name + ")")
-		case "int8":
-			addLine(cName + " := C.int8_t(" + p.Name + ")")
-		case "uint8":
-			addLine(cName + " := C.u_int8_t(" + p.Name + ")")
-		case "int16":
-			addLine(cName + " := C.int16_t(" + p.Name + ")")
-		case "uint16":
-			addLine(cName + " := C.u_int16_t(" + p.Name + ")")
-		case "int32":
-			addLine(cName + " := C.int32_t(" + p.Name + ")")
-		case "uint32":
-			addLine(cName + " := C.u_int32_t(" + p.Name + ")")
-		case "int64":
-			addLine(cName + " := C.int64_t(" + p.Name + ")")
-		case "uint64":
-			addLine(cName + " := C.u_int64_t(" + p.Name + ")")
-
-		default:
-			addLine(cName + " := (C.gml_variant)(gml.ToVariant(" + p.Name + ").Pointer())")
-		}
+		s += tmplFuncGoToCValue(p.Type, p.Name, prefix+p.Name, optsIndent...)
 	}
 	return
 }
@@ -222,133 +176,151 @@ func tmplFuncCToCPPParams(params []*genParam, skipFirstComma bool) (s string) {
 		if !skipFirstComma || i != 0 {
 			s += ", "
 		}
-
-		switch p.Type {
-		case "bool":
-			s += "bool(" + p.Name + ")"
-		case "byte":
-			s += p.Name
-		case "string":
-			s += "QString(" + p.Name + ")"
-		case "rune":
-			s += "QChar(" + p.Name + ")"
-
-		case "float32":
-			s += p.Name
-		case "float64":
-			s += p.Name
-
-		case "int":
-			s += p.Name
-		case "int8":
-			s += p.Name
-		case "uint8":
-			s += p.Name
-		case "int16":
-			s += p.Name
-		case "uint16":
-			s += p.Name
-		case "int32":
-			s += p.Name
-		case "uint32":
-			s += p.Name
-		case "int64":
-			s += p.Name
-		case "uint64":
-			s += p.Name
-
-		default:
-			s += "QVariant(*((QVariant*)" + p.Name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
-		}
+		s += tmplFuncCToCPPValue(p.Type, p.Name)
 	}
 	return
 }
 
-/* TODO:
-func tmplFuncCToCPPValue( v string) (s string) {
-		switch p.Type {
-		case "bool":
-			s += "bool(" + p.Name + ")"
-		case "byte":
-			s += p.Name
-		case "string":
-			s += "QString(" + p.Name + ")"
-		case "rune":
-			s += "QChar(" + p.Name + ")"
+func tmplFuncCToCPPValue(goType, name string) (s string) {
+	switch goType {
+	case "bool":
+		return "bool(" + name + ")"
+	case "byte":
+		return name
+	case "string":
+		return "QString(" + name + ")"
+	case "rune":
+		return "QChar(" + name + ")"
 
-		case "float32":
-			s += p.Name
-		case "float64":
-			s += p.Name
+	case "float32":
+		return name
+	case "float64":
+		return name
 
-		case "int":
-			s += p.Name
-		case "int8":
-			s += p.Name
-		case "uint8":
-			s += p.Name
-		case "int16":
-			s += p.Name
-		case "uint16":
-			s += p.Name
-		case "int32":
-			s += p.Name
-		case "uint32":
-			s += p.Name
-		case "int64":
-			s += p.Name
-		case "uint64":
-			s += p.Name
+	case "int":
+		return name
+	case "int8":
+		return name
+	case "uint8":
+		return name
+	case "int16":
+		return name
+	case "uint16":
+		return name
+	case "int32":
+		return name
+	case "uint32":
+		return name
+	case "int64":
+		return name
+	case "uint64":
+		return name
 
-		default:
-			s += "QVariant(*((QVariant*)" + p.Name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
-		}
-	return
-}*/
+	default:
+		return "QVariant(*((QVariant*)" + name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
+	}
+}
 
 func tmplFuncCPPToCParams(params []*genParam, skipFirstComma bool) (s string) {
 	for i, p := range params {
 		if !skipFirstComma || i != 0 {
 			s += ", "
 		}
+		s += tmplFuncCPPToCValue(p.Type, p.Name)
+	}
+	return
+}
 
-		switch p.Type {
-		case "bool":
-			s += "u_int8_t(" + p.Name + ")"
-		case "byte":
-			s += "char(" + p.Name + ")"
-		case "string":
-			s += p.Name + ".toLocal8Bit().data()" // Be careful! Only as long as the object lives.
-		case "rune":
-			s += "int32_t(" + p.Name + ")"
+func tmplFuncCPPToCValue(goType, name string) (s string) {
+	switch goType {
+	case "bool":
+		return "u_int8_t(" + name + ")"
+	case "byte":
+		return "char(" + name + ")"
+	case "string":
+		return name + ".toLocal8Bit().data()" // Be careful! Only as long as the object lives.
+	case "rune":
+		return "int32_t(" + name + ")"
 
-		case "float32":
-			s += p.Name
-		case "float64":
-			s += p.Name
+	case "float32":
+		return name
+	case "float64":
+		return name
 
-		case "int":
-			s += p.Name
-		case "int8":
-			s += "int8_t(" + p.Name + ")"
-		case "uint8":
-			s += "u_int8_t(" + p.Name + ")"
-		case "int16":
-			s += "int16_t(" + p.Name + ")"
-		case "uint16":
-			s += "u_int16_t(" + p.Name + ")"
-		case "int32":
-			s += "int32_t(" + p.Name + ")"
-		case "uint32":
-			s += "u_int32_t(" + p.Name + ")"
-		case "int64":
-			s += "int64_t(" + p.Name + ")"
-		case "uint64":
-			s += "u_int64_t(" + p.Name + ")"
+	case "int":
+		return name
+	case "int8":
+		return "int8_t(" + name + ")"
+	case "uint8":
+		return "u_int8_t(" + name + ")"
+	case "int16":
+		return "int16_t(" + name + ")"
+	case "uint16":
+		return "u_int16_t(" + name + ")"
+	case "int32":
+		return "int32_t(" + name + ")"
+	case "uint32":
+		return "u_int32_t(" + name + ")"
+	case "int64":
+		return "int64_t(" + name + ")"
+	case "uint64":
+		return "u_int64_t(" + name + ")"
 
-		default:
-			s += "(gml_variant*)(new QVariant(" + p.Name + "))" // Hint: Always free the object.
+	default:
+		return "(gml_variant*)(new QVariant(" + name + "))" // Hint: Always free the object.
+	}
+}
+
+func tmplFuncGoToCValue(goType, goName, cName string, optsIndent ...int) (s string) {
+	var ident string
+	if len(optsIndent) > 0 {
+		for i := 0; i < optsIndent[0]; i++ {
+			ident += " "
 		}
+	}
+
+	addLine := func(l string) {
+		s += "\n" + ident + l
+	}
+
+	switch goType {
+	case "bool":
+		addLine("var " + cName + " C.u_int8_t")
+		addLine("if " + goName + " { " + cName + " = 1 }")
+	case "byte":
+		addLine(cName + " := C.char(" + goName + ")")
+	case "string":
+		addLine(cName + " := C.CString(" + goName + ")")
+		addLine("defer C.free(unsafe.Pointer(" + cName + "))")
+	case "rune":
+		addLine(cName + " := C.int32_t(" + goName + ")")
+
+	case "float32":
+		addLine(cName + " := C.float(" + goName + ")")
+	case "float64":
+		addLine(cName + " := C.double(" + goName + ")")
+
+	case "int":
+		addLine(cName + " := C.int(" + goName + ")")
+	case "int8":
+		addLine(cName + " := C.int8_t(" + goName + ")")
+	case "uint8":
+		addLine(cName + " := C.u_int8_t(" + goName + ")")
+	case "int16":
+		addLine(cName + " := C.int16_t(" + goName + ")")
+	case "uint16":
+		addLine(cName + " := C.u_int16_t(" + goName + ")")
+	case "int32":
+		addLine(cName + " := C.int32_t(" + goName + ")")
+	case "uint32":
+		addLine(cName + " := C.u_int32_t(" + goName + ")")
+	case "int64":
+		addLine(cName + " := C.int64_t(" + goName + ")")
+	case "uint64":
+		addLine(cName + " := C.u_int64_t(" + goName + ")")
+
+	default:
+		addLine(cName + " := (C.gml_variant)(gml.ToVariant(" + goName + ").Pointer())")
 	}
 	return
 }
