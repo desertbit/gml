@@ -264,6 +264,48 @@ func tmplFuncCToCPPParams(params []*genParam, skipFirstComma bool) (s string) {
 	return
 }
 
+/* TODO:
+func tmplFuncCToCPPValue( v string) (s string) {
+		switch p.Type {
+		case "bool":
+			s += "bool(" + p.Name + ")"
+		case "byte":
+			s += p.Name
+		case "string":
+			s += "QString(" + p.Name + ")"
+		case "rune":
+			s += "QChar(" + p.Name + ")"
+
+		case "float32":
+			s += p.Name
+		case "float64":
+			s += p.Name
+
+		case "int":
+			s += p.Name
+		case "int8":
+			s += p.Name
+		case "uint8":
+			s += p.Name
+		case "int16":
+			s += p.Name
+		case "uint16":
+			s += p.Name
+		case "int32":
+			s += p.Name
+		case "uint32":
+			s += p.Name
+		case "int64":
+			s += p.Name
+		case "uint64":
+			s += p.Name
+
+		default:
+			s += "QVariant(*((QVariant*)" + p.Name + "))" // Create a copy of the passed QVariant. The old QVariant will be deleted by Go.
+		}
+	return
+}*/
+
 func tmplFuncCPPToCParams(params []*genParam, skipFirstComma bool) (s string) {
 	for i, p := range params {
 		if !skipFirstComma || i != 0 {
