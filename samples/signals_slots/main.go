@@ -118,15 +118,11 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// TODO: set default value!
-	// TODO: Run on main thread!
 	go func() {
-		time.Sleep(2 * time.Second)
-		app.RunMain(func() {
-			fmt.Println("state", b.State())
-			b.StateSet(2)
-			fmt.Println("state", b.State())
-		})
+		time.Sleep(1 * time.Second)
+		fmt.Println("state", b.State())
+		b.StateSet(2)
+		fmt.Println("state", b.State())
 	}()
 
 	model := newModel()
