@@ -28,6 +28,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"time"
@@ -41,7 +42,7 @@ type A struct{} // TODO: test as property.
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state   int                                                                            `gml:"property"`
+		State   int                                                                            `gml:"property"`
 		clicked func(i int, v *gml.Variant)                                                    `gml:"slot"`
 		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
 	}
@@ -116,6 +117,13 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		fmt.Println("state", b.State())
+		b.StateSet(2)
+		fmt.Println("state", b.State())
+	}()
 
 	model := newModel()
 	err = app.SetContextProperty("modl", model)

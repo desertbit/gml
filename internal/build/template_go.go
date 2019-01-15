@@ -117,16 +117,21 @@ func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCPara
 {{range $prop := $struct.Properties }}
 func (_v *{{$struct.Name}}) {{$prop.Name}}Set(v {{$prop.Type}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
-    // TODO: defer free?
+    // TODO: defer free if variant?
     {{- goToCValue $prop.Type "v" "vc" 4}}
-    C.{{$struct.CBaseName}}_{{$prop.Name}}_set(_ptr, vc)
+    gml.CurrentApp().RunMain(func() {
+        C.{{$struct.CBaseName}}_{{$prop.Name}}_set(_ptr, vc)
+    })
 }
 
-func (_v *{{$struct.Name}}) {{$prop.Name}}() {{$prop.Type}} {
+func (_v *{{$struct.Name}}) {{$prop.Name}}() (r {{$prop.Type}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
-    v := C.{{$struct.CBaseName}}_{{$prop.Name}}_get(_ptr)
-    {{- cToGoValue $prop.Type "vg" "v" 4}}
-    return vg
+    gml.CurrentApp().RunMain(func() {
+        v := C.{{$struct.CBaseName}}_{{$prop.Name}}_get(_ptr)
+        {{- cToGoValue $prop.Type "vg" "v" 8}}
+        r = vg
+    })
+    return
 }
 
 //export {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed

@@ -135,6 +135,10 @@ void {{$struct.CBaseName}}_free({{$struct.CBaseName}} _v) {
 
 {{$struct.CPPBaseName}}::{{$struct.CPPBaseName}}(void* goPtr) :
     goPtr(goPtr)
+    {{- range $prop := $struct.Properties -}}
+    ,
+    {{$prop.CPPName}}({{defaultCPPValue $prop.Type}})
+    {{- end}}
 {
 	{{- /* Connect property changed signals */ -}}
 	{{- range $prop := $struct.Properties }}
@@ -186,6 +190,7 @@ void {{$struct.CBaseName}}_{{$prop.Name}}_set({{$struct.CBaseName}} c, {{$prop.C
 
 void {{$struct.CPPBaseName}}::{{$prop.CPPName}}Set({{$prop.CPPType}} v) {
 	{{$prop.CPPName}} = v;
+	emit {{$prop.CPPName}}Changed(v);
 }
 
 {{$prop.CPPType}} {{$struct.CPPBaseName}}::{{$prop.CPPName}}Get() {

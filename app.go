@@ -53,7 +53,12 @@ func init() {
 	C.gml_app_init()
 }
 
+// Global app variable.
 var app *App
+
+func CurrentApp() *App {
+	return app
+}
 
 type App struct {
 	freed    bool
