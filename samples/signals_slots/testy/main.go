@@ -36,10 +36,10 @@ import (
 type Bridge struct {
 	gml.Object
 	_ struct {
-		dooo func() `gml:"slot"`
+		connect func() `gml:"slot"`
 	}
 }
 
-func (b *Bridge) dooo() {
-	fmt.Println("do stuff")
+func (b *Bridge) connect() {
+	fmt.Println("connect called")
 }

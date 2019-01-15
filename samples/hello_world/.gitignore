@@ -1,5 +1,5 @@
 /build
 /hello_world
-/gml_gen.go
-/gml_gen_resources.qrc
+gml_gen*
 *.qrc
+

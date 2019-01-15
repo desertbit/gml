@@ -37,7 +37,7 @@ ApplicationWindow {
         font.pixelSize: 38
         onClicked: function() {
             console.log(bridge.clicked(1, "Hallo"))
-            b2.dooo()
+            b2.connect()
         }
     }
 
