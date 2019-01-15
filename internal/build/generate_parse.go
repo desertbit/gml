@@ -273,15 +273,27 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: must be a function"))
 	}
 
-	// TODO: Handle return types! Currently not supported.
+	// Handle return values.
+	var retType string
 	if ft.Results != nil && len(ft.Results.List) > 0 {
-		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: a return value is currently not supported"))
+		if len(ft.Results.List) > 1 {
+			return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: multiple return values are not supported"))
+		}
+		retType = getTypeString(ft.Results.List[0].Type)
 	}
 
 	slot := &genSlot{
-		Name:    name,
-		CPPName: utils.FirstCharToLower(name), // Qt slot names must be lower-case.
-		Params:  make([]*genParam, 0, len(ft.Params.List)),
+		Name:       name,
+		CPPName:    utils.FirstCharToLower(name), // Qt slot names must be lower-case.
+		Params:     make([]*genParam, 0, len(ft.Params.List)),
+		RetType:    retType,
+		CRetType:   goTypeToC(retType),
+		CPPRetType: goTypeToCPP(retType),
+	}
+
+	if slot.CRetType == "gml_variant" {
+		slot.CRetType = "void"
+		slot.CPPRetType = "void"
 	}
 
 	for _, p := range ft.Params.List {

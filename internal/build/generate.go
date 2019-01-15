@@ -64,9 +64,12 @@ type genSignal struct {
 }
 
 type genSlot struct {
-	Name    string
-	CPPName string
-	Params  []*genParam
+	Name       string
+	CPPName    string
+	Params     []*genParam
+	RetType    string
+	CRetType   string
+	CPPRetType string
 }
 
 type genProperty struct {
