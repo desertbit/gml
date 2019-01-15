@@ -74,7 +74,7 @@ void {{$struct.CBaseName}}_{{$signal.Name}}({{$struct.CBaseName}} _v{{cParams $s
 
 {{- /* Slots */ -}}
 {{- range $slot := $struct.Slots }}
-typedef void (*{{$struct.CBaseName}}_{{$slot.Name}}_cb_t)(void* _go_ptr{{cParams $slot.Params true false}});
+typedef {{$slot.CRetType}} (*{{$struct.CBaseName}}_{{$slot.Name}}_cb_t)(void* _go_ptr{{cParams $slot.Params true false}});
 void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$slot.Name}}_cb_t cb);
 {{end}}
 

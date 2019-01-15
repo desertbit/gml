@@ -167,8 +167,7 @@ void gml_list_model_end_remove_rows(gml_list_model lm) {
 
 GmlListModel::GmlListModel(
     void* goPtr
-) :
-    goPtr(goPtr) {}
+) : goPtr(goPtr) {}
 
 int GmlListModel::rowCount(const QModelIndex& /*parent = QModelIndex()*/) const {
     // Call to go.

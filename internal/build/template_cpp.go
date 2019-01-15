@@ -77,7 +77,7 @@ signals:
 {{/* Slots */ -}}
 public slots:
 {{- range $slot := $struct.Slots }}
-    void {{$slot.CPPName}}({{cppParams $slot.Params true true}});
+    {{$slot.CPPRetType}} {{$slot.CPPName}}({{cppParams $slot.Params true true}});
 {{- end}}
 
 {{/* Properties */ -}}
@@ -163,8 +163,13 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
     {{$struct.CBaseName}}_{{$slot.Name}}_cb = cb;
 }
 
-void {{$struct.CPPBaseName}}::{{$slot.CPPName}}({{cppParams $slot.Params true true}}) {
+{{$slot.CPPRetType}} {{$struct.CPPBaseName}}::{{$slot.CPPName}}({{cppParams $slot.Params true true}}) {
+    {{ if $slot.NoRet -}}
     {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr{{cppToCParams $slot.Params false}});
+    {{- else -}}
+    {{$slot.CRetType}} _r = {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr{{cppToCParams $slot.Params false}});
+    return {{cToCPPValue $slot.RetType "_r"}};
+    {{- end}}
 }
 {{end}}
 

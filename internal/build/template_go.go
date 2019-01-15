@@ -49,7 +49,7 @@ package {{.PackageName}}
 {{range $struct := .Structs}}
  
 {{- range $slot := $struct.Slots }}
-extern void {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(void* _goPtr{{cParams $slot.Params true false}});
+extern {{$slot.CRetType}} {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(void* _goPtr{{cParams $slot.Params true false}});
 {{end -}}
 {{- range $prop := $struct.Properties }}
 extern void {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed(void* _goPtr);
@@ -106,10 +106,17 @@ func (_v *{{$struct.Name}}) {{$signal.EmitName}}({{goParams $signal.Params true 
 {{- /* Slots */ -}}
 {{range $slot := $struct.Slots }}
 //export {{$struct.CBaseName}}_{{$slot.Name}}_go_slot
-func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCParams $slot.Params true false}}) {
+func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCParams $slot.Params true false}}) {{$slot.CGoRetType}} {
 	_v := (pointer.Restore(_goPtr)).(*{{$struct.Name}})
     {{- cToGoParams $slot.Params "_go_" 4}}
+    
+    {{ if $slot.NoRet -}}
     _v.{{$slot.Name}}({{goParams $slot.Params false true "_go_"}})
+    {{- else -}}
+    _r := _v.{{$slot.Name}}({{goParams $slot.Params false true "_go_"}})
+    {{- goToCValue $slot.RetType "_r" "_rc" 4}}
+    return _rc
+    {{- end}}
 }
 {{end}}
 

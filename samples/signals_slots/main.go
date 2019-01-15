@@ -44,13 +44,14 @@ type Bridge struct {
 	gml.Object
 	_ struct {
 		State   int                                                                            `gml:"property"`
-		clicked func(i int, v *gml.Variant)                                                    `gml:"slot"`
+		clicked func(i int, v *gml.Variant) int                                                `gml:"slot"`
 		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
 	}
 }
 
-func (b *Bridge) clicked(i int, v *gml.Variant) {
+func (b *Bridge) clicked(i int, v *gml.Variant) int {
 	b.emitGreet(1, 2, 3, "foo", '本', 4, true, []byte{1, 2, 3})
+	return 9
 }
 
 func (b *Bridge) stateChanged() {

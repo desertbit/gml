@@ -283,17 +283,21 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 	}
 
 	slot := &genSlot{
-		Name:       name,
-		CPPName:    utils.FirstCharToLower(name), // Qt slot names must be lower-case.
-		Params:     make([]*genParam, 0, len(ft.Params.List)),
-		RetType:    retType,
-		CRetType:   goTypeToC(retType),
-		CPPRetType: goTypeToCPP(retType),
+		Name:    name,
+		CPPName: utils.FirstCharToLower(name), // Qt slot names must be lower-case.
+		Params:  make([]*genParam, 0, len(ft.Params.List)),
+		NoRet:   (retType == ""),
+		RetType: retType,
 	}
 
-	if slot.CRetType == "gml_variant" {
+	// Set to void type if no return type is set.
+	if slot.NoRet {
 		slot.CRetType = "void"
 		slot.CPPRetType = "void"
+	} else {
+		slot.CRetType = goTypeToC(retType)
+		slot.CPPRetType = goTypeToCPP(retType)
+		slot.CGoRetType = goTypeToCGo(retType)
 	}
 
 	for _, p := range ft.Params.List {
