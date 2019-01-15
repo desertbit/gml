@@ -50,7 +50,7 @@ func NewListModel() *ListModel {
 	lm := &ListModel{}
 
 	lm.ptr = pointer.Save(lm)
-	lm.lm = C.gml_imageprovider_new(lm.ptr)
+	//lm.lm = C.gml_imageprovider_new(lm.ptr)
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(lm, freeListModel)
@@ -73,6 +73,6 @@ func freeListModel(lm *ListModel) {
 		return
 	}
 	lm.freed = true
-	C.gml_imageprovider_free(lm.lm)
+	//C.gml_imageprovider_free(lm.lm)
 	pointer.Unref(lm.ptr)
 }

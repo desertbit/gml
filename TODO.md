@@ -1,10 +1,11 @@
 # TODO
+- add grml
 - set core.QCoreApplication_SetApplicationName("App") core.QCoreApplication_SetOrganizationName("Desertbit")
 - slots return values
 - docker container
 - properties
 - models
 - dp for pixels
-- add catch exception also to free methods.
+- add catch exception also in free methods?
 - document, that slot names must not overlap with QObject names!
 - call qml slots directly from go?

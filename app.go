@@ -36,6 +36,7 @@ package gml
 import "C"
 import (
 	"errors"
+	"fmt"
 	"os"
 	"runtime"
 	"sync"
@@ -132,6 +133,8 @@ func (a *App) RunMain(f func()) {
 
 	ret := C.gml_app_run_main(a.app, ptr)
 	if ret != 0 {
+		// This is fatal!
+		panic(fmt.Errorf("failed to run on main thread"))
 		return
 	}
 

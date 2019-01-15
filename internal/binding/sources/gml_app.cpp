@@ -154,7 +154,7 @@ void gml_app_add_import_path(gml_app app, const char* path) {
     }
 }
 
-int gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip, gml_error err) {
+int gml_app_add_imageprovider(gml_app app, const char* id, gml_image_provider ip, gml_error err) {
     try {
         GmlApp* a = (GmlApp*)app;
         GmlImageProvider* gip = (GmlImageProvider*)ip;

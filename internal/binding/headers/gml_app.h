@@ -34,7 +34,7 @@ extern "C" {
 
 #include "gml_error.h"
 #include "gml_object.h"
-#include "gml_imageprovider.h"
+#include "gml_image_provider.h"
 
 typedef void* gml_app;
 
@@ -50,7 +50,7 @@ int     gml_app_run_main(gml_app app, void* go_ptr);
 int     gml_app_load     (gml_app app, const char* url, gml_error err);
 int     gml_app_load_data(gml_app app, const char* data, gml_error err);
 void    gml_app_add_import_path(gml_app app, const char* path);
-int     gml_app_add_imageprovider(gml_app app, const char* id, gml_imageprovider ip, gml_error err);
+int     gml_app_add_imageprovider(gml_app app, const char* id, gml_image_provider ip, gml_error err);
 
 int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj, gml_error err);
 

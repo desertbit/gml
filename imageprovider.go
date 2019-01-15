@@ -29,9 +29,9 @@ package gml
 
 // #include <gml.h>
 //
-// extern void gml_imageprovider_request_go_slot(void* goPtr, gml_image_response, char* id, gml_image img);
-// static void gml_imageprovider_init() {
-//      gml_imageprovider_request_cb_register(gml_imageprovider_request_go_slot);
+// extern void gml_image_provider_request_go_slot(void* goPtr, gml_image_response, char* id, gml_image img);
+// static void gml_image_provider_init() {
+//      gml_image_provider_request_cb_register(gml_image_provider_request_go_slot);
 // }
 import "C"
 import (
@@ -58,14 +58,14 @@ const (
 )
 
 func init() {
-	C.gml_imageprovider_init()
+	C.gml_image_provider_init()
 }
 
 type ImageProviderCallback func(id string, img *Image) error
 
 type ImageProvider struct {
 	freed bool
-	ip    C.gml_imageprovider
+	ip    C.gml_image_provider
 	ptr   unsafe.Pointer
 
 	callback ImageProviderCallback
@@ -80,7 +80,7 @@ func NewImageProvider(
 		callback: callback,
 	}
 	ip.ptr = pointer.Save(ip)
-	ip.ip = C.gml_imageprovider_new(ip.ptr, C.int(aspectRatioMode), C.int(transformMode))
+	ip.ip = C.gml_image_provider_new(ip.ptr, C.int(aspectRatioMode), C.int(transformMode))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(ip, freeImageProvider)
@@ -99,7 +99,7 @@ func freeImageProvider(ip *ImageProvider) {
 		return
 	}
 	ip.freed = true
-	C.gml_imageprovider_free(ip.ip)
+	C.gml_image_provider_free(ip.ip)
 	pointer.Unref(ip.ptr)
 }
 
@@ -111,8 +111,8 @@ func (ip *ImageProvider) Free() {
 //### Exported to C ###//
 //#####################//
 
-//export gml_imageprovider_request_go_slot
-func gml_imageprovider_request_go_slot(
+//export gml_image_provider_request_go_slot
+func gml_image_provider_request_go_slot(
 	goPtr unsafe.Pointer,
 	imgResp C.gml_image_response,
 	idc *C.char,
