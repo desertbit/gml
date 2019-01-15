@@ -171,11 +171,31 @@ int gml_app_add_imageprovider(gml_app app, const char* id, gml_image_provider ip
     }
 }
 
-int gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj, gml_error err) {
+int gml_app_set_root_context_property_object(gml_app app, const char* name, gml_object obj, gml_error err) {
     try {
         GmlApp* a  = (GmlApp*)app;
         QObject* o = (QObject*)obj;
         a->engine.rootContext()->setContextProperty(name, o);
+        return 0;
+    }
+    catch (std::exception& e) {
+        gml_error_set_msg(err, e.what());
+        return -1;
+    }
+    catch (...) {
+        gml_error_set_catched_exception_msg(err);
+        return -1;
+    }
+}
+
+int gml_app_set_root_context_property_variant(gml_app app, const char* name, gml_variant gml_v, gml_error err) {
+    try {
+        GmlApp* a  = (GmlApp*)app;
+
+        // Create a copy.
+        QVariant v(*((QVariant*)gml_v));
+
+        a->engine.rootContext()->setContextProperty(name, v);
         return 0;
     }
     catch (std::exception& e) {
@@ -211,6 +231,22 @@ void gml_app_set_organization_name(gml_app app, const char* name) {
     }
     catch (...) {
         gml_error_log_exception();
+    }
+}
+
+double gml_app_get_dp(gml_app app, gml_error err) {
+    try {
+        GmlApp* a  = (GmlApp*)app;
+        QScreen* qs = a->app.primaryScreen();
+        return qs->devicePixelRatio() * qs->logicalDotsPerInch();
+    }
+    catch (std::exception& e) {
+        gml_error_set_msg(err, e.what());
+        return -1;
+    }
+    catch (...) {
+        gml_error_set_catched_exception_msg(err);
+        return -1;
     }
 }
 

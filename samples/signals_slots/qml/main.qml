@@ -4,6 +4,9 @@ import QtQuick.Controls 2.4
 
 ApplicationWindow {
     id: window
+
+    function dp(pixel) { return pixel * dip }
+
     width: 1280
     height: 720
     visible: true
@@ -34,6 +37,10 @@ ApplicationWindow {
         sourceSize.width: 100
         sourceSize.height: 100
         fillMode: Image.PreserveAspectFit
+
+        Component.onCompleted: {
+            console.log("dp: " + dp(100))
+        }
     }
 
     ListView {

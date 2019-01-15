@@ -47,6 +47,7 @@
 #include <QQuickImageResponse>
 #include <QAbstractListModel>
 #include <QModelIndex>
+#include <QScreen>
 
 using std::string;
 using std::cout;

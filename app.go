@@ -103,6 +103,16 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 		return
 	}
 
+	// Get the density independent pixels and set them as context property.
+	dp, err := a.getDp()
+	if err != nil {
+		return
+	}
+	err = a.SetContextProperty("dip", dp)
+	if err != nil {
+		return
+	}
+
 	// Always free the C value.
 	runtime.SetFinalizer(a, freeApp)
 
@@ -122,6 +132,49 @@ func freeApp(a *App) {
 
 func (a *App) Free() {
 	freeApp(a)
+}
+
+func (a *App) getDp() (dp float64, err error) {
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	dp = float64(C.gml_app_get_dp(a.app, apiErr.err))
+	if dp == -1 {
+		err = apiErr.Err("failed to get dp")
+	}
+
+	// Magic.
+	dp /= 140.0
+	return
+	/*currentType := core.QOperatingSystemVersion_CurrentType()
+
+	dpi := screen.LogicalDotsPerInch() * screen.DevicePixelRatio()
+
+	if currentType == core.QOperatingSystemVersion__IOS {
+		dpi = screen.PhysicalDotsPerInch()
+	} else if currentType == core.QOperatingSystemVersion__Android {
+		var env androidextras.QAndroidJniEnvironment
+		activity := androidextras.QtAndroid_AndroidActivity()
+		res := activity.CallObjectMethod2("getResources", "()Landroid/content/res/Resources;")
+		if env.ExceptionCheck() {
+			env.ExceptionDescribe()
+			env.ExceptionClear()
+			err = errors.New("android environment exception")
+			return
+		}
+
+		metrics := res.CallObjectMethod2("getDisplayMetrics", "()Landroid/util/DisplayMetrics;")
+		if env.ExceptionCheck() {
+			env.ExceptionDescribe()
+			env.ExceptionClear()
+			err = errors.New("android environment exception; display metrics")
+			return
+		}
+		dpi = float64(metrics.GetFieldInt("densityDpi"))
+	}
+
+	dp = dpi / 140.0*/
+	return
 }
 
 // RunMain runs the function on the applications main thread.
@@ -244,12 +297,6 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 		return errors.New("property name is empty")
 	}
 
-	// Try to obtain the object from the interface.
-	obj, err := toObject(v)
-	if err != nil {
-		return
-	}
-
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 
@@ -257,18 +304,39 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	defer errorPool.Put(apiErr)
 
 	var ret C.int
-	a.RunMain(func() {
-		ret = C.gml_app_set_root_context_property(a.app, nameC, obj.cObject(), apiErr.err)
-	})
-	if ret != 0 {
-		return apiErr.Err("failed to set context property")
+
+	// Try to obtain the object from the interface.
+	obj, err := toObject(v)
+	if err == nil {
+		a.RunMain(func() {
+			ret = C.gml_app_set_root_context_property_object(a.app, nameC, obj.cObject(), apiErr.err)
+		})
+		if ret != 0 {
+			return apiErr.Err("failed to set context property object")
+		}
+
+		// Add to map to ensure it gets not garbage collected.
+		// It is in use by the C++ context;
+		a.mutex.Lock()
+		a.ctxPropMap[name] = v
+		a.mutex.Unlock()
+
+		return
 	}
 
-	// Add to map to ensure it gets not garbage collected.
-	// It is in use by the C++ context;
-	a.mutex.Lock()
-	a.ctxPropMap[name] = v
-	a.mutex.Unlock()
+	// Obtain a variant from the interface.
+	variant := ToVariant(v)
+	defer variant.Free()
+	a.RunMain(func() {
+		ret = C.gml_app_set_root_context_property_variant(a.app, nameC, variant.ptr, apiErr.err)
+	})
+	if ret != 0 {
+		return apiErr.Err("failed to set context property variant")
+	}
+
+	// It is not necessary to add the variant to the context property map.
+	// C++ has made a copy of our variant, therefore we can safely garbage
+	// collect it on the Go side.
 
 	return nil
 }
