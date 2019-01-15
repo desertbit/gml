@@ -36,7 +36,7 @@
 #include "gml_image.h"
 #include "gml_object.h"
 #include "gml_variant.h"
-#include "gml_imageprovider.h"
+#include "gml_image_provider.h"
 #include "gml_list_model.h"
 
 #endif
