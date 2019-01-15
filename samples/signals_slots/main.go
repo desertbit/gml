@@ -34,6 +34,7 @@ import (
 	"time"
 
 	"github.com/desertbit/gml"
+	"github.com/desertbit/gml/samples/signals_slots/api"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
 )
 
@@ -73,7 +74,11 @@ func (m *Model) RowCount() int {
 }
 
 func (m *Model) Data(row int) interface{} {
-	return "Test: " + m.data[row]
+	return api.Test{
+		Row:   row,
+		Text:  "text",
+		Hello: []int32{54, 64, 4, 54, 684, 68422, 685424, 846, 58, 68548, 6584, 68465, 658465, 6546, 654658},
+	}
 }
 
 func (m *Model) Append(s string) {
