@@ -70,7 +70,7 @@ import (
     "unsafe"
     "runtime"
 
-	"github.com/desertbit/gml"
+	{{if pkgHasProps .}}"github.com/desertbit/gml"{{end}} {{/* Only import if required */}}
 	"github.com/desertbit/gml/pointer"
 )
 

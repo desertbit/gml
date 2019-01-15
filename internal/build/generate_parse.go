@@ -41,7 +41,7 @@ import (
 )
 
 const (
-	cBasePrefix   = "gml_gen_"
+	cBasePrefix   = "gml_gen"
 	cppBasePrefix = "GMLGen"
 )
 
@@ -138,8 +138,8 @@ func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
 		structName := typeSpec.Name.Name
 		gs := &genStruct{
 			Name:        structName,
-			CBaseName:   cBasePrefix + structName,
-			CPPBaseName: cppBasePrefix + structName,
+			CBaseName:   cBasePrefix + "_" + utils.FirstCharToLower(gp.PackageName) + "_" + structName,
+			CPPBaseName: cppBasePrefix + utils.FirstCharToUpper(gp.PackageName) + structName,
 		}
 
 		for _, f := range structDecl.Fields.List {

@@ -35,7 +35,10 @@ ApplicationWindow {
         height: 50
         text: "Trigger Signal"
         font.pixelSize: 38
-        onClicked: console.log(bridge.clicked(1, "Hallo"))
+        onClicked: function() {
+            console.log(bridge.clicked(1, "Hallo"))
+            b2.dooo()
+        }
     }
 
     Image {

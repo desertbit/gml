@@ -30,6 +30,8 @@ package build
 import "text/template"
 
 var tmplFuncMap = template.FuncMap{
+	"pkgHasProps": tmplFuncPkgHasProps,
+
 	"goParams":  tmplFuncGoParams,
 	"goCParams": tmplFuncGoCParams,
 	"cParams":   tmplFuncCParams,
@@ -46,6 +48,15 @@ var tmplFuncMap = template.FuncMap{
 	"cToGoValue":  tmplFuncCToGoValue,
 
 	"defaultCPPValue": tmplFuncDefaultCPPValue,
+}
+
+func tmplFuncPkgHasProps(p *genPackage) bool {
+	for _, s := range p.Structs {
+		if len(s.Properties) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {

@@ -35,7 +35,7 @@ import (
 
 	"github.com/desertbit/gml"
 	"github.com/desertbit/gml/samples/signals_slots/api"
-	_ "github.com/desertbit/gml/samples/signals_slots/testy"
+	"github.com/desertbit/gml/samples/signals_slots/testy"
 )
 
 type A struct{} // TODO: test as property.
@@ -116,6 +116,13 @@ func main() {
 
 	app.SetApplicationName("AppName")
 	app.SetOrganizationName("Desertbit")
+
+	b2 := &testy.Bridge{}
+	b2.GMLInit()
+	err = app.SetContextProperty("b2", b2)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	b := &Bridge{}
 	b.GMLInit()
