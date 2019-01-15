@@ -78,6 +78,12 @@ typedef void (*{{$struct.CBaseName}}_{{$slot.Name}}_cb_t)(void* _go_ptr{{cParams
 void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$slot.Name}}_cb_t cb);
 {{end}}
 
+{{- /* Properties */ -}}
+{{- range $prop := $struct.Properties }}
+typedef {{$prop.CType}} (*{{$struct.CBaseName}}_{{$prop.Name}}_read_cb_t)(void* go_ptr);
+void {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_read_cb_t read_cb);
+{{end}}
+
 {{- /* End of struct loop */ -}}
 {{- end}}
 

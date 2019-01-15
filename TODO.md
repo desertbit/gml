@@ -1,5 +1,5 @@
 # TODO
-- add grml
+- support subpackages (code generation)
 - set core.QCoreApplication_SetApplicationName("App") core.QCoreApplication_SetOrganizationName("Desertbit")
 - slots return values
 - docker container

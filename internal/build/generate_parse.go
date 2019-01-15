@@ -160,7 +160,7 @@ func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
 		}
 
 		// Skip if the struct is empty.
-		if len(gs.Signals) > 0 || len(gs.Slots) > 0 { // TODO: add slots & properties
+		if len(gs.Signals) > 0 || len(gs.Slots) > 0 || len(gs.Properties) > 0 {
 			gp.Structs = append(gp.Structs, gs)
 		}
 	}
@@ -206,8 +206,10 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 				return
 			}
 		case "property":
-			// TODO:
-			return newParseError(fset, f.Pos(), fmt.Errorf("properties are currently not supported"))
+			err = parseProperty(gs, fset, f, name)
+			if err != nil {
+				return
+			}
 		default:
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid struct tag value: %v", tagValue))
 		}
@@ -271,7 +273,10 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: must be a function"))
 	}
 
-	// TODO: Handle return types!
+	// TODO: Handle return types! Currently not supported.
+	if ft.Results != nil && len(ft.Results.List) > 0 {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: a return value is currently not supported"))
+	}
 
 	slot := &genSlot{
 		Name:    name,
@@ -302,24 +307,43 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 	return
 }
 
+func parseProperty(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
+	// Must be a variable.
+	ident, ok := f.Type.(*ast.Ident)
+	if !ok {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid property: must be a variable"))
+	}
+	typeStr := ident.Name
+
+	prop := &genProperty{
+		Name:    name,
+		CPPName: utils.FirstCharToLower(name),
+		Type:    typeStr,
+		CType:   goTypeToC(typeStr),
+		CPPType: goTypeToCPP(typeStr),
+	}
+
+	gs.Properties = append(gs.Properties, prop)
+	return
+}
+
 // Returns "interface{}" if unknown.
 func getTypeString(t ast.Expr) string {
-	// Check if basic type.
+	// Check if variable.
 	ident, ok := t.(*ast.Ident)
 	if ok {
 		return ident.Name
 	}
 
-	// Not required, because QByteArray is not supported by QML.
-	// check if slice
-	/*a, ok := t.(*ast.ArrayType)
-	if ok && a.Len == nil {
+	// Check if slice.
+	a, ok := t.(*ast.ArrayType)
+	if ok && a.Len == nil { // a.Len == 0 if slice
 		// Check if basic type is within the slice.
 		ident, ok := a.Elt.(*ast.Ident)
 		if ok {
 			return "[]" + ident.Name
 		}
-	}*/
+	}
 
 	return "interface{}"
 }

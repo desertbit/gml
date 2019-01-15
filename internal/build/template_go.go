@@ -105,6 +105,11 @@ func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(goPtr unsafe.Pointer{{goCParam
 }
 {{end}}
 
+{{- /* Properties */}}
+{{range $prop := $struct.Properties }}
+
+{{end}}
+
 {{- /* End of struct loop */ -}}
 {{- end}}
 `
