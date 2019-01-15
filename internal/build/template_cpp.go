@@ -193,7 +193,7 @@ void {{$struct.CPPBaseName}}::{{$prop.CPPName}}Set({{$prop.CPPType}} v) {
 }
 
 void {{$struct.CPPBaseName}}::{{$prop.CPPName}}OnChanged() {
-	{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t(this->goPtr);
+	{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb(this->goPtr);
 }
 {{- end}}
 

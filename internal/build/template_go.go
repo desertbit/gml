@@ -119,7 +119,14 @@ func (_v *{{$struct.Name}}) {{$prop.Name}}Set(v {{$prop.Type}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
     // TODO: defer free?
     {{- goToCValue $prop.Type "v" "vc" 4}}
-    C.{{$struct.CBaseName}}_{{$prop.Name}}(_ptr, vc)
+    C.{{$struct.CBaseName}}_{{$prop.Name}}_set(_ptr, vc)
+}
+
+func (_v *{{$struct.Name}}) {{$prop.Name}}() {{$prop.Type}} {
+    _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
+    v := C.{{$struct.CBaseName}}_{{$prop.Name}}_get(_ptr)
+    {{- cToGoValue $prop.Type "vg" "v" 4}}
+    return vg
 }
 
 //export {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed

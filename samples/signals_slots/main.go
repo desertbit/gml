@@ -36,12 +36,12 @@ import (
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
 )
 
-type A struct{}
+type A struct{} // TODO: test as property.
 
 type Bridge struct {
 	gml.Object
 	_ struct {
-		state   A                                                                              `gml:"property"`
+		state   int                                                                            `gml:"property"`
 		clicked func(i int, v *gml.Variant)                                                    `gml:"slot"`
 		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
 	}
@@ -49,6 +49,10 @@ type Bridge struct {
 
 func (b *Bridge) clicked(i int, v *gml.Variant) {
 	b.emitGreet(1, 2, 3, "foo", '本', 4, true, []byte{1, 2, 3})
+}
+
+func (b *Bridge) stateChanged() {
+	println("state changed")
 }
 
 type Model struct{}
