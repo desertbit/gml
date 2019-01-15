@@ -333,6 +333,7 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	// Obtain a variant from the interface.
 	variant := ToVariant(v)
 	defer variant.Free()
+
 	a.RunMain(func() {
 		ret = C.gml_app_set_root_context_property_variant(a.app, nameC, variant.ptr, apiErr.err)
 	})
