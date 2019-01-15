@@ -53,6 +53,8 @@ void    gml_app_add_import_path(gml_app app, const char* path);
 int     gml_app_add_imageprovider(gml_app app, const char* id, gml_image_provider ip, gml_error err);
 
 int     gml_app_set_root_context_property(gml_app app, const char* name, gml_object obj, gml_error err);
+void    gml_app_set_application_name(gml_app app, const char* name);
+void    gml_app_set_organization_name(gml_app app, const char* name);
 
 #ifdef __cplusplus
 }

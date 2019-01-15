@@ -188,6 +188,32 @@ int gml_app_set_root_context_property(gml_app app, const char* name, gml_object 
     }
 }
 
+void gml_app_set_application_name(gml_app app, const char* name) {
+    try {
+        GmlApp* a = (GmlApp*)app;
+        a->app.setApplicationName(QString(name));
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_app_set_organization_name(gml_app app, const char* name) {
+    try {
+        GmlApp* a = (GmlApp*)app;
+        a->app.setOrganizationName(QString(name));
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 //#################//
 //### App Class ###//
 //#################//

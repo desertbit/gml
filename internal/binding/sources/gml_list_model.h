@@ -40,6 +40,17 @@ public:
     int rowCount(const QModelIndex& parent) const override;
     QVariant data(const QModelIndex& index, int role) const override;
 
+    void emitBeginInsertRows(int row, int count);
+    void emitEndInsertRows();
+
+    void emitBeginMoveRows(int row, int count, int dstRow);
+    void emitEndMoveRows();
+
+    void emitRowsDataChanged(int row, int count);
+
+    void emitBeginRemoveRows(int row, int count);
+    void emitEndRemoveRows();
+
 private:
     void* goPtr;
 };

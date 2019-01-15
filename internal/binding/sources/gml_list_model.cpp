@@ -70,6 +70,97 @@ void gml_list_model_cb_register(
     gml_list_model_data_cb      = d_cb;
 }
 
+void gml_list_model_begin_insert_rows(gml_list_model lm, int row, int count) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitBeginInsertRows(row, count);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_end_insert_rows(gml_list_model lm) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitEndInsertRows();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_begin_move_rows(gml_list_model lm, int row, int count, int dst_row) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitBeginMoveRows(row, count, dst_row);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_end_move_rows(gml_list_model lm) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitEndMoveRows();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_rows_data_changed(gml_list_model lm, int row, int count) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitRowsDataChanged(row, count);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_begin_remove_rows(gml_list_model lm, int row, int count) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitBeginRemoveRows(row, count);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_list_model_end_remove_rows(gml_list_model lm) {
+    try {
+        GmlListModel* glm = (GmlListModel*)lm;
+        glm->emitEndRemoveRows();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 //##########################//
 //### GmlListModel Class ###//
 //##########################//
@@ -95,4 +186,32 @@ QVariant GmlListModel::data(const QModelIndex& index, int /*role = Qt::DisplayRo
     gml_variant_free(gmlV);
 
     return v;
+}
+
+void GmlListModel::emitBeginInsertRows(int row, int count) {
+    emit beginInsertRows(QModelIndex(), row, row+count-1);
+}
+
+void GmlListModel::emitEndInsertRows() {
+    emit endInsertRows();
+}
+
+void GmlListModel::emitBeginMoveRows(int row, int count, int dstRow) {
+    emit beginMoveRows(QModelIndex(), row, row+count-1, QModelIndex(), dstRow);
+}
+
+void GmlListModel::emitEndMoveRows() {
+    emit endMoveRows();
+}
+
+void GmlListModel::emitRowsDataChanged(int row, int count) {
+    emit dataChanged(createIndex(row, 0), createIndex(row+count-1, 0));
+}
+
+void GmlListModel::emitBeginRemoveRows(int row, int count) {
+    emit beginRemoveRows(QModelIndex(), row, row+count-1);
+}
+
+void GmlListModel::emitEndRemoveRows() {
+    emit endRemoveRows();
 }
