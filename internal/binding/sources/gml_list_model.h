@@ -30,4 +30,14 @@
 
 #include "gml_includes.h"
 
+class GmlListModel : public QAbstractListModel {
+public:
+    GmlListModel(
+        void* goPtr
+    );
+
+private:
+    void* goPtr;
+};
+
 #endif

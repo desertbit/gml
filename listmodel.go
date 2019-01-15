@@ -40,6 +40,10 @@ import (
 type ListModelHandler interface {
 }
 
+// Ensure the ListModel type implements the ListModelHandler interface.
+
+var _ ListModelHandler = &ListModel{}
+
 type ListModel struct {
 	freed bool
 	lm    C.gml_list_model

@@ -32,12 +32,34 @@
 //#############//
 
 gml_list_model gml_list_model_new(void* go_ptr) {
-
+    try {
+        GmlListModel* glm = new GmlListModel(go_ptr);
+        return (gml_list_model)glm;
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
 }
 
 void gml_list_model_free(gml_list_model lm) {
     if (lm == NULL) {
         return;
     }
-
+    GmlListModel* glm = (GmlListModel*)lm;
+    delete glm;
+    lm = NULL;
 }
+
+//##########################//
+//### GmlListModel Class ###//
+//##########################//
+
+GmlListModel::GmlListModel(
+    void* goPtr
+) :
+    goPtr(goPtr) {}
