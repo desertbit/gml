@@ -14,6 +14,14 @@ ApplicationWindow {
         color: "red"
     }
 
+	Text {
+		text: bridge.state
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.verticalCenter: parent.verticalCenter
+		font.pointSize: 24
+		font.bold: true
+	}
+    
     Button {
         id: button
         anchors {

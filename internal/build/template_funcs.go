@@ -44,6 +44,8 @@ var tmplFuncMap = template.FuncMap{
 	"cppToCValue": tmplFuncCPPToCValue,
 	"goToCValue":  tmplFuncGoToCValue,
 	"cToGoValue":  tmplFuncCToGoValue,
+
+	"defaultCPPValue": tmplFuncDefaultCPPValue,
 }
 
 func tmplFuncGoParams(params []*genParam, withType, skipFirstComma bool, optPrefix ...string) (s string) {
@@ -327,4 +329,44 @@ func tmplFuncCToGoValue(goType, goName, cName string, optsIndent ...int) (s stri
 		addLine(goName + " := gml.NewVariantFromPointer((unsafe.Pointer)(" + cName + "))")
 	}
 	return
+}
+
+func tmplFuncDefaultCPPValue(goType string) (s string) {
+	switch goType {
+	case "bool":
+		return "false"
+	case "byte":
+		return "0"
+	case "string":
+		return "\"\""
+	case "rune":
+		return "''"
+
+	case "float32":
+		return "0"
+	case "float64":
+		return "0"
+
+	case "int":
+		return "0"
+	case "int8":
+		return "0"
+	case "uint8":
+		return "0"
+	case "int16":
+		return "0"
+	case "uint16":
+		return "0"
+	case "int32":
+		return "0"
+	case "uint32":
+		return "0"
+	case "int64":
+		return "0"
+	case "uint64":
+		return "0"
+
+	default:
+		return "QVariant()"
+	}
 }
