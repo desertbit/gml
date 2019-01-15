@@ -168,7 +168,9 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
     {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr{{cppToCParams $slot.Params false}});
     {{- else -}}
     {{$slot.CRetType}} _r = {{$struct.CBaseName}}_{{$slot.Name}}_cb(this->goPtr{{cppToCParams $slot.Params false}});
-    return {{cToCPPValue $slot.RetType "_r"}};
+    {{$slot.CPPRetType}} _r_cpp = {{cToCPPValue $slot.RetType "_r"}};
+    {{freeCValue $slot.RetType "_r"}}
+    return _r_cpp;
     {{- end}}
 }
 {{end}}

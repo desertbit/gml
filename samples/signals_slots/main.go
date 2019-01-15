@@ -43,9 +43,12 @@ type A struct{} // TODO: test as property.
 type Bridge struct {
 	gml.Object
 	_ struct {
+		//A       A                                                                              `gml:"property"`
 		State   int                                                                            `gml:"property"`
 		clicked func(i int, v *gml.Variant) int                                                `gml:"slot"`
 		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
+		//foo     func() A                                                                       `gml:"slot"`
+		//str     func() string                                                                  `gml:"slot"`
 	}
 }
 

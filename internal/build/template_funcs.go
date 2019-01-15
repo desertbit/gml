@@ -48,6 +48,7 @@ var tmplFuncMap = template.FuncMap{
 	"cToGoValue":  tmplFuncCToGoValue,
 
 	"defaultCPPValue": tmplFuncDefaultCPPValue,
+	"freeCValue":      tmplFuncFreeCValue,
 }
 
 func tmplFuncPkgHasProps(p *genPackage) bool {
@@ -121,9 +122,9 @@ func tmplFuncCPPParams(params []*genParam, withType, skipFirstComma bool) (s str
 	return
 }
 
-func tmplFuncGoToCParams(params []*genParam, prefix string, optsIndent ...int) (s string) {
+func tmplFuncGoToCParams(params []*genParam, prefix string, deferFree bool, optsIndent ...int) (s string) {
 	for _, p := range params {
-		s += tmplFuncGoToCValue(p.Type, p.Name, prefix+p.Name, optsIndent...)
+		s += tmplFuncGoToCValue(p.Type, p.Name, prefix+p.Name, deferFree, optsIndent...)
 	}
 	return
 }
@@ -235,7 +236,7 @@ func tmplFuncCPPToCValue(goType, name string) (s string) {
 	}
 }
 
-func tmplFuncGoToCValue(goType, goName, cName string, optsIndent ...int) (s string) {
+func tmplFuncGoToCValue(goType, goName, cName string, deferFree bool, optsIndent ...int) (s string) {
 	var ident string
 	if len(optsIndent) > 0 {
 		for i := 0; i < optsIndent[0]; i++ {
@@ -255,7 +256,9 @@ func tmplFuncGoToCValue(goType, goName, cName string, optsIndent ...int) (s stri
 		addLine(cName + " := C.char(" + goName + ")")
 	case "string":
 		addLine(cName + " := C.CString(" + goName + ")")
-		addLine("defer C.free(unsafe.Pointer(" + cName + "))")
+		if deferFree {
+			addLine("defer C.free(unsafe.Pointer(" + cName + "))")
+		}
 	case "rune":
 		addLine(cName + " := C.int32_t(" + goName + ")")
 
@@ -284,7 +287,14 @@ func tmplFuncGoToCValue(goType, goName, cName string, optsIndent ...int) (s stri
 		addLine(cName + " := C.u_int64_t(" + goName + ")")
 
 	default:
-		addLine(cName + " := (C.gml_variant)(gml.ToVariant(" + goName + ").Pointer())")
+		vName := "_v_" + goName
+		addLine(vName + " := gml.ToVariant(" + goName + ")")
+		if deferFree {
+			addLine("defer " + vName + ".Free()")
+		} else {
+			addLine(vName + ".Release()")
+		}
+		addLine(cName + " := (C.gml_variant)(" + vName + ".Pointer())")
 	}
 	return
 }
@@ -379,5 +389,45 @@ func tmplFuncDefaultCPPValue(goType string) (s string) {
 
 	default:
 		return "QVariant()"
+	}
+}
+
+func tmplFuncFreeCValue(goType, name string) (s string) {
+	switch goType {
+	case "bool":
+		return ""
+	case "byte":
+		return ""
+	case "string":
+		return "free(" + name + ");"
+	case "rune":
+		return ""
+
+	case "float32":
+		return ""
+	case "float64":
+		return ""
+
+	case "int":
+		return ""
+	case "int8":
+		return ""
+	case "uint8":
+		return ""
+	case "int16":
+		return ""
+	case "uint16":
+		return ""
+	case "int32":
+		return ""
+	case "uint32":
+		return ""
+	case "int64":
+		return ""
+	case "uint64":
+		return ""
+
+	default:
+		return "gml_variant_free(" + name + ");"
 	}
 }

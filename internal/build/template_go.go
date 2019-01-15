@@ -98,7 +98,7 @@ func (_v *{{$struct.Name}}) GMLInit() {
 {{range $signal := $struct.Signals }}
 func (_v *{{$struct.Name}}) {{$signal.EmitName}}({{goParams $signal.Params true true}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
-    {{- goToCParams $signal.Params "_c_" 4}}
+    {{- goToCParams $signal.Params "_c_" true 4}}
     C.{{$struct.CBaseName}}_{{$signal.Name}}(_ptr{{goParams $signal.Params false false "_c_"}})
 }
 {{end}}
@@ -114,7 +114,7 @@ func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCPara
     _v.{{$slot.Name}}({{goParams $slot.Params false true "_go_"}})
     {{- else -}}
     _r := _v.{{$slot.Name}}({{goParams $slot.Params false true "_go_"}})
-    {{- goToCValue $slot.RetType "_r" "_rc" 4}}
+    {{- goToCValue $slot.RetType "_r" "_rc" false 4}}
     return _rc
     {{- end}}
 }
@@ -124,8 +124,7 @@ func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCPara
 {{range $prop := $struct.Properties }}
 func (_v *{{$struct.Name}}) {{$prop.Name}}Set(v {{$prop.Type}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
-    // TODO: defer free if variant?
-    {{- goToCValue $prop.Type "v" "vc" 4}}
+    {{- goToCValue $prop.Type "v" "vc" true 4}}
     gml.CurrentApp().RunMain(func() {
         C.{{$struct.CBaseName}}_{{$prop.Name}}_set(_ptr, vc)
     })

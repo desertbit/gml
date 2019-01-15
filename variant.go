@@ -39,6 +39,12 @@ import (
 	"github.com/desertbit/gml/internal/json"
 )
 
+// TODO: think about adding a ticker routine calling gc...
+// Hint: consider freeing a variant if not required anymore
+//       to release memory as fast as possible.
+//       The go garbage collector does not know about the C++ data
+//       and might not trigger a gc cycle to release memory.
+//       Consider this if you store bigger data values into a variant.
 type Variant struct {
 	freed bool
 	ptr   C.gml_variant
@@ -95,8 +101,6 @@ func ToVariant(i interface{}) *Variant {
 		ptr = C.gml_variant_new_from_string(cstr) // Makes a deep copy.
 	case []byte:
 		ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&d[0])), C.int(len(d))) // Makes a deep copy.
-
-	// TODO: QStringList?
 
 	default:
 		//ptr = C.gml_variant_new() // Always create a valid QVariant. TODO: reflection.
