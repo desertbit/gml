@@ -32,10 +32,24 @@
 extern "C" {
 #endif
 
+#include "gml_variant.h"
+
 typedef void* gml_list_model;
 
 gml_list_model gml_list_model_new(void* go_ptr);
 void gml_list_model_free(gml_list_model lm);
+
+typedef int (*gml_list_model_row_count_cb_t)(
+    void* go_ptr
+);
+typedef gml_variant (*gml_list_model_data_cb_t)(
+    void* go_ptr,
+    int row
+);
+void gml_list_model_cb_register(
+    gml_list_model_row_count_cb_t rc_cb,
+    gml_list_model_data_cb_t      d_cb
+);
 
 #ifdef __cplusplus
 }

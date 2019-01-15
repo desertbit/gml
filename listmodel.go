@@ -28,6 +28,15 @@
 package gml
 
 // #include <gml.h>
+//
+// extern int gml_list_model_row_count_go_slot(void* goPtr);
+// extern gml_variant gml_list_model_data_go_slot(void* goPtr, int row);
+// static void gml_list_model_init() {
+//      gml_list_model_cb_register(
+//      	gml_list_model_row_count_go_slot,
+//			gml_list_model_data_go_slot
+//      );
+// }
 import "C"
 import (
 	"fmt"
@@ -38,23 +47,26 @@ import (
 )
 
 type ListModelHandler interface {
+	RowCount() int
+	Data(row int) interface{}
 }
 
-// Ensure the ListModel type implements the ListModelHandler interface.
-
-var _ ListModelHandler = &ListModel{}
-
 type ListModel struct {
+	*Object
+
 	freed bool
 	lm    C.gml_list_model
 	ptr   unsafe.Pointer
+
+	handler ListModelHandler
 }
 
-func NewListModel() *ListModel {
+func NewListModel(handler ListModelHandler) *ListModel {
 	lm := &ListModel{}
 
 	lm.ptr = pointer.Save(lm)
-	//lm.lm = C.gml_imageprovider_new(lm.ptr)
+	lm.lm = C.gml_list_model_new(lm.ptr)
+	lm.Object = newObject(unsafe.Pointer(lm.lm))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(lm, freeListModel)
@@ -77,6 +89,27 @@ func freeListModel(lm *ListModel) {
 		return
 	}
 	lm.freed = true
-	//C.gml_imageprovider_free(lm.lm)
+	C.gml_list_model_free(lm.lm)
 	pointer.Unref(lm.ptr)
+}
+
+//#####################//
+//### Exported to C ###//
+//#####################//
+
+//export gml_list_model_row_count_go_slot
+func gml_list_model_row_count_go_slot(goPtr unsafe.Pointer) C.int {
+	println("tdaaa")
+	return C.int((pointer.Restore(goPtr)).(*ListModel).handler.RowCount())
+}
+
+//export gml_list_model_data_go_slot
+func gml_list_model_data_go_slot(goPtr unsafe.Pointer, row C.int) C.gml_variant {
+	data := (pointer.Restore(goPtr)).(*ListModel).handler.Data(int(row))
+
+	v := ToVariant(data)
+	// Release, because C++ is handling memory.
+	v.Release()
+
+	return v.ptr
 }

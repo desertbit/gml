@@ -30,6 +30,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"strconv"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -48,6 +49,16 @@ func (b *Bridge) clicked(i int, v *gml.Variant) {
 	b.emitGreet(1, 2, 3, "foo", '本', 4, true, []byte{1, 2, 3})
 }
 
+type Model struct{}
+
+func (m *Model) RowCount() int {
+	return 5
+}
+
+func (m *Model) Data(row int) interface{} {
+	return "Test: " + strconv.Itoa(row)
+}
+
 func main() {
 	app, err := gml.NewApp()
 	if err != nil {
@@ -57,6 +68,12 @@ func main() {
 	b := &Bridge{}
 	b.GMLInit()
 	err = app.SetContextProperty("bridge", b)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	model := gml.NewListModel(&Model{})
+	err = app.SetContextProperty("modl", model)
 	if err != nil {
 		log.Fatalln(err)
 	}

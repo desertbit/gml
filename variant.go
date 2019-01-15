@@ -127,6 +127,10 @@ func (v *Variant) Free() {
 	freeVariant(v)
 }
 
+func (v *Variant) Release() {
+	v.freed = true
+}
+
 func (v *Variant) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(v.ptr)
 }

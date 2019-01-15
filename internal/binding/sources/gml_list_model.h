@@ -29,12 +29,16 @@
 #define GML_LIST_MODEL_H
 
 #include "gml_includes.h"
+#include "gml_error.h"
 
 class GmlListModel : public QAbstractListModel {
 public:
     GmlListModel(
         void* goPtr
     );
+
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
 private:
     void* goPtr;
