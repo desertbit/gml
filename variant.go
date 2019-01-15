@@ -33,7 +33,10 @@ import "C"
 import (
 	"fmt"
 	"runtime"
+	"time"
 	"unsafe"
+
+	"github.com/desertbit/gml/internal/json"
 )
 
 type Variant struct {
@@ -96,7 +99,11 @@ func ToVariant(i interface{}) *Variant {
 	// TODO: QStringList?
 
 	default:
-		ptr = C.gml_variant_new() // Always create a valid QVariant. TODO: reflection.
+		//ptr = C.gml_variant_new() // Always create a valid QVariant. TODO: reflection.
+		start := time.Now()
+		data, _ := json.Marshal(i)
+		println(time.Now().Sub(start).String())
+		ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data))) // Makes a deep copy.
 	}
 
 	return newVariant(ptr)

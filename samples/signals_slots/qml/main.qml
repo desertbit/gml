@@ -45,10 +45,6 @@ ApplicationWindow {
         sourceSize.width: 100
         sourceSize.height: 100
         fillMode: Image.PreserveAspectFit
-
-        Component.onCompleted: {
-            console.log("dp: " + dp(100))
-        }
     }
 
     ListView {
@@ -61,11 +57,18 @@ ApplicationWindow {
         width: 200
         model: modl
         delegate: Item {
+            property var item : JSON.parse(display)
+
             width: list.width
             height: 30
             Text {
                 color: "green"
-                text: display
+                text: item.text
+            }
+
+            Text {
+                color: "blue"
+                text: item.row
             }
         }
     }
