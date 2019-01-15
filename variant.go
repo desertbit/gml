@@ -33,7 +33,6 @@ import "C"
 import (
 	"fmt"
 	"runtime"
-	"time"
 	"unsafe"
 
 	"github.com/desertbit/gml/internal/json"
@@ -103,11 +102,14 @@ func ToVariant(i interface{}) *Variant {
 		ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&d[0])), C.int(len(d))) // Makes a deep copy.
 
 	default:
-		//ptr = C.gml_variant_new() // Always create a valid QVariant. TODO: reflection.
-		start := time.Now()
-		data, _ := json.Marshal(i)
-		println(time.Now().Sub(start).String())
-		ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data))) // Makes a deep copy.
+		data, err := json.Marshal(i)
+		if err != nil {
+			// Don't fail on an error.
+			fmt.Println("gml: ToVariant: failed to marshal value to json: ", err)
+			ptr = C.gml_variant_new() // Always create a valid QVariant.
+		} else {
+			ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data))) // Makes a deep copy.
+		}
 	}
 
 	return newVariant(ptr)
