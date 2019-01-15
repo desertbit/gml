@@ -30,7 +30,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"strconv"
+	"time"
 
 	"github.com/desertbit/gml"
 	_ "github.com/desertbit/gml/samples/signals_slots/testy"
@@ -51,14 +51,50 @@ func (b *Bridge) clicked(i int, v *gml.Variant) {
 	b.emitGreet(1, 2, 3, "foo", '本', 4, true, []byte{1, 2, 3})
 }
 
-type Model struct{}
+type Model struct {
+	*gml.ListModel
+
+	data []string
+}
+
+func newModel() *Model {
+	m := &Model{data: []string{"1", "2", "3"}}
+	m.ListModel = gml.NewListModel(m)
+	return m
+}
 
 func (m *Model) RowCount() int {
-	return 5
+	return len(m.data)
 }
 
 func (m *Model) Data(row int) interface{} {
-	return "Test: " + strconv.Itoa(row)
+	return "Test: " + m.data[row]
+}
+
+func (m *Model) Append(s string) {
+	m.ListModel.Insert(len(m.data), 1, func() {
+		m.data = append(m.data, s)
+	})
+}
+
+func (m *Model) MoveItem(srcRow, dstRow int) {
+	m.ListModel.Move(srcRow, 1, dstRow, func() {
+		m.data[srcRow], m.data[dstRow] = m.data[dstRow], m.data[srcRow]
+	})
+}
+
+func (m *Model) UpdateItem(row int, s string) {
+	m.ListModel.Reload(row, 1, func() {
+		m.data[row] = s
+	})
+}
+
+func (m *Model) Pop() (s string) {
+	m.ListModel.Remove(len(m.data)-1, 1, func() {
+		s = m.data[len(m.data)-1]
+		m.data = m.data[:len(m.data)-1]
+	})
+	return
 }
 
 func main() {
@@ -67,6 +103,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	app.SetApplicationName("AppName")
+	app.SetOrganizationName("Desertbit")
+
 	b := &Bridge{}
 	b.GMLInit()
 	err = app.SetContextProperty("bridge", b)
@@ -74,11 +113,24 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	model := gml.NewListModel(&Model{})
+	model := newModel()
 	err = app.SetContextProperty("modl", model)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	time.AfterFunc(time.Second, func() {
+		model.Append("hello")
+	})
+	time.AfterFunc(time.Second*2, func() {
+		println(model.Pop())
+	})
+	time.AfterFunc(time.Second*3, func() {
+		model.MoveItem(2, 0)
+	})
+	time.AfterFunc(time.Second*4, func() {
+		model.UpdateItem(1, "REVOLUTION")
+	})
 
 	err = app.AddImageProvider(
 		"imgprov",

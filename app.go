@@ -53,6 +53,8 @@ func init() {
 	C.gml_app_init()
 }
 
+var app *App
+
 type App struct {
 	freed    bool
 	threadID int
@@ -79,6 +81,11 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 	// Ensure the thread is locked within this context of app creation.
 	runtime.LockOSThread()
 
+	// Check if an App has already been created.
+	if app != nil {
+		panic("more than one application created")
+	}
+
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
@@ -98,6 +105,9 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 
 	// Always free the C value.
 	runtime.SetFinalizer(a, freeApp)
+
+	// Set our global private variable.
+	app = a
 	return
 }
 
@@ -261,6 +271,24 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	a.mutex.Unlock()
 
 	return nil
+}
+
+func (a *App) SetApplicationName(name string) {
+	nameC := C.CString(name)
+	defer C.free(unsafe.Pointer(nameC))
+
+	a.RunMain(func() {
+		C.gml_app_set_application_name(a.app, nameC)
+	})
+}
+
+func (a *App) SetOrganizationName(name string) {
+	nameC := C.CString(name)
+	defer C.free(unsafe.Pointer(nameC))
+
+	a.RunMain(func() {
+		C.gml_app_set_organization_name(a.app, nameC)
+	})
 }
 
 //#####################//

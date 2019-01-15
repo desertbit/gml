@@ -46,6 +46,10 @@ import (
 	"github.com/desertbit/gml/pointer"
 )
 
+func init() {
+	C.gml_list_model_init()
+}
+
 type ListModelHandler interface {
 	RowCount() int
 	Data(row int) interface{}
@@ -62,7 +66,7 @@ type ListModel struct {
 }
 
 func NewListModel(handler ListModelHandler) *ListModel {
-	lm := &ListModel{}
+	lm := &ListModel{handler: handler}
 
 	lm.ptr = pointer.Save(lm)
 	lm.lm = C.gml_list_model_new(lm.ptr)
@@ -93,13 +97,54 @@ func freeListModel(lm *ListModel) {
 	pointer.Unref(lm.ptr)
 }
 
+func (lm *ListModel) Insert(row, count int, dataModifier func()) {
+	app.RunMain(func() {
+		// Begin the insert operation.
+		C.gml_list_model_begin_insert_rows(lm.lm, C.int(row), C.int(count))
+		// Perform the data modification.
+		dataModifier()
+		// End the insert operation.
+		C.gml_list_model_end_insert_rows(lm.lm)
+	})
+}
+
+func (lm *ListModel) Move(row, count, dstRow int, dataModifier func()) {
+	app.RunMain(func() {
+		// Begin the move operation.
+		C.gml_list_model_begin_move_rows(lm.lm, C.int(row), C.int(count), C.int(dstRow))
+		// Perform the data modification.
+		dataModifier()
+		// End the move operation.
+		C.gml_list_model_end_move_rows(lm.lm)
+	})
+}
+
+func (lm *ListModel) Reload(row, count int, dataModifier func()) {
+	app.RunMain(func() {
+		// Perform the data modification.
+		dataModifier()
+		// Signal the changed operation.
+		C.gml_list_model_rows_data_changed(lm.lm, C.int(row), C.int(count))
+	})
+}
+
+func (lm *ListModel) Remove(row, count int, dataModifier func()) {
+	app.RunMain(func() {
+		// Begin the remove operation.
+		C.gml_list_model_begin_remove_rows(lm.lm, C.int(row), C.int(count))
+		// Perform the data modification.
+		dataModifier()
+		// End the remove operation.
+		C.gml_list_model_end_remove_rows(lm.lm)
+	})
+}
+
 //#####################//
 //### Exported to C ###//
 //#####################//
 
 //export gml_list_model_row_count_go_slot
 func gml_list_model_row_count_go_slot(goPtr unsafe.Pointer) C.int {
-	println("tdaaa")
 	return C.int((pointer.Restore(goPtr)).(*ListModel).handler.RowCount())
 }
 

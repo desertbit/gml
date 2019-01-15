@@ -37,6 +37,7 @@ ApplicationWindow {
     }
 
     ListView {
+        id: list
         anchors {
             right: parent.right
             top: parent.top
@@ -45,13 +46,13 @@ ApplicationWindow {
         width: 200
         model: modl
         delegate: Item {
+            width: list.width
+            height: 30
             Text {
-                color: "red"
+                color: "green"
                 text: display
             }
         }
-
-        Component.onCompleted: { console.log(modl) }
     }
 
     Connections {

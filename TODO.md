@@ -1,10 +1,8 @@
 # TODO
 - support subpackages (code generation)
-- set core.QCoreApplication_SetApplicationName("App") core.QCoreApplication_SetOrganizationName("Desertbit")
 - slots return values
 - docker container
 - properties
-- models
 - dp for pixels
 - add catch exception also in free methods?
 - document, that slot names must not overlap with QObject names!

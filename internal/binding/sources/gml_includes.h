@@ -46,6 +46,7 @@
 #include <QQuickAsyncImageProvider>
 #include <QQuickImageResponse>
 #include <QAbstractListModel>
+#include <QModelIndex>
 
 using std::string;
 using std::cout;
