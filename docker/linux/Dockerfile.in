@@ -1,0 +1,5 @@
+FROM therecipe/qt:linux
+
+ENV QT_ROOT="/opt/Qt/5.12.0/gcc_64"
+
+#import common.base

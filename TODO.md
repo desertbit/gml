@@ -1,5 +1,5 @@
 # TODO
-- check with vargant if any memory is lost
+- check with vargrant if any memory is lost
 - variant json
 - docker container
 - recheck c code for memory bugs. (variants)

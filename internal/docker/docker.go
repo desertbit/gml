@@ -25,46 +25,71 @@
  * SOFTWARE.
  */
 
-package main
+package docker
 
 import (
-	"fmt"
 	"os"
+	"os/exec"
+	"os/user"
+	"path/filepath"
 
 	"github.com/desertbit/gml/internal/utils"
-	"github.com/desertbit/grumble"
-	"github.com/fatih/color"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
-var App = grumble.New(&grumble.Config{
-	Name:        "gml",
-	Description: "go qml tool",
-	PromptColor: color.New(color.FgGreen, color.Bold),
+const (
+	containerPrefix = "desertbit/gml:"
+)
 
-	Flags: func(f *grumble.Flags) {
-		f.Bool("v", "verbose", false, "verbose mode")
-	},
-})
-
-func init() {
-	App.SetPrintASCIILogo(func(a *grumble.App) {
-		fmt.Println(`  ___  __  __  __   `)
-		fmt.Println(` / __)(  \/  )(  )  `)
-		fmt.Println(`( (_-. )    (  )(__ `)
-		fmt.Println(` \___/(_/\/\_)(____)`)
-		fmt.Println()
-	})
-
-	App.OnInit(func(a *grumble.App, f grumble.FlagMap) error {
-		utils.Verbose = f.Bool("verbose")
-		return nil
-	})
-}
-
-func main() {
-	err := App.Run()
+func Build(
+	container string,
+	sourceDir, buildDir, destDir string,
+	clean, noStrip bool,
+) (err error) {
+	ctx, err := newContext(container, sourceDir, buildDir, destDir)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return
 	}
+
+	utils.PrintColorln("> docker build: " + container)
+
+	user, err := user.Current()
+	if err != nil {
+		return
+	}
+
+	// Only add the -t docker flag if this is a TTY.
+	var ttyArg string
+	if terminal.IsTerminal(int(os.Stdout.Fd())) {
+		ttyArg = "t"
+	}
+
+	args := []string{
+		"run", "--rm", "-i" + ttyArg,
+		"-e", "UID=" + user.Uid,
+		"-e", "GID=" + user.Gid,
+		"-v", ctx.GoPath + "/src:/work/src",
+		"-v", ctx.BuildDir + ":/work/pkg",
+		"-v", ctx.DestDir + ":/work/bin",
+		containerPrefix + ctx.Container,
+		"gml", "build",
+		"--source-dir", filepath.Join("/work", ctx.ImportPath),
+		"--build-dir", "/work/pkg",
+		"--dest-dir", "/work/bin",
+	}
+
+	if clean {
+		args = append(args, "--clean")
+	}
+	if noStrip {
+		args = append(args, "--no-strip")
+	}
+
+	c := exec.Command("docker", args...)
+	c.Dir = ctx.BuildDir
+	c.Stderr = os.Stderr
+	c.Stdout = os.Stdout
+	c.Stdin = os.Stdin
+
+	return c.Run()
 }

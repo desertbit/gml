@@ -1,0 +1,5 @@
+FROM therecipe/qt:windows_64_static
+
+ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5"
+
+#import common.base

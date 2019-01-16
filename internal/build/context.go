@@ -75,15 +75,15 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 	// Get absolute paths.
 	sourceDir, err = filepath.Abs(sourceDir)
 	if err != nil {
-		return nil, err
+		return
 	}
 	buildDir, err = filepath.Abs(buildDir)
 	if err != nil {
-		return nil, err
+		return
 	}
 	destDir, err = filepath.Abs(destDir)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	cGenDir := filepath.Join(buildDir, cGenDirName)
@@ -168,7 +168,7 @@ func (c *Context) cleanDirs() (err error) {
 		if err != nil {
 			return err
 		} else if e {
-			err = os.RemoveAll(c.BuildDir)
+			err = os.RemoveAll(d)
 			if err != nil {
 				return err
 			}
@@ -189,7 +189,7 @@ func (c *Context) cleanupDirs() (err error) {
 		if err != nil {
 			return err
 		} else if e {
-			err = os.RemoveAll(c.BuildDir)
+			err = os.RemoveAll(d)
 			if err != nil {
 				return err
 			}

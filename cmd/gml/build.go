@@ -28,12 +28,15 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/desertbit/gml/internal/build"
+	"github.com/desertbit/gml/internal/docker"
 	"github.com/desertbit/grumble"
 )
 
 func init() {
-	App.AddCommand(&grumble.Command{
+	BuildCmd := &grumble.Command{
 		Name:      "build",
 		Help:      "build a gml project",
 		AllowArgs: false,
@@ -45,11 +48,34 @@ func init() {
 			f.String("d", "dest-dir", "./", "destination directorty")
 		},
 		Run: runBuild,
+	}
+	App.AddCommand(BuildCmd)
+
+	BuildCmd.AddCommand(&grumble.Command{
+		Name:      "docker",
+		Help:      "build a gml project with docker",
+		AllowArgs: true,
+		Run:       runBuildDocker,
 	})
 }
 
 func runBuild(c *grumble.Context) error {
 	return build.Build(
+		c.Flags.String("source-dir"),
+		c.Flags.String("build-dir"),
+		c.Flags.String("dest-dir"),
+		c.Flags.Bool("clean"),
+		c.Flags.Bool("no-strip"),
+	)
+}
+
+func runBuildDocker(c *grumble.Context) error {
+	if len(c.Args) != 1 {
+		return fmt.Errorf("invalid args: pass a docker container")
+	}
+
+	return docker.Build(
+		c.Args[0],
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
