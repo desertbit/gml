@@ -31,6 +31,7 @@ package gml
 import "C"
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"unsafe"
@@ -93,7 +94,7 @@ func ToVariant(i interface{}) *Variant {
 		ptr = C.gml_variant_new_from_uint64(C.u_int64_t(d))
 
 	case Char:
-		ptr = C.gml_variant_new_from_qchar(C.int32_t(d))
+		ptr = C.gml_variant_new_from_rune(C.int32_t(d))
 	case string:
 		cstr := C.CString(d)
 		defer C.free(unsafe.Pointer(cstr))
@@ -146,4 +147,57 @@ func (v *Variant) Release() {
 
 func (v *Variant) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(v.ptr)
+}
+
+// Pass a pointer.
+func (v *Variant) Decode(i interface{}) (err error) {
+	if i == nil {
+		return errors.New("decode input is nil")
+	}
+
+	switch d := i.(type) {
+	case *bool:
+		*d = (C.gml_variant_to_bool(v.ptr) != 0)
+
+	case *float32:
+		*d = float32(C.gml_variant_to_float(v.ptr))
+	case *float64:
+		*d = float64(C.gml_variant_to_double(v.ptr))
+
+	case *int:
+		*d = int(C.gml_variant_to_int(v.ptr))
+	case *int8:
+		*d = int8(C.gml_variant_to_int8(v.ptr))
+	case *uint8: // Alias for byte
+		*d = uint8(C.gml_variant_to_uint8(v.ptr))
+	case *int16:
+		*d = int16(C.gml_variant_to_int16(v.ptr))
+	case *uint16:
+		*d = uint16(C.gml_variant_to_uint16(v.ptr))
+	case *int32:
+		*d = int32(C.gml_variant_to_int32(v.ptr))
+	case *uint32:
+		*d = uint32(C.gml_variant_to_uint32(v.ptr))
+	case *int64:
+		*d = int64(C.gml_variant_to_int64(v.ptr))
+	case *uint64:
+		*d = uint64(C.gml_variant_to_uint64(v.ptr))
+
+	case *Char:
+		*d = Char(C.gml_variant_to_rune(v.ptr))
+	case *string:
+	// TODO:
+	case *[]byte:
+	// TODO:
+
+	default:
+		// TODO:
+		var data []byte
+		err = json.Unmarshal(data, i)
+		if err != nil {
+			return fmt.Errorf("failed to decode variant: %v", err)
+		}
+	}
+
+	return
 }

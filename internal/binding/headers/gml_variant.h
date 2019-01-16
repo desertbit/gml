@@ -32,10 +32,16 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 typedef void* gml_variant;
 
-void        gml_variant_free(gml_variant v);
 gml_variant gml_variant_new();
+void        gml_variant_free(gml_variant v);
+
+// #############################//
+// ### To variant from value ###//
+// #############################//
 
 gml_variant gml_variant_new_from_bool(u_int8_t b);
 
@@ -52,9 +58,32 @@ gml_variant gml_variant_new_from_uint32(u_int32_t i);
 gml_variant gml_variant_new_from_int64 (int64_t i);
 gml_variant gml_variant_new_from_uint64(u_int64_t i);
 
-gml_variant gml_variant_new_from_qchar (int32_t r);
+gml_variant gml_variant_new_from_rune  (int32_t r);
 gml_variant gml_variant_new_from_string(char* s);
 gml_variant gml_variant_new_from_bytes (char* b, int size);
+
+// ########################//
+// ### Variant to value ###//
+// ########################//
+
+u_int8_t gml_variant_to_bool(gml_variant v);
+
+float     gml_variant_to_float (gml_variant v);
+double    gml_variant_to_double(gml_variant v);
+
+int       gml_variant_to_int   (gml_variant v);
+int8_t    gml_variant_to_int8  (gml_variant v);
+u_int8_t  gml_variant_to_uint8 (gml_variant v);
+int16_t   gml_variant_to_int16 (gml_variant v);
+u_int16_t gml_variant_to_uint16(gml_variant v);
+int32_t   gml_variant_to_int32 (gml_variant v);
+u_int32_t gml_variant_to_uint32(gml_variant v);
+int64_t   gml_variant_to_int64 (gml_variant v);
+u_int64_t gml_variant_to_uint64(gml_variant v);
+
+int32_t   gml_variant_to_rune  (gml_variant v);
+char*     gml_variant_to_string(gml_variant v);
+char*     gml_variant_to_bytes (gml_variant v, int* size);
 
 #ifdef __cplusplus
 }

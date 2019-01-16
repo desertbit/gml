@@ -32,15 +32,6 @@
 //### C API ###//
 //#############//
 
-void gml_variant_free(gml_variant vv) {
-    if (vv == NULL) {
-        return;
-    }
-    QVariant* v = (QVariant*)vv;
-    delete v;
-    vv = NULL;
-}
-
 gml_variant gml_variant_new() {
     try {
         QVariant* v = new QVariant();
@@ -55,6 +46,19 @@ gml_variant gml_variant_new() {
         return NULL;
     }
 }
+
+void gml_variant_free(gml_variant vv) {
+    if (vv == NULL) {
+        return;
+    }
+    QVariant* v = (QVariant*)vv;
+    delete v;
+    vv = NULL;
+}
+
+// #############################//
+// ### To variant from value ###//
+// #############################//
 
 gml_variant gml_variant_new_from_bool(u_int8_t b) {
     try {
@@ -236,7 +240,7 @@ gml_variant gml_variant_new_from_uint64(u_int64_t i) {
     }
 }
 
-gml_variant gml_variant_new_from_qchar(int32_t r) {
+gml_variant gml_variant_new_from_rune(int32_t r) {
     try {
         QVariant* v = new QVariant(QChar(r));
         return (gml_variant)v;
@@ -278,5 +282,235 @@ gml_variant gml_variant_new_from_bytes(char* b, int size) {
     catch (...) {
         gml_error_log_exception("variant");
         return NULL;
+    }
+}
+
+// ########################//
+// ### Variant to value ###//
+// ########################//
+
+u_int8_t gml_variant_to_bool(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (u_int8_t)(qv->toBool());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+float gml_variant_to_float(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return qv->toFloat();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+double gml_variant_to_double(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return qv->toDouble();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int gml_variant_to_int(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return qv->toInt();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int8_t gml_variant_to_int8(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (int8_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+u_int8_t gml_variant_to_uint8(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (u_int8_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int16_t gml_variant_to_int16(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (int16_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+u_int16_t gml_variant_to_uint16(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (u_int16_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int32_t gml_variant_to_int32(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (int32_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+u_int32_t gml_variant_to_uint32(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (u_int32_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int64_t gml_variant_to_int64(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (int64_t)(qv->toLongLong());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+u_int64_t gml_variant_to_uint64(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (u_int64_t)(qv->toLongLong());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+int32_t gml_variant_to_rune(gml_variant v) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return (int32_t)(qv->toInt());
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+// TTODO: Return an error? 
+char* gml_variant_to_string(gml_variant v)  {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return qv->toString().toLocal8Bit().data(); // TODO: does not work! user everywhere constDatat because it is faster
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
+    }
+}
+
+char* gml_variant_to_bytes(gml_variant v, int* size) {
+    try {
+        QVariant* qv = (QVariant*)v;
+        return NULL; //qv->toByteArray(); // TODO: also set size
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception("variant: " + string(e.what()));
+        return 0;
+    }
+    catch (...) {
+        gml_error_log_exception("variant");
+        return 0;
     }
 }
