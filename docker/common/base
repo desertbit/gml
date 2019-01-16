@@ -34,7 +34,7 @@ RUN mkdir /work
 VOLUME /work
 WORKDIR /work
 
-ADD entrypoint.sh /entrypoint
+ADD common/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["gml"]
