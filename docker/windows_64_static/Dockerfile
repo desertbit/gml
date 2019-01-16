@@ -1,16 +1,18 @@
 # This file is auto-generated.
 FROM therecipe/qt:windows_64_static
 
-ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5"
+ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5" \
+    GOOS=windows \
+    GOARCH=amd64
 
 # Install dependencies.
 RUN apt-get -y update && \
     apt-get -y install sudo git wget nano make && \
     apt-get -y clean
 
-ENV PATH="/$QT_ROOT/bin:$PATH"
-ENV PKG_CONFIG_PATH="$QT_ROOT/lib/pkgconfig:$PKG_CONFIG_PATH"
-ENV LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH"
+ENV PATH="/$QT_ROOT/bin:$PATH" \
+    PKG_CONFIG_PATH="$QT_ROOT/lib/pkgconfig:$PKG_CONFIG_PATH" \
+    LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH"
 
 # Install the Go compiler. We can't assure, that the go compiler is up-to-date from the base package.
 RUN export GO_VERSION="1.11.4" && \
@@ -31,6 +33,8 @@ ENV GOROOT=/usr/local/go \
 # Install the gml tool.
 RUN mkdir -p /tmp/go && cd /tmp/go && \
     export GOPATH="/tmp/go" && \
+    export GOOS=linux && \
+    export GOARCH=amd64 && \
     go get github.com/desertbit/gml/cmd/gml && \
     mv -f /tmp/go/bin/gml /bin/gml && \
     rm -rf /tmp/go

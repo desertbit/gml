@@ -1,5 +1,7 @@
 FROM therecipe/qt:windows_64_static
 
-ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5"
+ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5" \
+    GOOS=windows \
+    GOARCH=amd64
 
 #import common.base
