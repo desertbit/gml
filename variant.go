@@ -93,7 +93,7 @@ func ToVariant(i interface{}) *Variant {
 	case uint64:
 		ptr = C.gml_variant_new_from_uint64(C.u_int64_t(d))
 
-	case Char:
+	case Char: // TODO: remove?
 		ptr = C.gml_variant_new_from_rune(C.int32_t(d))
 	case string:
 		cstr := C.CString(d)
@@ -155,6 +155,7 @@ func (v *Variant) Decode(i interface{}) (err error) {
 		return errors.New("decode input is nil")
 	}
 
+	// TODO: create tests?
 	switch d := i.(type) {
 	case *bool:
 		*d = (C.gml_variant_to_bool(v.ptr) != 0)
@@ -183,7 +184,7 @@ func (v *Variant) Decode(i interface{}) (err error) {
 	case *uint64:
 		*d = uint64(C.gml_variant_to_uint64(v.ptr))
 
-	case *Char:
+	case *Char: // TODO: remove?
 		*d = Char(C.gml_variant_to_rune(v.ptr))
 	case *string:
 	// TODO:
