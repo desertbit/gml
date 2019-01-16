@@ -38,7 +38,6 @@ import (
 )
 
 type Context struct {
-	Container string
 	SourceDir string
 	BuildDir  string
 	DestDir   string
@@ -47,7 +46,7 @@ type Context struct {
 	ImportPath string
 }
 
-func newContext(container, sourceDir, buildDir, destDir string) (ctx *Context, err error) {
+func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	// Get absolute paths.
 	sourceDir, err = filepath.Abs(sourceDir)
 	if err != nil {
@@ -80,20 +79,11 @@ func newContext(container, sourceDir, buildDir, destDir string) (ctx *Context, e
 	importPath := filepath.Clean("/" + strings.TrimPrefix(sourceDir, goPath))
 
 	ctx = &Context{
-		Container:  container,
 		SourceDir:  sourceDir,
 		BuildDir:   buildDir,
 		DestDir:    destDir,
 		GoPath:     goPath,
 		ImportPath: importPath,
-	}
-
-	// Check if the container name is valid.
-	switch container {
-	case "linux":
-	default:
-		err = fmt.Errorf("invalid container: %s", container)
-		return
 	}
 
 	err = ctx.createDirsIfNotExists()

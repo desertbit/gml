@@ -28,6 +28,7 @@
 package docker
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"os/user"
@@ -41,12 +42,27 @@ const (
 	containerPrefix = "desertbit/gml:"
 )
 
+var (
+	containers = []string{
+		"linux",
+	}
+)
+
+func Containers() []string {
+	return containers
+}
+
 func Build(
 	container string,
 	sourceDir, buildDir, destDir string,
 	clean, noStrip bool,
 ) (err error) {
-	ctx, err := newContext(container, sourceDir, buildDir, destDir)
+	ctx, err := newContext(sourceDir, buildDir, destDir)
+	if err != nil {
+		return
+	}
+
+	err = checkIfValidContainer(container)
 	if err != nil {
 		return
 	}
@@ -71,10 +87,10 @@ func Build(
 		"-v", ctx.GoPath + "/src:/work/src",
 		"-v", ctx.BuildDir + ":/work/pkg",
 		"-v", ctx.DestDir + ":/work/bin",
-		containerPrefix + ctx.Container,
+		containerPrefix + container,
 		"gml", "build",
 		"--source-dir", filepath.Join("/work", ctx.ImportPath),
-		"--build-dir", "/work/pkg",
+		"--build-dir", "/work/pkg/gml-build",
 		"--dest-dir", "/work/bin",
 	}
 
@@ -92,4 +108,26 @@ func Build(
 	c.Stdin = os.Stdin
 
 	return c.Run()
+}
+
+func Pull(container string) (err error) {
+	err = checkIfValidContainer(container)
+	if err != nil {
+		return
+	}
+
+	err = utils.RunCommand(
+		os.Environ(), "",
+		"docker", "pull", containerPrefix+container,
+	)
+	return
+}
+
+func checkIfValidContainer(container string) error {
+	for _, c := range containers {
+		if c == container {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid container: %s", container)
 }

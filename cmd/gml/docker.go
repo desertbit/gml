@@ -30,58 +30,41 @@ package main
 import (
 	"fmt"
 
-	"github.com/desertbit/gml/internal/build"
 	"github.com/desertbit/gml/internal/docker"
 	"github.com/desertbit/grumble"
 )
 
 func init() {
-	BuildCmd := &grumble.Command{
-		Name:      "build",
-		Help:      "build a gml project",
-		AllowArgs: false,
-		Flags: func(f *grumble.Flags) {
-			f.Bool("c", "clean", false, "clean build files first")
-			f.BoolL("no-strip", false, "don't strip the final binary")
-			f.String("s", "source-dir", "./", "source directorty")
-			f.String("b", "build-dir", "./build", "build directorty")
-			f.String("d", "dest-dir", "./", "destination directorty")
-		},
-		Run: runBuild,
-	}
-	App.AddCommand(BuildCmd)
-
-	BuildCmd.AddCommand(&grumble.Command{
+	DockerCmd := &grumble.Command{
 		Name:      "docker",
-		Help:      "build a gml project with docker",
+		Help:      "manage gml docker containers",
+		AllowArgs: false,
+		Run:       runDocker,
+	}
+	App.AddCommand(DockerCmd)
+
+	DockerCmd.AddCommand(&grumble.Command{
+		Name:      "pull",
+		Help:      "pull latest docker container",
 		AllowArgs: true,
-		Run:       runBuildDocker,
+		Run:       runDockerPull,
 	})
 }
 
-func runBuild(c *grumble.Context) error {
-	return build.Build(
-		c.Flags.String("source-dir"),
-		c.Flags.String("build-dir"),
-		c.Flags.String("dest-dir"),
-		c.Flags.Bool("clean"),
-		c.Flags.Bool("no-strip"),
-	)
+func runDocker(c *grumble.Context) error {
+	containers := docker.Containers()
+	for _, c := range containers {
+		fmt.Println(c)
+	}
+	return nil
 }
 
-func runBuildDocker(c *grumble.Context) error {
+func runDockerPull(c *grumble.Context) error {
 	if len(c.Args) == 0 {
 		return fmt.Errorf("invalid args: pass a docker container")
 	} else if len(c.Args) > 1 {
 		return fmt.Errorf("too many args")
 	}
 
-	return docker.Build(
-		c.Args[0],
-		c.Flags.String("source-dir"),
-		c.Flags.String("build-dir"),
-		c.Flags.String("dest-dir"),
-		c.Flags.Bool("clean"),
-		c.Flags.Bool("no-strip"),
-	)
+	return docker.Pull(c.Args[0])
 }
