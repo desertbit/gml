@@ -1,7 +1,8 @@
 # This file is auto-generated.
 FROM therecipe/qt:windows_64_static
 
-ENV QT_ROOT="/usr/lib/mxe/usr/x86_64-w64-mingw32.static/qt5" \
+ENV CROSS_TRIPLE="x86_64-w64-mingw32.static"
+ENV QT_ROOT="/usr/lib/mxe/usr/$CROSS_TRIPLE/qt5" \
     GOOS=windows \
     GOARCH=amd64
 
@@ -47,3 +48,9 @@ ADD common/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["gml"]
+
+RUN mkdir -p /cross-bin && \
+    export MXE_BIN="/usr/lib/mxe/usr/bin" && \
+    ln -s "$MXE_BIN/$CROSS_TRIPLE-gcc" /cross-bin/gcc && \
+    ln -s "$MXE_BIN/$CROSS_TRIPLE-strip" /cross-bin/strip
+ENV PATH="/cross-bin:$PATH"

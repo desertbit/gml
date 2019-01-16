@@ -32,7 +32,6 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
-	"path/filepath"
 
 	"github.com/desertbit/gml/internal/utils"
 	"golang.org/x/crypto/ssh/terminal"
@@ -45,6 +44,7 @@ const (
 var (
 	containers = []string{
 		"linux",
+		"windows_64_static",
 	}
 )
 
@@ -88,10 +88,11 @@ func Build(
 		"-v", ctx.BuildDir + ":/work/pkg",
 		"-v", ctx.DestDir + ":/work/bin",
 		containerPrefix + container,
-		"gml", "build",
+		"bash",
+		/*"gml", "build",
 		"--source-dir", filepath.Join("/work", ctx.ImportPath),
 		"--build-dir", "/work/pkg/gml-build",
-		"--dest-dir", "/work/bin",
+		"--dest-dir", "/work/bin",*/
 	}
 
 	if clean {

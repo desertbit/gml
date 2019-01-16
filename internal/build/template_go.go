@@ -41,8 +41,7 @@ package {{.PackageName}}
 /*
 #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick
 #cgo LDFLAGS: -lstdc++
-#include <stdlib.h>
-#include <stdint.h>
+#include <gml.h>
 #include <gml_gen.h>
 
 {{- /* Register with go functions */}}

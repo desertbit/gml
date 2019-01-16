@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+#include "gml_includes.h"
 
 typedef void* gml_variant;
 

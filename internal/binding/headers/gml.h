@@ -28,9 +28,7 @@
 #ifndef GML_HEADER_H
 #define GML_HEADER_H
 
-#include <stdlib.h>
-#include <stdint.h>
-
+#include "gml_includes.h"
 #include "gml_error.h"
 #include "gml_app.h"
 #include "gml_image.h"

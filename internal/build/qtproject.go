@@ -56,6 +56,11 @@ QT += core qml quick
 TEMPLATE = lib
 CONFIG += staticlib
 
+win32|win64 {
+	CONFIG += release
+	Release:DESTDIR = 
+}
+
 INCLUDEPATH += {{.GMLBindingDir}}/headers
 
 HEADERS += {{.GMLBindingHeadersDir}}/*.h {{.GMLBindingSourcesDir}}/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
@@ -66,4 +71,5 @@ OBJECTS_DIR = {{.BuildDir}}
 MOC_DIR = {{.BuildDir}}
 UI_DIR = {{.BuildDir}}
 TARGET = {{.BuildDir}}/gml
+DESTDIR = 
 `
