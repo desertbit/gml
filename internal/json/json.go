@@ -37,17 +37,9 @@ import (
 )
 
 func Marshal(v interface{}) (data []byte, err error) {
-	/*if m, ok := v.(easyjson.Marshaler); ok {
-		return easyjson.Marshal(m)
-	}*/
-
 	return jsoniter.Marshal(v)
 }
 
 func Unmarshal(data []byte, v interface{}) (err error) {
-	/*if m, ok := v.(easyjson.Unmarshaler); ok {
-		return easyjson.Unmarshal(data, m)
-	}*/
-
 	return jsoniter.Unmarshal(data, v)
 }

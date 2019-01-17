@@ -34,6 +34,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 
 	"github.com/desertbit/gml/internal/utils"
 )
@@ -104,13 +105,38 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 	}
 
 	// Obtain the current GOPATH.
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
+	goPathEnv := os.Getenv("GOPATH")
+	if goPathEnv == "" {
+		goPathEnv = build.Default.GOPATH
+	}
+
+	goPaths := strings.Split(goPathEnv, ":")
+
+	var (
+		importPath string
+		goPath     string
+	)
+	for _, gp := range goPaths {
+		gp, err = filepath.Abs(gp)
+		if err != nil {
+			return
+		}
+
+		// Must be within the GoPath.
+		if strings.HasPrefix(sourceDir, gp) {
+			importPath = filepath.Clean("/" + strings.TrimPrefix(sourceDir, gp))
+			goPath = gp
+			break
+		}
+	}
+
+	if importPath == "" {
+		err = fmt.Errorf("source directory is not within the GoPath")
+		return
 	}
 
 	// Obtain the current import path.
-	ctx.GMLBindingDir = filepath.Join(gopath, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
+	ctx.GMLBindingDir = filepath.Join(goPath, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
 	ctx.GMLBindingHeadersDir = filepath.Join(ctx.GMLBindingDir, "headers")
 	ctx.GMLBindingSourcesDir = filepath.Join(ctx.GMLBindingDir, "sources")
 

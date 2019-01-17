@@ -62,21 +62,35 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	}
 
 	// Obtain the current GOPATH.
-	goPath := os.Getenv("GOPATH")
-	if goPath == "" {
-		goPath = build.Default.GOPATH
-	}
-	goPath, err = filepath.Abs(goPath)
-	if err != nil {
-		return
+	goPathEnv := os.Getenv("GOPATH")
+	if goPathEnv == "" {
+		goPathEnv = build.Default.GOPATH
 	}
 
-	// Must be within the GoPath.
-	if !strings.HasPrefix(sourceDir, goPath) {
+	goPaths := strings.Split(goPathEnv, ":")
+
+	var (
+		importPath string
+		goPath     string
+	)
+	for _, gp := range goPaths {
+		gp, err = filepath.Abs(gp)
+		if err != nil {
+			return
+		}
+
+		// Must be within the GoPath.
+		if strings.HasPrefix(sourceDir, gp) {
+			importPath = filepath.Clean("/" + strings.TrimPrefix(sourceDir, gp))
+			goPath = gp
+			break
+		}
+	}
+
+	if importPath == "" {
 		err = fmt.Errorf("source directory is not within the GoPath")
 		return
 	}
-	importPath := filepath.Clean("/" + strings.TrimPrefix(sourceDir, goPath))
 
 	ctx = &Context{
 		SourceDir:  sourceDir,
