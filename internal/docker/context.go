@@ -32,6 +32,7 @@ import (
 	"go/build"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
 	"github.com/desertbit/gml/internal/utils"
@@ -42,8 +43,9 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	GoPath     string
-	ImportPath string
+	GoPath        string
+	GoPathBinding string
+	ImportPath    string
 }
 
 func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
@@ -69,9 +71,17 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 
 	goPaths := strings.Split(goPathEnv, ":")
 
+	ctx = &Context{
+		SourceDir: sourceDir,
+		BuildDir:  buildDir,
+		DestDir:   destDir,
+	}
+
 	var (
-		importPath string
-		goPath     string
+		importPath       string
+		importPathSuffix = filepath.Join("src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
+		goPath           string
+		goPathBinding    string
 	)
 	for _, gp := range goPaths {
 		gp, err = filepath.Abs(gp)
@@ -83,22 +93,30 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 		if strings.HasPrefix(sourceDir, gp) {
 			importPath = filepath.Clean("/" + strings.TrimPrefix(sourceDir, gp))
 			goPath = gp
-			break
+		}
+
+		// Check in which go path the binding dir exists.
+		var exists bool
+		path := filepath.Join(gp, importPathSuffix)
+		exists, err = utils.Exists(path)
+		if err != nil {
+			return
+		}
+		if exists {
+			goPathBinding, err = filepath.Abs(gp)
+			if err != nil {
+				return
+			}
 		}
 	}
-
 	if importPath == "" {
 		err = fmt.Errorf("source directory is not within the GoPath")
 		return
 	}
 
-	ctx = &Context{
-		SourceDir:  sourceDir,
-		BuildDir:   buildDir,
-		DestDir:    destDir,
-		GoPath:     goPath,
-		ImportPath: importPath,
-	}
+	ctx.GoPath = goPath
+	ctx.GoPathBinding = goPathBinding
+	ctx.ImportPath = importPath
 
 	err = ctx.createDirsIfNotExists()
 	if err != nil {

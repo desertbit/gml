@@ -112,31 +112,34 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 
 	goPaths := strings.Split(goPathEnv, ":")
 
-	var (
-		importPath string
-		goPath     string
-	)
+	var bindingPath string
 	for _, gp := range goPaths {
 		gp, err = filepath.Abs(gp)
 		if err != nil {
 			return
 		}
 
-		// Must be within the GoPath.
-		if strings.HasPrefix(sourceDir, gp) {
-			importPath = filepath.Clean("/" + strings.TrimPrefix(sourceDir, gp))
-			goPath = gp
-			break
+		// Check in which go path the binding dir exists.
+		var exists bool
+		path := filepath.Join(gp, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
+		exists, err = utils.Exists(path)
+		if err != nil {
+			return
+		}
+		if exists {
+			bindingPath, err = filepath.Abs(path)
+			if err != nil {
+				return
+			}
 		}
 	}
-
-	if importPath == "" {
-		err = fmt.Errorf("source directory is not within the GoPath")
+	if bindingPath == "" {
+		err = fmt.Errorf("binding directory is not within the GoPath")
 		return
 	}
 
 	// Obtain the current import path.
-	ctx.GMLBindingDir = filepath.Join(goPath, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
+	ctx.GMLBindingDir = bindingPath
 	ctx.GMLBindingHeadersDir = filepath.Join(ctx.GMLBindingDir, "headers")
 	ctx.GMLBindingSourcesDir = filepath.Join(ctx.GMLBindingDir, "sources")
 
