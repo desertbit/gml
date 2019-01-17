@@ -1,4 +1,6 @@
 # TODO
+- don't use C.CString instead use the direct byte buffer?
+- use everythwere constData instead of data (strings).
 - check with vargrant if any memory is lost
 - variant json
 - docker container

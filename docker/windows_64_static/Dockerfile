@@ -13,7 +13,7 @@ RUN apt-get -y update && \
 
 ENV PATH="/$QT_ROOT/bin:$PATH" \
     PKG_CONFIG_PATH="$QT_ROOT/lib/pkgconfig:$PKG_CONFIG_PATH" \
-    LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH" # TODO: pass base lib path also?
 
 # Install the Go compiler. We can't assure, that the go compiler is up-to-date from the base package.
 RUN export GO_VERSION="1.11.4" && \

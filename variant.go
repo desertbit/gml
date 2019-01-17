@@ -117,7 +117,7 @@ func ToVariant(i interface{}) *Variant {
 }
 
 func newVariant(ptr C.gml_variant) (v *Variant) {
-	// This should never happen is signalizes a fatal error.
+	// This should never happen. Signalizes a fatal error.
 	if ptr == nil {
 		panic(fmt.Errorf("failed to create gml variant: C pointer is nil"))
 	}
@@ -155,7 +155,6 @@ func (v *Variant) Decode(i interface{}) (err error) {
 		return errors.New("decode input is nil")
 	}
 
-	// TODO: create tests?
 	switch d := i.(type) {
 	case *bool:
 		*d = (C.gml_variant_to_bool(v.ptr) != 0)
@@ -187,13 +186,34 @@ func (v *Variant) Decode(i interface{}) (err error) {
 	case *Char: // TODO: remove?
 		*d = Char(C.gml_variant_to_rune(v.ptr))
 	case *string:
-	// TODO:
+		b := newBytes()
+		defer b.Free()
+
+		C.gml_variant_to_string(v.ptr, b.ptr)
+		buf := b.String()
+		if len(buf) == 0 {
+			*d = ""
+		} else {
+			*d = string(buf)
+		}
+
 	case *[]byte:
-	// TODO:
+		b := newBytes()
+		defer b.Free()
+
+		C.gml_variant_to_string(v.ptr, b.ptr)
+		*d = b.Bytes()
 
 	default:
-		// TODO:
-		var data []byte
+		b := newBytes()
+		defer b.Free()
+
+		C.gml_variant_to_string(v.ptr, b.ptr)
+		data := b.String()
+		if len(data) == 0 {
+			return fmt.Errorf("failed to decode variant: no data to decode")
+		}
+
 		err = json.Unmarshal(data, i)
 		if err != nil {
 			return fmt.Errorf("failed to decode variant: %v", err)
