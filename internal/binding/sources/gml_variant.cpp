@@ -489,7 +489,7 @@ void gml_variant_to_string(gml_variant v, gml_bytes b)  {
     try {
         QVariant* qv = (QVariant*)v;
         QByteArray* qb = (QByteArray*)b;
-        *qb = qv->toString().toLocal8Bit();
+        *qb = qv->toString().toLocal8Bit(); // TODO: can we use toByteArray instead?
     }
     catch (std::exception& e) {
         gml_error_log_exception("variant: " + string(e.what()));

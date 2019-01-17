@@ -74,3 +74,12 @@ func (b *bytes) Bytes() []byte {
 	}
 	return C.GoBytes(unsafe.Pointer(buf), size)
 }
+
+func (b *bytes) String() []byte {
+	buf := b.Bytes()
+	// Remove if null-terminated.
+	if len(buf) > 0 && buf[len(buf)-1] == 0 {
+		buf = buf[:len(buf)-1]
+	}
+	return buf
+}

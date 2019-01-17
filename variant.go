@@ -188,8 +188,9 @@ func (v *Variant) Decode(i interface{}) (err error) {
 	case *string:
 		b := newBytes()
 		defer b.Free()
+
 		C.gml_variant_to_string(v.ptr, b.ptr)
-		buf := b.Bytes()
+		buf := b.String()
 		if len(buf) == 0 {
 			*d = ""
 		} else {
@@ -199,14 +200,16 @@ func (v *Variant) Decode(i interface{}) (err error) {
 	case *[]byte:
 		b := newBytes()
 		defer b.Free()
+
 		C.gml_variant_to_string(v.ptr, b.ptr)
 		*d = b.Bytes()
 
 	default:
 		b := newBytes()
 		defer b.Free()
+
 		C.gml_variant_to_string(v.ptr, b.ptr)
-		data := b.Bytes()
+		data := b.String()
 		if len(data) == 0 {
 			return fmt.Errorf("failed to decode variant: no data to decode")
 		}
