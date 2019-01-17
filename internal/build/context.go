@@ -146,7 +146,7 @@ func (c *Context) Env(optsEnv ...string) (env []string) {
 		fmt.Sprintf("MAKEFLAGS=-j%v", runtime.NumCPU()+1),
 		"CPPFLAGS=-D_FORTIFY_SOURCE=2",
 		"CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt",
-		"CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -std=c++11",
+		"CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt",
 		"LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now",
 	}...)
 

@@ -25,63 +25,52 @@
  * SOFTWARE.
  */
 
-package utils
+package gml
 
+// #include <gml.h>
+import "C"
 import (
-	"os"
-	"os/exec"
-	"unicode"
+	"fmt"
+	"runtime"
+	"unsafe"
 )
 
-// Exists returns whether the given file or directory exists.
-func Exists(path string) (bool, error) {
-	_, err := os.Lstat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
+type bytes struct {
+	freed bool
+	ptr   C.gml_bytes
 }
 
-func RunCommand(env []string, dir, cmd string, args ...string) (err error) {
-	c := exec.Command(cmd, args...)
-	c.Dir = dir
-	c.Env = env
-
-	// TODO: also log to a log file.
-	c.Stderr = os.Stderr
-	if Verbose {
-		c.Stdout = os.Stdout
+func newBytes() (b *bytes) {
+	b = &bytes{
+		ptr: C.gml_bytes_new(),
 	}
 
-	return c.Run()
-}
-
-func FirstCharToLower(s string) string {
-	if len(s) == 0 {
-		return ""
+	// This should never happen. Signalizes a fatal error.
+	if b.ptr == nil {
+		panic(fmt.Errorf("failed to create gml bytes: C pointer is nil"))
 	}
 
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToLower(rune(sr[0]))
-	return string(sr)
+	runtime.SetFinalizer(b, freeBytes) // Always free the C value.
+	return
 }
 
-func FirstCharToUpper(s string) string {
-	if len(s) == 0 {
-		return ""
+func freeBytes(b *bytes) {
+	if b.freed {
+		return
 	}
-
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToUpper(rune(sr[0]))
-	return string(sr)
+	b.freed = true
+	C.gml_bytes_free(b.ptr)
 }
 
-func GetThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows.
-	return 0 //syscall.Gettid()
+func (b *bytes) Free() {
+	freeBytes(b)
+}
+
+func (b *bytes) Bytes() []byte {
+	var size C.int
+	buf := C.gml_bytes_get(b.ptr, &size)
+	if size <= 0 {
+		return nil
+	}
+	return C.GoBytes(unsafe.Pointer(buf), size)
 }

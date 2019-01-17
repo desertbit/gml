@@ -25,63 +25,49 @@
  * SOFTWARE.
  */
 
-package utils
+#include "gml_includes.h"
+#include "gml_error.h"
 
-import (
-	"os"
-	"os/exec"
-	"unicode"
-)
+//#############//
+//### C API ###//
+//#############//
 
-// Exists returns whether the given file or directory exists.
-func Exists(path string) (bool, error) {
-	_, err := os.Lstat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
+gml_bytes gml_bytes_new() {
+    try {
+        QByteArray* qb = new QByteArray();
+        return (gml_bytes)qb;
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
 }
 
-func RunCommand(env []string, dir, cmd string, args ...string) (err error) {
-	c := exec.Command(cmd, args...)
-	c.Dir = dir
-	c.Env = env
-
-	// TODO: also log to a log file.
-	c.Stderr = os.Stderr
-	if Verbose {
-		c.Stdout = os.Stdout
-	}
-
-	return c.Run()
+void gml_bytes_free(gml_bytes b) {
+    if (b == NULL) {
+        return;
+    }
+    QByteArray* qb = (QByteArray*)b;
+    delete qb;
+    b = NULL;
 }
 
-func FirstCharToLower(s string) string {
-	if len(s) == 0 {
-		return ""
-	}
-
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToLower(rune(sr[0]))
-	return string(sr)
-}
-
-func FirstCharToUpper(s string) string {
-	if len(s) == 0 {
-		return ""
-	}
-
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToUpper(rune(sr[0]))
-	return string(sr)
-}
-
-func GetThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows.
-	return 0 //syscall.Gettid()
+const char* gml_bytes_get(gml_bytes b, int* size) {
+    try {
+        QByteArray* qb = (QByteArray*)b;
+        *size = qb->length();
+        return qb->constData();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
 }

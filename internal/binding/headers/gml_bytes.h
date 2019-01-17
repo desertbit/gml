@@ -25,63 +25,21 @@
  * SOFTWARE.
  */
 
-package utils
+#ifndef GML_HEADER_BYTES_H
+#define GML_HEADER_BYTES_H
 
-import (
-	"os"
-	"os/exec"
-	"unicode"
-)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// Exists returns whether the given file or directory exists.
-func Exists(path string) (bool, error) {
-	_, err := os.Lstat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
+typedef void* gml_bytes;
+
+gml_bytes   gml_bytes_new ();
+void        gml_bytes_free(gml_bytes b);
+const char* gml_bytes_get (gml_bytes b, int* size);
+
+#ifdef __cplusplus
 }
+#endif
 
-func RunCommand(env []string, dir, cmd string, args ...string) (err error) {
-	c := exec.Command(cmd, args...)
-	c.Dir = dir
-	c.Env = env
-
-	// TODO: also log to a log file.
-	c.Stderr = os.Stderr
-	if Verbose {
-		c.Stdout = os.Stdout
-	}
-
-	return c.Run()
-}
-
-func FirstCharToLower(s string) string {
-	if len(s) == 0 {
-		return ""
-	}
-
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToLower(rune(sr[0]))
-	return string(sr)
-}
-
-func FirstCharToUpper(s string) string {
-	if len(s) == 0 {
-		return ""
-	}
-
-	// Ensure first char is lower case.
-	sr := []rune(s)
-	sr[0] = unicode.ToUpper(rune(sr[0]))
-	return string(sr)
-}
-
-func GetThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows.
-	return 0 //syscall.Gettid()
-}
+#endif

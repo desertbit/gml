@@ -27,6 +27,7 @@
 
 #include "gml_includes.h"
 #include "gml_error.h"
+#include "gml_bytes.h"
 
 //#############//
 //### C API ###//
@@ -484,33 +485,30 @@ int32_t gml_variant_to_rune(gml_variant v) {
     }
 }
 
-// TTODO: Return an error? 
-char* gml_variant_to_string(gml_variant v)  {
+void gml_variant_to_string(gml_variant v, gml_bytes b)  {
     try {
         QVariant* qv = (QVariant*)v;
-        return qv->toString().toLocal8Bit().data(); // TODO: does not work! user everywhere constDatat because it is faster
+        QByteArray* qb = (QByteArray*)b;
+        *qb = qv->toString().toLocal8Bit();
     }
     catch (std::exception& e) {
         gml_error_log_exception("variant: " + string(e.what()));
-        return 0;
     }
     catch (...) {
         gml_error_log_exception("variant");
-        return 0;
     }
 }
 
-char* gml_variant_to_bytes(gml_variant v, int* size) {
+void gml_variant_to_bytes(gml_variant v, gml_bytes b) {
     try {
         QVariant* qv = (QVariant*)v;
-        return NULL; //qv->toByteArray(); // TODO: also set size
+        QByteArray* qb = (QByteArray*)b;
+        *qb = qv->toByteArray();
     }
     catch (std::exception& e) {
         gml_error_log_exception("variant: " + string(e.what()));
-        return 0;
     }
     catch (...) {
         gml_error_log_exception("variant");
-        return 0;
     }
 }

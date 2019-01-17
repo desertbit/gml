@@ -29,6 +29,7 @@
 #define GML_HEADER_H
 
 #include "gml_includes.h"
+#include "gml_bytes.h"
 #include "gml_error.h"
 #include "gml_app.h"
 #include "gml_image.h"

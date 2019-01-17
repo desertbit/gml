@@ -81,9 +81,9 @@ u_int32_t gml_variant_to_uint32(gml_variant v);
 int64_t   gml_variant_to_int64 (gml_variant v);
 u_int64_t gml_variant_to_uint64(gml_variant v);
 
-int32_t   gml_variant_to_rune  (gml_variant v);
-char*     gml_variant_to_string(gml_variant v);
-char*     gml_variant_to_bytes (gml_variant v, int* size);
+int32_t gml_variant_to_rune  (gml_variant v);
+void    gml_variant_to_string(gml_variant v, gml_bytes b);
+void    gml_variant_to_bytes (gml_variant v, gml_bytes b);
 
 #ifdef __cplusplus
 }
