@@ -121,7 +121,7 @@ func {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(_goPtr unsafe.Pointer{{goCPara
 
 {{- /* Properties */ -}}
 {{range $prop := $struct.Properties }}
-func (_v *{{$struct.Name}}) Set{{$prop.Name}}(v {{$prop.Type}}) {
+func (_v *{{$struct.Name}}) {{$prop.SetName}}(v {{$prop.Type}}) {
     _ptr := (C.{{$struct.CBaseName}})(_v.GMLObject_Pointer())
     {{- goToCValue $prop.Type "v" "vc" true 4}}
     gml.CurrentApp().RunMain(func() {

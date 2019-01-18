@@ -79,10 +79,13 @@ type genProperty struct {
 	Name       string
 	PublicName string
 	CPPName    string
-	Type       string
-	CType      string
-	CPPType    string
-	Silent     bool
+	SetName    string
+
+	Type    string
+	CType   string
+	CPPType string
+
+	Silent bool
 }
 
 type genParam struct {

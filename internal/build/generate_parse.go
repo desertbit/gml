@@ -454,14 +454,24 @@ func parseProperty(gs *genStruct, fset *token.FileSet, f *types.Var, name string
 	privName := utils.FirstCharToLower(name)
 	pubName := utils.FirstCharToUpper(name)
 
+	var setName string
+	if unicode.IsUpper(rune(name[0])) {
+		setName = "Set" + pubName
+	} else {
+		setName = "set" + pubName
+	}
+
 	prop := &genProperty{
 		Name:       name,
 		PublicName: pubName,
 		CPPName:    privName,
-		Type:       typeStr,
-		CType:      goTypeToC(typeStr),
-		CPPType:    goTypeToCPP(typeStr),
-		Silent:     silent,
+		SetName:    setName,
+
+		Type:    typeStr,
+		CType:   goTypeToC(typeStr),
+		CPPType: goTypeToCPP(typeStr),
+
+		Silent: silent,
 	}
 
 	gs.Properties = append(gs.Properties, prop)
