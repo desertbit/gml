@@ -25,24 +25,13 @@
  * SOFTWARE.
  */
 
-package testy
+// +build windows
+package utils
 
 import (
-	"fmt"
-
-	"github.com/desertbit/gml"
-	"github.com/desertbit/gml/samples/signals_slots/testy/b"
+	"golang.org/x/sys/windows"
 )
 
-type c b.B
-
-type Bridge struct {
-	gml.Object
-	_ struct {
-		connect func() `gml:"slot"`
-	}
-}
-
-func (b *Bridge) connect() {
-	fmt.Println("connect called")
+func GetThreadID() int {
+	return int(windows.GetCurrentThreadId())
 }

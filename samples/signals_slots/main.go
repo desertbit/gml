@@ -36,20 +36,29 @@ import (
 	"github.com/desertbit/gml"
 	"github.com/desertbit/gml/samples/signals_slots/api"
 	"github.com/desertbit/gml/samples/signals_slots/testy"
+	"github.com/desertbit/gml/samples/signals_slots/testy/b"
 )
 
-type A struct{} // TODO: test as property.
+type c b.B
+
+type Sub struct {
+	gml.Object
+	_ struct {
+		State int `gml:"property"`
+	}
+}
 
 type Bridge struct {
 	gml.Object
 	_ struct {
-		//A       A                                                                              `gml:"property"`
 		State   int                                                                            `gml:"property"`
 		clicked func(i int, v *gml.Variant) int                                                `gml:"slot"`
 		greet   func(i1 uint8, i2 int32, i3 int, s string, r rune, b byte, bb bool, bs []byte) `gml:"signal"`
 		//foo     func() A                                                                       `gml:"slot"`
 		//str     func() string                                                                  `gml:"slot"`
 	}
+
+	S *Sub `gml:"property"`
 }
 
 func (b *Bridge) clicked(i int, v *gml.Variant) int {

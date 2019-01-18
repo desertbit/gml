@@ -30,8 +30,11 @@ package build
 import (
 	"fmt"
 	"go/ast"
+	"go/build"
+	"go/importer"
 	"go/parser"
 	"go/token"
+	"go/types"
 	"os"
 	"path/filepath"
 	"strings"
@@ -41,42 +44,92 @@ import (
 )
 
 const (
+	skipPrefix    = "gml_gen_"
 	cBasePrefix   = "gml_gen"
 	cppBasePrefix = "GMLGen"
 )
 
+var (
+	typesConf = types.Config{
+		Importer:         importer.For("source", nil),
+		IgnoreFuncBodies: true,
+		FakeImportC:      true,
+	}
+)
+
 // TODO: make concurrent with multiple goroutines.
 func parseDirRecursive(dir string) (gt *genTargets, err error) {
-	gt = &genTargets{}
-
-	// Walk through all directories and fill the slice.
-	var dirs []string
-	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		// Skip files.
-		if !info.IsDir() {
-			return nil
-		}
-		dirName := info.Name()
-
-		// Skip hidden filea and files starting with a "_".
-		if strings.HasPrefix(dirName, ".") || strings.HasPrefix(dirName, "_") {
-			return filepath.SkipDir
-		}
-
-		dirs = append(dirs, path)
-		return nil
-	})
+	// Obtain all imports including the package in the base dir.
+	imports, basePath, err := getPackageImports(dir)
 	if err != nil {
 		return
 	}
 
-	// Parse all directories.
-	for _, dir := range dirs {
-		err = parseDir(gt, dir)
+	gt = &genTargets{}
+	fset := token.NewFileSet()
+
+	// In reverse for deepest import first.
+	for i := len(imports) - 1; i >= 0; i-- {
+		err = parseDir(gt, fset, filepath.Join(basePath, imports[i]))
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// TODO: use ast package with ImportsOnly to make this even faster?
+func getPackageImports(dir string) (imports []string, basePath string, err error) {
+	dir, err = filepath.Abs(dir)
+	if err != nil {
+		return
+	}
+
+	pkg, err := build.ImportDir(dir, 0)
+	if err != nil {
+		return
+	}
+
+	// Base import without the main package import path.
+	basePath = filepath.Clean(strings.TrimSuffix(dir, pkg.ImportPath))
+
+	// Add the main package first.
+	imports = append(imports, pkg.ImportPath)
+
+	// Add further recursive packages.
+	err = getPackageImportsRec(pkg, pkg.ImportPath, basePath, &imports)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func getPackageImportsRec(pkg *build.Package, mustPrefix, basePath string, imports *[]string) (err error) {
+Loop:
+	for _, imp := range pkg.Imports {
+		if !strings.HasPrefix(imp, pkg.ImportPath) {
+			continue Loop
+		}
+
+		// Check if already present in imports slice.
+		for _, i := range *imports {
+			if i == imp {
+				continue Loop
+			}
+		}
+
+		// Add import.
+		*imports = append(*imports, imp)
+
+		// Add further recursive packages.
+		var subPkg *build.Package
+		subPkg, err = build.ImportDir(filepath.Join(basePath, imp), 0)
+		if err != nil {
+			return
+		}
+		err = getPackageImportsRec(subPkg, mustPrefix, basePath, imports)
 		if err != nil {
 			return
 		}
@@ -84,29 +137,122 @@ func parseDirRecursive(dir string) (gt *genTargets, err error) {
 	return
 }
 
-func parseDir(gt *genTargets, dir string) (err error) {
-	gp := &genPackage{
-		Dir: dir,
-	}
-
-	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, dir, nil, 0)
+func parseDir(gt *genTargets, fset *token.FileSet, dir string) (err error) {
+	// Parse go sources and skip gml_gen prefixed files.
+	pkgs, err := parser.ParseDir(fset, dir, func(i os.FileInfo) bool {
+		return !strings.HasPrefix(i.Name(), skipPrefix)
+	}, 0)
 	if err != nil {
 		return
 	}
 
-	// Actually there should be only one package in the map,
+	// There should be only one package in the map,
 	// if the go source is valid and correct.
-	for pkgName, pkg := range pkgs {
-		// Set the package name.
-		gp.PackageName = pkgName
+	if len(pkgs) != 1 {
+		return fmt.Errorf("invalid package: multiple package definitions")
+	}
 
-		for _, f := range pkg.Files {
-			err = parseFile(gp, fset, f)
+	// Obtain the single package.
+	var pkgName string
+	var pkg *ast.Package
+	for n, p := range pkgs {
+		pkgName = n
+		pkg = p
+		break
+	}
+
+	gp := &genPackage{
+		Dir:         dir,
+		PackageName: pkgName,
+	}
+
+	// Create a slice of ast files.
+	i := 0
+	files := make([]*ast.File, len(pkg.Files))
+	for _, f := range pkg.Files {
+		files[i] = f
+		i++
+	}
+
+	info := &types.Info{
+		Defs: make(map[*ast.Ident]types.Object),
+	}
+
+	// Type-check the package containing only file f.
+	// Check returns a *types.Package.
+	_, err = typesConf.Check(pkgName, fset, files, info)
+	if err != nil {
+		return
+	}
+
+	for id, obj := range info.Defs {
+		if obj == nil {
+			continue
+		}
+
+		objT := obj.Type()
+
+		// Must be a named type.
+		_, ok := objT.(*types.Named)
+		if !ok {
+			continue
+		}
+
+		// Underlying type must be a struct.
+		s, ok := objT.Underlying().(*types.Struct)
+		if !ok {
+			continue
+		}
+
+		var (
+			hasEmbeddedObject bool
+			structName        = obj.Name()
+			numFields         = s.NumFields()
+		)
+
+		gs := &genStruct{
+			Name:        structName,
+			CBaseName:   cBasePrefix + "_" + utils.FirstCharToLower(gp.PackageName) + "_" + structName,
+			CPPBaseName: cppBasePrefix + utils.FirstCharToUpper(gp.PackageName) + structName,
+		}
+
+		// Check all struct fields.
+		for i = 0; i < numFields; i++ {
+			f := s.Field(i)
+
+			// Check if this is an embedded gml.Object field.
+			if f.Embedded() && strings.HasSuffix(f.Type().String(), "/gml.Object") {
+				hasEmbeddedObject = true
+				continue
+			}
+
+			// Check for the _ struct field.
+			name := f.Name()
+			if name != "_" {
+				continue
+			}
+			su, ok := f.Type().(*types.Struct)
+			if !ok {
+				continue
+			}
+
+			err = parseUnderlineStruct(gs, fset, su)
 			if err != nil {
 				return
 			}
 		}
+
+		// Skip if the struct is empty.
+		if len(gs.Signals) == 0 && len(gs.Slots) == 0 && len(gs.Properties) == 0 {
+			continue
+		}
+
+		// There must be one embedded gml.Object field.
+		if !hasEmbeddedObject {
+			return newParseError(fset, id.Pos(), fmt.Errorf("invalid struct: gml.Object must be embedded"))
+		}
+
+		gp.Structs = append(gp.Structs, gs)
 	}
 
 	// Skip if the package is empty.
@@ -114,69 +260,14 @@ func parseDir(gt *genTargets, dir string) (err error) {
 		gt.Packages = append(gt.Packages, gp)
 	}
 	return
+
 }
 
-func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (err error) {
-	// Search for struct definitions.
-	for _, decl := range f.Decls {
-		// Must be a token: type
-		typeDecl, ok := decl.(*ast.GenDecl)
-		if !ok || typeDecl.Tok != token.TYPE || len(typeDecl.Specs) == 0 {
-			continue
-		}
-
-		typeSpec, ok := typeDecl.Specs[0].(*ast.TypeSpec)
-		if !ok {
-			continue
-		}
-
-		structDecl, ok := typeSpec.Type.(*ast.StructType)
-		if !ok {
-			continue
-		}
-
-		structName := typeSpec.Name.Name
-		gs := &genStruct{
-			Name:        structName,
-			CBaseName:   cBasePrefix + "_" + utils.FirstCharToLower(gp.PackageName) + "_" + structName,
-			CPPBaseName: cppBasePrefix + utils.FirstCharToUpper(gp.PackageName) + structName,
-		}
-
-		for _, f := range structDecl.Fields.List {
-			// Variable name must be "_".
-			if len(f.Names) == 0 || f.Names[0].Name != "_" {
-				continue
-			}
-
-			st, ok := f.Type.(*ast.StructType)
-			if !ok {
-				continue
-			}
-
-			err = parseInlineStruct(gs, fset, st)
-			if err != nil {
-				return
-			}
-		}
-
-		// Skip if the struct is empty.
-		if len(gs.Signals) > 0 || len(gs.Slots) > 0 || len(gs.Properties) > 0 {
-			gp.Structs = append(gp.Structs, gs)
-		}
-	}
-
-	return
-}
-
-func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (err error) {
-	for _, f := range st.Fields.List {
-		// Ensure name is set.
-		if len(f.Names) == 0 {
-			continue
-		}
-
+func parseUnderlineStruct(gs *genStruct, fset *token.FileSet, s *types.Struct) (err error) {
+	numFields := s.NumFields()
+	for i := 0; i < numFields; i++ {
 		// Extract the tag value and key.
-		tagValue := strings.Trim(f.Tag.Value, "`")
+		tagValue := s.Tag(i)
 		pos := strings.Index(tagValue, ":")
 		if pos < 0 {
 			continue
@@ -189,7 +280,10 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 			continue
 		}
 
-		name := f.Names[0].Name
+		f := s.Field(i)
+
+		// Ensure name is set.
+		name := f.Name()
 		if len(name) == 0 {
 			continue
 		}
@@ -214,26 +308,34 @@ func parseInlineStruct(gs *genStruct, fset *token.FileSet, st *ast.StructType) (
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid struct tag value: %v", tagValue))
 		}
 	}
-
 	return
 }
 
-func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
-	// Must be a function/
-	ft, ok := f.Type.(*ast.FuncType)
+func parseSignal(gs *genStruct, fset *token.FileSet, f *types.Var, name string) (err error) {
+	// Must be a function signature.
+	s, ok := f.Type().(*types.Signature)
 	if !ok {
-		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: must be a function"))
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: must be a function signature"))
+	}
+
+	// Variadic functions are not supported.
+	if s.Variadic() {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: variadic functions are not supported"))
 	}
 
 	// Ensure the function does not contain any return value.
-	if ft.Results != nil && len(ft.Results.List) > 0 {
+	retVals := s.Results()
+	if retVals != nil && retVals.Len() > 0 {
 		return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal: must not contain a return value"))
 	}
+
+	params := s.Params()
+	paramsLen := params.Len()
 
 	signal := &genSignal{
 		Name:    name,
 		CPPName: utils.FirstCharToLower(name), // Qt signal names must be lower-case.
-		Params:  make([]*genParam, 0, len(ft.Params.List)),
+		Params:  make([]*genParam, 0, paramsLen),
 	}
 
 	// Prepare the emit name.
@@ -244,48 +346,58 @@ func parseSignal(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) 
 		signal.EmitName = "emit" + utils.FirstCharToUpper(signal.Name)
 	}
 
-	for _, p := range ft.Params.List {
-		typeStr := getTypeString(p.Type)
+	// Prepare all params.
+	for i := 0; i < paramsLen; i++ {
+		p := params.At(i)
+		pName := p.Name()
 
 		// Ensure a parameter name is set.
-		if len(p.Names) == 0 {
+		if len(pName) == 0 {
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid signal function parameter: name not set"))
 		}
 
-		for _, n := range p.Names {
-			signal.Params = append(signal.Params, &genParam{
-				Name:    n.Name,
-				Type:    typeStr,
-				CType:   goTypeToC(typeStr),
-				CPPType: goTypeToCPP(typeStr),
-			})
-		}
+		typeStr := goType(p.Type())
+		signal.Params = append(signal.Params, &genParam{
+			Name:    pName,
+			Type:    typeStr,
+			CType:   goTypeToC(typeStr),
+			CPPType: goTypeToCPP(typeStr),
+		})
 	}
 
 	gs.Signals = append(gs.Signals, signal)
 	return
 }
 
-func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
-	// Must be a function/
-	ft, ok := f.Type.(*ast.FuncType)
+func parseSlot(gs *genStruct, fset *token.FileSet, f *types.Var, name string) (err error) {
+	// Must be a function signature.
+	s, ok := f.Type().(*types.Signature)
 	if !ok {
-		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: must be a function"))
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: must be a function signature"))
 	}
 
-	// Handle return values.
+	// Variadic functions are not supported.
+	if s.Variadic() {
+		return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: variadic functions are not supported"))
+	}
+
+	// Handkle returns values.
 	var retType string
-	if ft.Results != nil && len(ft.Results.List) > 0 {
-		if len(ft.Results.List) > 1 {
+	retVals := s.Results()
+	if retVals != nil && retVals.Len() > 0 {
+		if retVals.Len() > 1 {
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot: multiple return values are not supported"))
 		}
-		retType = getTypeString(ft.Results.List[0].Type)
+		retType = retVals.At(0).Type().String()
 	}
+
+	params := s.Params()
+	paramsLen := params.Len()
 
 	slot := &genSlot{
 		Name:    name,
 		CPPName: utils.FirstCharToLower(name), // Qt slot names must be lower-case.
-		Params:  make([]*genParam, 0, len(ft.Params.List)),
+		Params:  make([]*genParam, 0, paramsLen),
 		NoRet:   (retType == ""),
 		RetType: retType,
 	}
@@ -300,37 +412,38 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (e
 		slot.CGoRetType = goTypeToCGo(retType)
 	}
 
-	for _, p := range ft.Params.List {
-		typeStr := getTypeString(p.Type)
+	// Prepare all params.
+	for i := 0; i < paramsLen; i++ {
+		p := params.At(i)
+		pName := p.Name()
 
 		// Ensure a parameter name is set.
-		if len(p.Names) == 0 {
+		if len(pName) == 0 {
 			return newParseError(fset, f.Pos(), fmt.Errorf("invalid slot function parameter: name not set"))
 		}
 
-		for _, n := range p.Names {
-			slot.Params = append(slot.Params, &genParam{
-				Name:    n.Name,
-				Type:    typeStr,
-				CType:   goTypeToC(typeStr),
-				CGoType: goTypeToCGo(typeStr),
-				CPPType: goTypeToCPP(typeStr),
-			})
-		}
+		typeStr := goType(p.Type())
+		slot.Params = append(slot.Params, &genParam{
+			Name:    pName,
+			Type:    typeStr,
+			CType:   goTypeToC(typeStr),
+			CGoType: goTypeToCGo(typeStr),
+			CPPType: goTypeToCPP(typeStr),
+		})
 	}
 
 	gs.Slots = append(gs.Slots, slot)
 	return
 }
 
-func parseProperty(gs *genStruct, fset *token.FileSet, f *ast.Field, name string) (err error) {
-	// Must be a variable.
-	ident, ok := f.Type.(*ast.Ident)
-	if !ok {
+func parseProperty(gs *genStruct, fset *token.FileSet, f *types.Var, name string) (err error) {
+	// Ensure it is not a function signature.
+	_, ok := f.Type().(*types.Signature)
+	if ok {
 		return newParseError(fset, f.Pos(), fmt.Errorf("invalid property: must be a variable"))
 	}
-	typeStr := ident.Name
 
+	typeStr := goType(f.Type())
 	privName := utils.FirstCharToLower(name)
 
 	prop := &genProperty{
@@ -346,30 +459,19 @@ func parseProperty(gs *genStruct, fset *token.FileSet, f *ast.Field, name string
 	return
 }
 
-// Returns "interface{}" if unknown.
-func getTypeString(t ast.Expr) string {
-	// Check if variable.
-	ident, ok := t.(*ast.Ident)
-	if ok {
-		return ident.Name
-	}
-
-	// Check if slice.
-	a, ok := t.(*ast.ArrayType)
-	if ok && a.Len == nil { // a.Len == 0 if slice
-		// Check if basic type is within the slice.
-		ident, ok := a.Elt.(*ast.Ident)
-		if ok {
-			return "[]" + ident.Name
-		}
-	}
-
-	return "interface{}"
-}
-
 func newParseError(fset *token.FileSet, p token.Pos, err error) error {
 	pos := fset.Position(p)
 	return fmt.Errorf("%s: line %v: %v", pos.Filename, pos.Line, err)
+}
+
+// Returns interface{} if unknown.
+func goType(t types.Type) string {
+	switch t := t.(type) {
+	case *types.Basic:
+		return t.String()
+	default:
+		return "interface{}"
+	}
 }
 
 func goTypeToC(t string) string {

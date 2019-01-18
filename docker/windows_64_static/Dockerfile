@@ -8,12 +8,12 @@ ENV QT_ROOT="/usr/lib/mxe/usr/$CROSS_TRIPLE/qt5" \
 
 # Install dependencies.
 RUN apt-get -y update && \
-    apt-get -y install sudo git wget nano make && \
+    apt-get -y install sudo git wget nano make pkg-config && \
     apt-get -y clean
 
 ENV PATH="/$QT_ROOT/bin:$PATH" \
     PKG_CONFIG_PATH="$QT_ROOT/lib/pkgconfig:$PKG_CONFIG_PATH" \
-    LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH" # TODO: pass base lib path also?
+    LD_LIBRARY_PATH="$QT_ROOT/lib:$LD_LIBRARY_PATH"
 
 # Install the Go compiler. We can't assure, that the go compiler is up-to-date from the base package.
 RUN export GO_VERSION="1.11.4" && \
@@ -50,7 +50,8 @@ ENTRYPOINT ["/entrypoint"]
 CMD ["gml"]
 
 RUN mkdir -p /cross-bin && \
-    export MXE_BIN="/usr/lib/mxe/usr/bin" && \
-    ln -s "$MXE_BIN/$CROSS_TRIPLE-gcc" /cross-bin/gcc && \
-    ln -s "$MXE_BIN/$CROSS_TRIPLE-strip" /cross-bin/strip
+    for f in /usr/lib/mxe/usr/bin/${CROSS_TRIPLE}-*; do \
+        name="$(echo "$f" | sed -e "s|^/usr/lib/mxe/usr/bin/${CROSS_TRIPLE}-||")" ;\
+        ln -s "$f" "/cross-bin/${name}" ;\
+    done
 ENV PATH="/cross-bin:$PATH"

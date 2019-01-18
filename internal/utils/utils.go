@@ -80,8 +80,3 @@ func FirstCharToUpper(s string) string {
 	sr[0] = unicode.ToUpper(rune(sr[0]))
 	return string(sr)
 }
-
-func GetThreadID() int {
-	// TODO: check if this is supported in MaxOSX and Windows.
-	return 0 //syscall.Gettid()
-}

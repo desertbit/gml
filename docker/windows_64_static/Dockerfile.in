@@ -8,7 +8,8 @@ ENV QT_ROOT="/usr/lib/mxe/usr/$CROSS_TRIPLE/qt5" \
 #import common.base
 
 RUN mkdir -p /cross-bin && \
-    export MXE_BIN="/usr/lib/mxe/usr/bin" && \
-    ln -s "$MXE_BIN/$CROSS_TRIPLE-gcc" /cross-bin/gcc && \
-    ln -s "$MXE_BIN/$CROSS_TRIPLE-strip" /cross-bin/strip
+    for f in /usr/lib/mxe/usr/bin/${CROSS_TRIPLE}-*; do \
+        name="$(echo "$f" | sed -e "s|^/usr/lib/mxe/usr/bin/${CROSS_TRIPLE}-||")" ;\
+        ln -s "$f" "/cross-bin/${name}" ;\
+    done
 ENV PATH="/cross-bin:$PATH"
