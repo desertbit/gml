@@ -82,6 +82,7 @@ type genProperty struct {
 	Type       string
 	CType      string
 	CPPType    string
+	Silent     bool
 }
 
 type genParam struct {

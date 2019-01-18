@@ -288,6 +288,10 @@ func parseUnderlineStruct(gs *genStruct, fset *token.FileSet, s *types.Struct) (
 			continue
 		}
 
+		var (
+			silent bool
+		)
+
 		switch tagValue {
 		case "signal":
 			err = parseSignal(gs, fset, f, name)
@@ -299,8 +303,11 @@ func parseUnderlineStruct(gs *genStruct, fset *token.FileSet, s *types.Struct) (
 			if err != nil {
 				return
 			}
+		case "property,silent":
+			silent = true
+			fallthrough
 		case "property":
-			err = parseProperty(gs, fset, f, name)
+			err = parseProperty(gs, fset, f, name, silent)
 			if err != nil {
 				return
 			}
@@ -436,7 +443,7 @@ func parseSlot(gs *genStruct, fset *token.FileSet, f *types.Var, name string) (e
 	return
 }
 
-func parseProperty(gs *genStruct, fset *token.FileSet, f *types.Var, name string) (err error) {
+func parseProperty(gs *genStruct, fset *token.FileSet, f *types.Var, name string, silent bool) (err error) {
 	// Ensure it is not a function signature.
 	_, ok := f.Type().(*types.Signature)
 	if ok {
@@ -454,6 +461,7 @@ func parseProperty(gs *genStruct, fset *token.FileSet, f *types.Var, name string
 		Type:       typeStr,
 		CType:      goTypeToC(typeStr),
 		CPPType:    goTypeToCPP(typeStr),
+		Silent:     silent,
 	}
 
 	gs.Properties = append(gs.Properties, prop)

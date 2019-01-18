@@ -57,7 +57,7 @@ class {{$struct.CPPBaseName}} : public QObject
 	Q_OBJECT
 	{{- /* Properties */ -}}
 	{{- range $prop := $struct.Properties }}
-	Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set NOTIFY {{$prop.CPPName}}Changed)
+	{{if not $prop.Silent}}Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set NOTIFY {{$prop.CPPName}}Changed){{end}}
 	{{- end}}
 
 private:
@@ -92,12 +92,12 @@ private:
 
 signals:
 {{- range $prop := $struct.Properties }}
-	void {{$prop.CPPName}}Changed({{$prop.CPPType}} v);
+	{{if not $prop.Silent}}void {{$prop.CPPName}}Changed({{$prop.CPPType}} v);{{end}}
 {{- end}}
 
 private slots:
 {{- range $prop := $struct.Properties }}
-	void {{$prop.CPPName}}OnChanged();
+	{{if not $prop.Silent}}void {{$prop.CPPName}}OnChanged();{{end}}
 {{- end}}
 };
 
@@ -140,8 +140,10 @@ void {{$struct.CBaseName}}_free({{$struct.CBaseName}} _v) {
 {
 	{{- /* Connect property changed signals */ -}}
 	{{- range $prop := $struct.Properties }}
+	{{if not $prop.Silent -}}
 	QObject::connect(this, &{{$struct.CPPBaseName}}::{{$prop.CPPName}}Changed,
 		this, &{{$struct.CPPBaseName}}::{{$prop.CPPName}}OnChanged);
+	{{- end}}
 	{{- end}}
 }
 
@@ -175,12 +177,13 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
 
 {{- /* Properties */ -}}
 {{- range $prop := $struct.Properties }}
+{{if not $prop.Silent -}}
 {{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t {{$struct.CBaseName}}_{{$prop.Name}}_changed_cb = NULL;
 
 void {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t cb) {
 	{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb = cb;
 }
-
+{{- end}}
 
 {{$prop.CType}} {{$struct.CBaseName}}_{{$prop.Name}}_get({{$struct.CBaseName}} c) {
 	auto cc = ({{$struct.CPPBaseName}}*)c;
@@ -195,16 +198,18 @@ void {{$struct.CBaseName}}_{{$prop.Name}}_set({{$struct.CBaseName}} c, {{$prop.C
 
 void {{$struct.CPPBaseName}}::{{$prop.CPPName}}Set({{$prop.CPPType}} v) {
 	{{$prop.CPPName}} = v;
-	emit {{$prop.CPPName}}Changed(v);
+	{{if not $prop.Silent}}emit {{$prop.CPPName}}Changed(v);{{end}}
 }
 
 {{$prop.CPPType}} {{$struct.CPPBaseName}}::{{$prop.CPPName}}Get() {
 	return {{$prop.CPPName}};
 }
 
+{{if not $prop.Silent}}
 void {{$struct.CPPBaseName}}::{{$prop.CPPName}}OnChanged() {
 	{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb(this->goPtr);
 }
+{{- end}}
 {{- end}}
 
 {{- /* End of struct loop */ -}}

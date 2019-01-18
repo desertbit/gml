@@ -78,8 +78,10 @@ void {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$s
 
 {{- /* Properties */ -}}
 {{- range $prop := $struct.Properties }}
+{{if not $prop.Silent -}}
 typedef void (*{{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t)(void* go_ptr);
 void {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_changed_cb_t cb);
+{{- end}}
 
 {{$prop.CType}} {{$struct.CBaseName}}_{{$prop.Name}}_get({{$struct.CBaseName}} c);
 void {{$struct.CBaseName}}_{{$prop.Name}}_set({{$struct.CBaseName}} c, {{$prop.CType}} v);

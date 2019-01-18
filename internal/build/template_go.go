@@ -51,14 +51,14 @@ package {{.PackageName}}
 extern {{$slot.CRetType}} {{$struct.CBaseName}}_{{$slot.Name}}_go_slot(void* _goPtr{{cParams $slot.Params true false}});
 {{end -}}
 {{- range $prop := $struct.Properties }}
-extern void {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed(void* _goPtr);
+{{if not $prop.Silent}}extern void {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed(void* _goPtr);{{end}}
 {{end}}
 static void {{$struct.CBaseName}}_register() {
 {{- range $slot := $struct.Slots }}
     {{$struct.CBaseName}}_{{$slot.Name}}_cb_register({{$struct.CBaseName}}_{{$slot.Name}}_go_slot);
 {{end -}}
 {{- range $prop := $struct.Properties }}
-    {{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed);
+    {{if not $prop.Silent}}{{$struct.CBaseName}}_{{$prop.Name}}_cb_register({{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed);{{end}}
 {{end -}}
 }
 
@@ -139,12 +139,14 @@ func (_v *{{$struct.Name}}) {{$prop.Name}}() (r {{$prop.Type}}) {
     return
 }
 
+{{if not $prop.Silent}}
 //export {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed
 func {{$struct.CBaseName}}_{{$prop.Name}}_go_prop_changed(_goPtr unsafe.Pointer) {
 	_v := (pointer.Restore(_goPtr)).(*{{$struct.Name}})
     _v.on{{$prop.PublicName}}Changed()
 }
 {{end}}
+{{- end}}
 
 {{- /* End of struct loop */ -}}
 {{- end}}
