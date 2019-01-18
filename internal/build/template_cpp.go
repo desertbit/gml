@@ -57,7 +57,7 @@ class {{$struct.CPPBaseName}} : public QObject
 	Q_OBJECT
 	{{- /* Properties */ -}}
 	{{- range $prop := $struct.Properties }}
-	Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set{{if not $prop.Silent}} NOTIFY {{$prop.CPPName}}Changed{{end}})
+	Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set NOTIFY {{$prop.CPPName}}Changed)
 	{{- end}}
 
 private:
@@ -92,7 +92,7 @@ private:
 
 signals:
 {{- range $prop := $struct.Properties }}
-	{{if not $prop.Silent}}void {{$prop.CPPName}}Changed({{$prop.CPPType}} v);{{end}}
+	void {{$prop.CPPName}}Changed({{$prop.CPPType}} v);
 {{- end}}
 
 private slots:
@@ -198,7 +198,7 @@ void {{$struct.CBaseName}}_{{$prop.Name}}_set({{$struct.CBaseName}} c, {{$prop.C
 
 void {{$struct.CPPBaseName}}::{{$prop.CPPName}}Set({{$prop.CPPType}} v) {
 	{{$prop.CPPName}} = v;
-	{{if not $prop.Silent}}emit {{$prop.CPPName}}Changed(v);{{end}}
+	emit {{$prop.CPPName}}Changed(v);
 }
 
 {{$prop.CPPType}} {{$struct.CPPBaseName}}::{{$prop.CPPName}}Get() {
