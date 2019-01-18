@@ -7,7 +7,7 @@ ENV QT_ROOT="/opt/Qt/5.12.0/gcc_64" \
 
 # Install dependencies.
 RUN apt-get -y update && \
-    apt-get -y install sudo git wget nano make && \
+    apt-get -y install sudo git wget nano make pkg-config && \
     apt-get -y clean
 
 ENV PATH="/$QT_ROOT/bin:$PATH" \

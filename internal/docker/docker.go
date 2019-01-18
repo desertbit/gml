@@ -34,8 +34,9 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/desertbit/gml/internal/utils"
 	"golang.org/x/crypto/ssh/terminal"
+
+	"github.com/desertbit/gml/internal/utils"
 )
 
 const (
@@ -85,15 +86,21 @@ func Build(
 		"run", "--rm", "-i" + ttyArg,
 		"-e", "UID=" + user.Uid,
 		"-e", "GID=" + user.Gid,
+		"-e", "GOPATH=/work:/work/vendor",
 		"-v", ctx.GoPath + "/src:/work/src",
 		"-v", ctx.BuildDir + ":/work/pkg",
 		"-v", ctx.DestDir + ":/work/bin",
-		containerPrefix + container,
+	}
+	if ctx.GoPathBinding != "" && ctx.GoPathBinding != ctx.GoPath {
+		args = append(args, "-v", ctx.GoPathBinding+":/work/vendor/")
+	}
+
+	args = append(args,
+		containerPrefix+container,
 		"gml", "build",
 		"--source-dir", filepath.Join("/work", ctx.ImportPath),
 		"--build-dir", "/work/pkg/gml-build",
-		"--dest-dir", "/work/bin",
-	}
+		"--dest-dir", "/work/bin")
 
 	if clean {
 		args = append(args, "--clean")
