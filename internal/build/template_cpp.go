@@ -57,7 +57,7 @@ class {{$struct.CPPBaseName}} : public QObject
 	Q_OBJECT
 	{{- /* Properties */ -}}
 	{{- range $prop := $struct.Properties }}
-	{{if not $prop.Silent}}Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set NOTIFY {{$prop.CPPName}}Changed){{end}}
+	Q_PROPERTY({{$prop.CPPType}} {{$prop.CPPName}} READ {{$prop.CPPName}}Get WRITE {{$prop.CPPName}}Set{{if not $prop.Silent}} NOTIFY {{$prop.CPPName}}Changed{{end}})
 	{{- end}}
 
 private:
