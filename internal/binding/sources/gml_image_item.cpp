@@ -58,12 +58,17 @@ void gml_image_item_emit_changed(const char* id) {
 //##########################//
 
 GmlImageItem::GmlImageItem(QQuickItem *parent) :
-    QQuickPaintedItem(parent), src("")
+    QQuickPaintedItem(parent),
+    src(""),
+    transformationMode(Qt::FastTransformation),
+    aspectRatioMode(Qt::KeepAspectRatio)
 {
     QObject::connect(GmlApp::App(), &GmlApp::imageItemChanged,
                      this, &GmlImageItem::onImageItemChanged);
     QObject::connect(this, &GmlImageItem::sourceChanged,
 		             this, &GmlImageItem::onSourceChanged);
+    QObject::connect(this, &GmlImageItem::modeChanged,
+		             this, &GmlImageItem::onRequestUpdate);
 }
 
 QString GmlImageItem::source() const {
@@ -73,6 +78,28 @@ QString GmlImageItem::source() const {
 void GmlImageItem::setSource(const QString &source) {
     this->src = source;
     emit sourceChanged();
+}
+
+Qt::AspectRatioMode GmlImageItem::getAspectRatioMode() {
+    return aspectRatioMode;
+}
+
+void GmlImageItem::setAspectRatioMode(const Qt::AspectRatioMode m) {
+    aspectRatioMode = m;
+    emit modeChanged();
+}
+
+Qt::TransformationMode GmlImageItem::getTransformationMode() {
+    return transformationMode;
+}
+
+void GmlImageItem::setTransformationMode(const Qt::TransformationMode m) {
+    transformationMode = m;
+    emit modeChanged();
+}
+
+void GmlImageItem::onRequestUpdate() {
+    update();
 }
 
 void GmlImageItem::onImageItemChanged(const QString id) {
@@ -106,18 +133,19 @@ void GmlImageItem::paint(QPainter *painter) {
     if (img.isNull()) {
         return;
     }
+    
+    QRectF bRect   = boundingRect();
+    QImage scaled  = img.scaled(bRect.width(), bRect.height(), aspectRatioMode, transformationMode);
+    QPointF center = bRect.center() - scaled.rect().center();
 
-    // TODO: add some more modes.
-    QRectF bounding_rect = boundingRect();
-    QImage scaled = img.scaledToHeight(bounding_rect.height());
-    QPointF center = bounding_rect.center() - scaled.rect().center();
-
+    // Ensure the image is centered.
     if(center.x() < 0) {
         center.setX(0);
     }
     if(center.y() < 0) {
         center.setY(0);
     }
+
     painter->drawImage(center, scaled);
 }
 

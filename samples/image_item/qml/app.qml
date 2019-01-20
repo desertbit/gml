@@ -6,13 +6,15 @@ import Gml 1.0
 
 ApplicationWindow {
     id: window
-    width: 300
-    height: 300
+    width: 500
+    height: 500
     visible: true
 
     ImageItem {
         id: imageItem
         source: "cage"
+        aspectRatioMode: Qt.KeepAspectRatio
+        transformationMode: Qt.SmoothTransformation
         height: parent.height
         width: parent.width
     }

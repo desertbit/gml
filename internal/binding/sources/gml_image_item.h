@@ -36,6 +36,8 @@ class GmlImageItem : public QQuickPaintedItem
 {
 Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(Qt::TransformationMode transformationMode READ getTransformationMode WRITE setTransformationMode NOTIFY modeChanged)
+    Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ getAspectRatioMode WRITE setAspectRatioMode NOTIFY modeChanged)
 
 public:
     GmlImageItem(QQuickItem *parent = nullptr);
@@ -43,16 +45,26 @@ public:
     QString source() const;
     void    setSource(const QString &source);
 
+    Qt::AspectRatioMode getAspectRatioMode();
+    void                setAspectRatioMode(const Qt::AspectRatioMode m);
+
+    Qt::TransformationMode getTransformationMode();
+    void                   setTransformationMode(const Qt::TransformationMode m);
+
     void paint(QPainter *painter);
  
 signals:
     void sourceChanged();
+    void modeChanged();
 
 private:
     QString src;
     QImage  img;
+    Qt::TransformationMode transformationMode;
+    Qt::AspectRatioMode    aspectRatioMode;
 
 private slots:
+    void onRequestUpdate();
     void onImageItemChanged(const QString id);
     void onSourceChanged();
 

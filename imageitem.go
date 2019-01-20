@@ -86,6 +86,7 @@ func (i *ImageItem) SetImage(img *Image) {
 	i.mutex.Unlock()
 
 	// Notify the change to QML.
+	// Don't need RunMain, because this emits only a signal.
 	C.gml_image_item_emit_changed(i.idC)
 }
 
