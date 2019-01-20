@@ -28,37 +28,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/desertbit/gml"
 )
 
 func main() {
-	err := gml.LoadData(qmlData)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	gml.ExecExit()
+	gml.ExecExit("qrc:/qml/app.qml")
 }
-
-const qmlData = `
-import QtQuick 2.11
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.4
-
-ApplicationWindow {
-    id: window
-    width: 300
-    height: 300
-    visible: true
-
-	Text {
-		text: "Hello world!"
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-		font.pointSize: 24
-		font.bold: true
-	}
-}
-`

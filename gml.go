@@ -51,48 +51,39 @@ func init() {
 	}
 }
 
+// OnInit calls the function during application initialization.
+// The qml data is already loaded, but the application does not run yet.
+func OnInit(f func() error) {
+	gapp.OnInit(f)
+}
+
 // RunMain runs the function on the applications main thread.
 func RunMain(f func()) {
 	gapp.RunMain(f)
 }
 
-// Load the root QML file located at url.
-// Hint: Must be called within main thread.
-func Load(url string) error {
-	return gapp.Load(url)
-}
-
-// LoadData loads the QML given in data.
-// Hint: Must be called within main thread.
-func LoadData(data string) error {
-	return gapp.LoadData(data)
-}
-
-// AddImportPath adds the given import path to the app engine.
-// Hint: Must be called within main thread.
-func AddImportPath(path string) {
-	gapp.AddImportPath(path)
-}
-
-// AddImageProvider adds the image provider to the app engine for the given id.
-func AddImageProvider(id string, ip *ImageProvider) error {
-	return gapp.AddImageProvider(id, ip)
-}
-
-// Exec executes the application and returns the exit code.
+// Exec load sthe root QML file located at url,
+// executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.
-func Exec() (retCode int, err error) {
-	return gapp.Exec()
+func Exec(url string) (retCode int, err error) {
+	return gapp.Exec(url)
+}
+
+// ExecExit load sthe root QML file located at url,
+// executes the app, prints errors and exits
+// the application with the specific exit code.
+func ExecExit(url string) {
+	ret, err := gapp.Exec(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	os.Exit(ret)
 }
 
 // Quit the application.
 func Quit() {
 	gapp.Quit()
-}
-
-func SetContextProperty(name string, v interface{}) (err error) {
-	return gapp.SetContextProperty(name, v)
 }
 
 func SetApplicationName(name string) {
@@ -103,28 +94,11 @@ func SetOrganizationName(name string) {
 	gapp.SetOrganizationName(name)
 }
 
-// ExecExit executes the app, prints errors and exits
-// the application with the specific exit code.
-func ExecExit() {
-	ret, err := gapp.Exec()
-	if err != nil {
-		fmt.Println(err)
-	}
-	os.Exit(ret)
+// AddImageProvider adds the image provider to the app engine for the given id.
+func AddImageProvider(id string, ip *ImageProvider) error {
+	return gapp.AddImageProvider(id, ip)
 }
 
-// LoadExecExit loads the qml url, executes the app, prints errors and exits
-// the application with the specific exit code.
-func LoadExecExit(url string) {
-	err := gapp.Load(url)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	ret, err := gapp.Exec()
-	if err != nil {
-		fmt.Println(err)
-	}
-	os.Exit(ret)
+func SetContextProperty(name string, v interface{}) (err error) {
+	return gapp.SetContextProperty(name, v)
 }
