@@ -34,17 +34,12 @@ import (
 )
 
 func main() {
-	app, err := gml.NewApp()
+	err := gml.LoadData(qmlData)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = app.LoadData(qmlData)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	gml.Exec(app)
+	gml.ExecExit()
 }
 
 const qmlData = `

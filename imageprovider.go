@@ -86,7 +86,7 @@ func NewImageProvider(
 	runtime.SetFinalizer(ip, freeImageProvider)
 
 	// Check if something failed.
-	// This should never happen is signalizes a fatal error.
+	// This should never happen. Otherwise this signalizes a fatal error.
 	if ip.ip == nil {
 		panic(fmt.Errorf("failed to create gml imageprovider: C pointer is nil"))
 	}

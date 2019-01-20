@@ -53,14 +53,7 @@ func init() {
 	C.gml_app_init()
 }
 
-// Global app variable.
-var app *App
-
-func CurrentApp() *App {
-	return app
-}
-
-type App struct {
+type app struct {
 	freed    bool
 	threadID int
 
@@ -73,28 +66,23 @@ type App struct {
 	imgProvMap map[string]*ImageProvider
 }
 
-func NewApp() (a *App, err error) {
+func newApp() (a *app, err error) {
 	// Only pass the executable name.
 	args := os.Args
 	if len(args) > 1 {
 		args = args[:1]
 	}
-	return NewAppWithArgs(args)
+	return newAppWithArgs(args)
 }
 
-func NewAppWithArgs(args []string) (a *App, err error) {
+func newAppWithArgs(args []string) (a *app, err error) {
 	// Ensure the thread is locked within this context of app creation.
 	runtime.LockOSThread()
-
-	// Check if an App has already been created.
-	if app != nil {
-		panic("more than one application created")
-	}
 
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
-	a = &App{
+	a = &app{
 		threadID:   utils.GetThreadID(),
 		argc:       len(args),
 		argv:       toCharArray(args),
@@ -120,13 +108,10 @@ func NewAppWithArgs(args []string) (a *App, err error) {
 
 	// Always free the C value.
 	runtime.SetFinalizer(a, freeApp)
-
-	// Set our global private variable.
-	app = a
 	return
 }
 
-func freeApp(a *App) {
+func freeApp(a *app) {
 	if a.freed {
 		return
 	}
@@ -135,11 +120,11 @@ func freeApp(a *App) {
 	freeCharArray(a.argv, a.argc)
 }
 
-func (a *App) Free() {
+func (a *app) Free() {
 	freeApp(a)
 }
 
-func (a *App) getDp() (dp float64, err error) {
+func (a *app) getDp() (dp float64, err error) {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
@@ -184,7 +169,7 @@ func (a *App) getDp() (dp float64, err error) {
 }
 
 // RunMain runs the function on the applications main thread.
-func (a *App) RunMain(f func()) {
+func (a *app) RunMain(f func()) {
 	// Check if already running on the main thread.
 	if utils.GetThreadID() == a.threadID {
 		f()
@@ -212,7 +197,7 @@ func (a *App) RunMain(f func()) {
 
 // Load the root QML file located at url.
 // Hint: Must be called within main thread.
-func (a *App) Load(url string) error {
+func (a *app) Load(url string) error {
 	urlC := C.CString(url)
 	defer C.free(unsafe.Pointer(urlC))
 
@@ -228,7 +213,7 @@ func (a *App) Load(url string) error {
 
 // LoadData loads the QML given in data.
 // Hint: Must be called within main thread.
-func (a *App) LoadData(data string) error {
+func (a *app) LoadData(data string) error {
 	dataC := C.CString(data)
 	defer C.free(unsafe.Pointer(dataC))
 
@@ -244,7 +229,7 @@ func (a *App) LoadData(data string) error {
 
 // AddImportPath adds the given import path to the app engine.
 // Hint: Must be called within main thread.
-func (a *App) AddImportPath(path string) {
+func (a *app) AddImportPath(path string) {
 	pathC := C.CString(path)
 	defer C.free(unsafe.Pointer(pathC))
 
@@ -252,7 +237,7 @@ func (a *App) AddImportPath(path string) {
 }
 
 // AddImageProvider adds the image provider to the app engine for the given id.
-func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
+func (a *app) AddImageProvider(id string, ip *ImageProvider) error {
 	idC := C.CString(id)
 	defer C.free(unsafe.Pointer(idC))
 
@@ -279,7 +264,7 @@ func (a *App) AddImageProvider(id string, ip *ImageProvider) error {
 // Exec executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.
-func (a *App) Exec() (retCode int, err error) {
+func (a *app) Exec() (retCode int, err error) {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
@@ -292,13 +277,13 @@ func (a *App) Exec() (retCode int, err error) {
 }
 
 // Quit the application.
-func (a *App) Quit() {
+func (a *app) Quit() {
 	a.RunMain(func() {
 		C.gml_app_quit(a.app)
 	})
 }
 
-func (a *App) SetContextProperty(name string, v interface{}) (err error) {
+func (a *app) SetContextProperty(name string, v interface{}) (err error) {
 	if len(name) == 0 {
 		return errors.New("property name is empty")
 	}
@@ -348,7 +333,7 @@ func (a *App) SetContextProperty(name string, v interface{}) (err error) {
 	return nil
 }
 
-func (a *App) SetApplicationName(name string) {
+func (a *app) SetApplicationName(name string) {
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 
@@ -357,7 +342,7 @@ func (a *App) SetApplicationName(name string) {
 	})
 }
 
-func (a *App) SetOrganizationName(name string) {
+func (a *app) SetOrganizationName(name string) {
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 

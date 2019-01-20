@@ -98,7 +98,7 @@ func freeListModel(lm *ListModel) {
 }
 
 func (lm *ListModel) Insert(row, count int, dataModifier func()) {
-	app.RunMain(func() {
+	RunMain(func() {
 		// Begin the insert operation.
 		C.gml_list_model_begin_insert_rows(lm.lm, C.int(row), C.int(count))
 		// Perform the data modification.
@@ -109,7 +109,7 @@ func (lm *ListModel) Insert(row, count int, dataModifier func()) {
 }
 
 func (lm *ListModel) Move(row, count, dstRow int, dataModifier func()) {
-	app.RunMain(func() {
+	RunMain(func() {
 		// Begin the move operation.
 		C.gml_list_model_begin_move_rows(lm.lm, C.int(row), C.int(count), C.int(dstRow))
 		// Perform the data modification.
@@ -120,7 +120,7 @@ func (lm *ListModel) Move(row, count, dstRow int, dataModifier func()) {
 }
 
 func (lm *ListModel) Reload(row, count int, dataModifier func()) {
-	app.RunMain(func() {
+	RunMain(func() {
 		// Perform the data modification.
 		dataModifier()
 		// Signal the changed operation.
@@ -129,7 +129,7 @@ func (lm *ListModel) Reload(row, count int, dataModifier func()) {
 }
 
 func (lm *ListModel) Remove(row, count int, dataModifier func()) {
-	app.RunMain(func() {
+	RunMain(func() {
 		// Begin the remove operation.
 		C.gml_list_model_begin_remove_rows(lm.lm, C.int(row), C.int(count))
 		// Perform the data modification.
