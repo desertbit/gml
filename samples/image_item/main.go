@@ -35,24 +35,30 @@ import (
 )
 
 func main() {
-	imgCached := gml.NewImage()
-	err := imgCached.LoadFromFile("./cage1.jpg")
+	// Load image 1.
+	imgCage1 := gml.NewImage()
+	err := imgCage1.LoadFromFile("./cage1.jpg")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer imgCached.Free()
+	defer imgCage1.Free()
 
+	// Load image 2.
+	imgCage2 := gml.NewImage()
+	err = imgCage2.LoadFromFile("./cage2.jpg")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer imgCage2.Free()
+
+	// Create the image provider and set to image 1.
 	item := gml.NewImageItem("cage")
-	item.SetImage(imgCached)
+	item.SetImage(imgCage1)
 
-	err = imgCached.LoadFromFile("./cage2.jpg")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
+	// Change after a short timeout.
 	go func() {
 		time.Sleep(2 * time.Second)
-		item.SetImage(imgCached)
+		item.SetImage(imgCage2)
 	}()
 
 	gml.ExecExit("qrc:/qml/app.qml")
