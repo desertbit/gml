@@ -69,9 +69,12 @@ import (
     "unsafe"
     "runtime"
 
-	{{if pkgHasProps .}}"github.com/desertbit/gml"{{end}} {{/* Only import if required */}}
+	"github.com/desertbit/gml"
 	"github.com/desertbit/gml/pointer"
 )
+
+// Force to use the gml package. The import is not alway required...
+var _ = gml.Object{}
 
 {{/* Struct loop */ -}}
 {{range $struct := .Structs -}}
