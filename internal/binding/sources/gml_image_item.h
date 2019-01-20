@@ -30,6 +30,7 @@
 
 #include "gml_includes.h"
 #include "gml_error.h"
+#include "gml_app.h"
 
 class GmlImageItem : public QQuickPaintedItem
 {
@@ -38,7 +39,6 @@ Q_OBJECT
 
 public:
     GmlImageItem(QQuickItem *parent = nullptr);
-    virtual ~GmlImageItem();
 
     QString source() const;
     void    setSource(const QString &source);
@@ -53,6 +53,7 @@ private:
     QImage  img;
 
 private slots:
+    void onImageItemChanged(const QString id);
     void onSourceChanged();
 
 };

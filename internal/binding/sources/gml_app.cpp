@@ -33,6 +33,8 @@
 
 gml_app_run_main_cb_t gml_app_run_main_cb = NULL;
 
+GmlApp* GmlApp::globalApp = NULL;
+
 //#############//
 //### C API ###//
 //#############//
@@ -264,6 +266,13 @@ GmlApp::GmlApp(int& argc, char** argv) :
 
     // Register custom QML types.
     qmlRegisterType<GmlImageItem>("Gml", 1, 0, "ImageItem");
+
+    // Set the global app pointer.
+    globalApp = this;
+}
+
+GmlApp* GmlApp::App() {
+    return globalApp;
 }
 
 void GmlApp::runMain(void* goPtr) {

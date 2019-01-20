@@ -38,6 +38,7 @@ class GmlApp : public QObject
     Q_OBJECT
 private:
     int argc;
+    static GmlApp* globalApp;
 
 public:
     QGuiApplication       app;
@@ -45,8 +46,11 @@ public:
 
     GmlApp(int& argc, char** argv);
 
+    static GmlApp* App();
+
 signals:
     void requestRunMain(void* goPtr);
+    void imageItemChanged(const QString id);
 
 private slots:
     void runMain(void* goPtr);

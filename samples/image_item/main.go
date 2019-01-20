@@ -29,21 +29,31 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/desertbit/gml"
 )
 
 func main() {
 	imgCached := gml.NewImage()
-	err := imgCached.LoadFromFile("./cage.jpg")
+	err := imgCached.LoadFromFile("./cage1.jpg")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer imgCached.Free()
 
-	gml.NewImageItem("hallo", func(img *gml.Image) {
-		img.SetTo(imgCached)
-	})
+	item := gml.NewImageItem("cage")
+	item.SetImage(imgCached)
+
+	err = imgCached.LoadFromFile("./cage2.jpg")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		item.SetImage(imgCached)
+	}()
 
 	gml.ExecExit("qrc:/qml/app.qml")
 }

@@ -12,7 +12,7 @@ ApplicationWindow {
 
     ImageItem {
         id: imageItem
-        source: "hallo"
+        source: "cage"
         height: parent.height
         width: parent.width
     }

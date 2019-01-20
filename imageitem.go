@@ -29,7 +29,7 @@ package gml
 
 // #include <gml.h>
 //
-// extern void gml_image_item_request_go_slot(char* src, gml_image img);
+// extern void gml_image_item_request_go_slot(char* id, gml_image img);
 // static void gml_image_item_init() {
 //      gml_image_item_request_cb_register(gml_image_item_request_go_slot);
 // }
@@ -37,6 +37,7 @@ import "C"
 import (
 	"log"
 	"sync"
+	"unsafe"
 )
 
 var (
@@ -48,39 +49,92 @@ func init() {
 	C.gml_image_item_init()
 }
 
+//#################//
+//### ImageItem ###//
+//#################//
+
 type ImageItem struct {
-	id       string
+	id  string
+	idC *C.char
+
+	mutex    sync.Mutex
 	released bool
-	callback func(img *Image)
+	img      *Image
 }
 
-// Don't block the callback. This will block the main ui thread.
-func NewImageItem(id string, callback func(img *Image)) (i *ImageItem) {
+func NewImageItem(id string) (i *ImageItem) {
 	i = &ImageItem{
-		id:       id,
-		callback: callback,
+		id:  id,
+		idC: C.CString(id),
+		img: NewImage(),
 	}
 
-	imageItemsMutex.Lock()
-	if old, ok := imageItems[id]; ok {
-		old.released = true
+	old := setImageItem(id, i)
+	if old != nil {
+		old.release(true)
 	}
-	imageItems[id] = i
-	imageItemsMutex.Unlock()
 
+	// Hint: Does not need a finalizer, because it is always in the map
+	//       and Release must be called.
 	return
 }
 
+// SetImage sets the image by doing a shallow copy.
+func (i *ImageItem) SetImage(img *Image) {
+	i.mutex.Lock()
+	i.img.SetTo(img)
+	i.mutex.Unlock()
+
+	// Notify the change to QML.
+	C.gml_image_item_emit_changed(i.idC)
+}
+
+// Release this image item.
+// Don't use it anymore after this call, because memory is freed.
 func (i *ImageItem) Release() {
-	imageItemsMutex.Lock()
-	defer imageItemsMutex.Unlock()
+	i.release(false)
+}
+
+func (i *ImageItem) release(skipMapDelete bool) {
+	i.mutex.Lock()
+	defer i.mutex.Unlock()
 
 	if i.released {
 		return
 	}
 	i.released = true
 
-	delete(imageItems, i.id)
+	if !skipMapDelete {
+		deleteImageItem(i.id)
+	}
+
+	C.free(unsafe.Pointer(i.idC))
+	i.img.Free()
+}
+
+//######################//
+//### Image Item Map ###//
+//######################//
+
+func getImageItem(id string) (i *ImageItem) {
+	imageItemsMutex.Lock()
+	i = imageItems[id]
+	imageItemsMutex.Unlock()
+	return
+}
+
+func setImageItem(id string, i *ImageItem) (old *ImageItem) {
+	imageItemsMutex.Lock()
+	old = imageItems[id]
+	imageItems[id] = i
+	imageItemsMutex.Unlock()
+	return
+}
+
+func deleteImageItem(id string) {
+	imageItemsMutex.Lock()
+	delete(imageItems, id)
+	imageItemsMutex.Unlock()
 }
 
 //#####################//
@@ -89,21 +143,19 @@ func (i *ImageItem) Release() {
 
 //export gml_image_item_request_go_slot
 func gml_image_item_request_go_slot(
-	srcC *C.char,
+	idC *C.char,
 	imgC C.gml_image,
 ) {
-	id := C.GoString(srcC)
+	id := C.GoString(idC)
 	img := newImage(imgC, false) // Don't free the image. We are not the owner of the pointer.
 
-	var i *ImageItem
-	imageItemsMutex.Lock()
-	i = imageItems[id]
-	imageItemsMutex.Unlock()
-
+	i := getImageItem(id)
 	if i == nil {
 		log.Println("gml: image item not registered for source ID:", id)
 		return
 	}
 
-	i.callback(img)
+	i.mutex.Lock()
+	img.SetTo(i.img)
+	i.mutex.Unlock()
 }

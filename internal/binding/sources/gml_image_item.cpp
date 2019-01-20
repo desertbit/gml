@@ -41,6 +41,18 @@ void gml_image_item_request_cb_register(gml_image_item_request_cb_t cb) {
     gml_image_item_request_cb = cb;
 }
 
+void gml_image_item_emit_changed(const char* id) {
+    try {
+        emit GmlApp::App()->imageItemChanged(QString(id));
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 //##########################//
 //### GmlImageItem Class ###//
 //##########################//
@@ -48,11 +60,11 @@ void gml_image_item_request_cb_register(gml_image_item_request_cb_t cb) {
 GmlImageItem::GmlImageItem(QQuickItem *parent) :
     QQuickPaintedItem(parent), src("")
 {
+    QObject::connect(GmlApp::App(), &GmlApp::imageItemChanged,
+                     this, &GmlImageItem::onImageItemChanged);
     QObject::connect(this, &GmlImageItem::sourceChanged,
-		this, &GmlImageItem::onSourceChanged);
+		             this, &GmlImageItem::onSourceChanged);
 }
-
-GmlImageItem::~GmlImageItem() {}
 
 QString GmlImageItem::source() const {
     return src;
@@ -61,6 +73,14 @@ QString GmlImageItem::source() const {
 void GmlImageItem::setSource(const QString &source) {
     this->src = source;
     emit sourceChanged();
+}
+
+void GmlImageItem::onImageItemChanged(const QString id) {
+    if (this->src != id) {
+        return;
+    }
+
+    onSourceChanged();
 }
 
 void GmlImageItem::onSourceChanged() {
@@ -87,6 +107,7 @@ void GmlImageItem::paint(QPainter *painter) {
         return;
     }
 
+    // TODO: add some more modes.
     QRectF bounding_rect = boundingRect();
     QImage scaled = img.scaledToHeight(bounding_rect.height());
     QPointF center = bounding_rect.center() - scaled.rect().center();

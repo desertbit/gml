@@ -33,10 +33,12 @@ extern "C" {
 #endif
 
 typedef void (*gml_image_item_request_cb_t)(
-    char*      src,
+    char*      id,
     gml_image  img
 );
 void gml_image_item_request_cb_register(gml_image_item_request_cb_t cb);
+
+void gml_image_item_emit_changed(const char* id);
 
 #ifdef __cplusplus
 }
