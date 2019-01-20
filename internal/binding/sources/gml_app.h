@@ -31,6 +31,7 @@
 #include "gml_includes.h"
 #include "gml_error.h"
 #include "gml_image_provider.h"
+#include "gml_image_item.h"
 
 class GmlApp : public QObject
 {

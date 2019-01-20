@@ -25,18 +25,21 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#ifndef GML_HEADER_IMAGE_ITEM_H
+#define GML_HEADER_IMAGE_ITEM_H
 
-#include "gml_includes.h"
-#include "gml_bytes.h"
-#include "gml_error.h"
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_image.h"
-#include "gml_image_item.h"
-#include "gml_image_provider.h"
-#include "gml_list_model.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef void (*gml_image_item_request_cb_t)(
+    char*      src,
+    gml_image  img
+);
+void gml_image_item_request_cb_register(gml_image_item_request_cb_t cb);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,4 +1,5 @@
 # TODO
+- remove the app completly.
 - code gen: use the direct type instead of interface{} -> properties don't return a QVariant.
 - don't use C.CString instead use the direct byte buffer?
 - use everythwere constData instead of data (strings).

@@ -25,18 +25,25 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+package main
 
-#include "gml_includes.h"
-#include "gml_bytes.h"
-#include "gml_error.h"
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_image.h"
-#include "gml_image_item.h"
-#include "gml_image_provider.h"
-#include "gml_list_model.h"
+import (
+	"log"
 
-#endif
+	"github.com/desertbit/gml"
+)
+
+func main() {
+	imgCached := gml.NewImage()
+	err := imgCached.LoadFromFile("./cage.jpg")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer imgCached.Free()
+
+	gml.NewImageItem("hallo", func(img *gml.Image) {
+		img.SetTo(imgCached)
+	})
+
+	gml.ExecExit("qrc:/qml/app.qml")
+}

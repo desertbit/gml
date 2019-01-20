@@ -25,18 +25,36 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#ifndef GML_IMAGE_ITEM_H
+#define GML_IMAGE_ITEM_H
 
 #include "gml_includes.h"
-#include "gml_bytes.h"
 #include "gml_error.h"
-#include "gml_app.h"
-#include "gml_object.h"
-#include "gml_variant.h"
-#include "gml_image.h"
-#include "gml_image_item.h"
-#include "gml_image_provider.h"
-#include "gml_list_model.h"
+
+class GmlImageItem : public QQuickPaintedItem
+{
+Q_OBJECT
+    Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
+
+public:
+    GmlImageItem(QQuickItem *parent = nullptr);
+    virtual ~GmlImageItem();
+
+    QString source() const;
+    void    setSource(const QString &source);
+
+    void paint(QPainter *painter);
+ 
+signals:
+    void sourceChanged();
+
+private:
+    QString src;
+    QImage  img;
+
+private slots:
+    void onSourceChanged();
+
+};
 
 #endif

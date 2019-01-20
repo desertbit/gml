@@ -32,10 +32,13 @@
 extern "C" {
 #endif
 
+#include "gml_error.h"
+
 typedef void* gml_image;
 
 gml_image gml_image_new();
 void      gml_image_free(gml_image img);
+void      gml_image_set_to(gml_image img, gml_image other);
 int       gml_image_load_from_data(gml_image img, char* data, int size, gml_error err);
 
 #ifdef __cplusplus

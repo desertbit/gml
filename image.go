@@ -31,6 +31,7 @@ package gml
 import "C"
 import (
 	"fmt"
+	"io/ioutil"
 	"runtime"
 	"unsafe"
 )
@@ -76,6 +77,20 @@ func freeImage(img *Image) {
 
 func (img *Image) Free() {
 	freeImage(img)
+}
+
+// SetTo performs a shallow copy.
+func (img *Image) SetTo(other *Image) {
+	C.gml_image_set_to(img.img, other.img)
+}
+
+func (img *Image) LoadFromFile(path string) error {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	return img.LoadFromData(data)
 }
 
 func (img *Image) LoadFromData(data []byte) error {

@@ -1,0 +1,5 @@
+/build
+/image_item
+gml_gen*
+*.qrc
+

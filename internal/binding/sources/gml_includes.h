@@ -48,6 +48,9 @@
 #include <QAbstractListModel>
 #include <QModelIndex>
 #include <QScreen>
+#include <QQuickPaintedItem>
+#include <QQuickItem>
+#include <QPainter>
 
 using std::string;
 using std::cout;

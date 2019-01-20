@@ -261,6 +261,9 @@ GmlApp::GmlApp(int& argc, char** argv) :
     Q_INIT_RESOURCE(gml_gen_resources);
     QObject::connect(this, &GmlApp::requestRunMain,
                      this, &GmlApp::runMain);
+
+    // Register custom QML types.
+    qmlRegisterType<GmlImageItem>("Gml", 1, 0, "ImageItem");
 }
 
 void GmlApp::runMain(void* goPtr) {

@@ -56,6 +56,20 @@ void gml_image_free(gml_image img) {
     img = NULL;
 }
 
+void gml_image_set_to(gml_image img, gml_image other) {
+    try {
+        QImage* qImg = (QImage*)img;
+        QImage* qImgOther = (QImage*)other;
+        *qImg = *qImgOther;
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 int gml_image_load_from_data(gml_image img, char* data, int size, gml_error err) {
     try {
         QImage* qImg = (QImage*)img;
