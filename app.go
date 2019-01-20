@@ -62,7 +62,6 @@ type app struct {
 	argv **C.char
 
 	mutex      sync.Mutex
-	initFuncs  []func() error
 	ctxPropMap map[string]interface{}
 	imgProvMap map[string]*ImageProvider
 }
@@ -169,14 +168,6 @@ func (a *app) getDp() (dp float64, err error) {
 		dp = dpi / 140.0*/
 }
 
-// OnInit calls the function during application initialization.
-// The qml data is already loaded, but the application does not run yet.
-func (a *app) OnInit(f func() error) {
-	a.mutex.Lock()
-	a.initFuncs = append(a.initFuncs, f)
-	a.mutex.Unlock()
-}
-
 // RunMain runs the function on the applications main thread.
 func (a *app) RunMain(f func()) {
 	// Check if already running on the main thread.
@@ -281,21 +272,6 @@ func (a *app) Exec(url string) (retCode int, err error) {
 	err = a.Load(url)
 	if err != nil {
 		return
-	}
-
-	// Call all init functions.
-	var initFuncs []func() error
-	a.mutex.Lock()
-	initFuncs = a.initFuncs
-	a.initFuncs = nil
-	a.mutex.Unlock()
-
-	for _, f := range initFuncs {
-		err = f()
-		if err != nil {
-			err = fmt.Errorf("gml: onInit: %v", err)
-			return
-		}
 	}
 
 	// Execute the app.

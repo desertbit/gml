@@ -51,12 +51,6 @@ func init() {
 	}
 }
 
-// OnInit calls the function during application initialization.
-// The qml data is already loaded, but the application does not run yet.
-func OnInit(f func() error) {
-	gapp.OnInit(f)
-}
-
 // RunMain runs the function on the applications main thread.
 func RunMain(f func()) {
 	gapp.RunMain(f)
