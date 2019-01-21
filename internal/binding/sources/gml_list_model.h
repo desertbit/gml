@@ -40,6 +40,9 @@ public:
     int rowCount(const QModelIndex& parent) const override;
     QVariant data(const QModelIndex& index, int role) const override;
 
+    void emitBeginResetModel();
+    void emitEndResetModel();
+
     void emitBeginInsertRows(int row, int count);
     void emitEndInsertRows();
 

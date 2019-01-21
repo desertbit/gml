@@ -97,6 +97,17 @@ func freeListModel(lm *ListModel) {
 	pointer.Unref(lm.ptr)
 }
 
+func (lm *ListModel) Reset(dataModifier func()) {
+	RunMain(func() {
+		// Begin the reset operation.
+		C.gml_list_model_begin_reset_model()
+		// Perform the data modifications.
+		dataModifier()
+		// End the reset operation.
+		C.gml_list_model_end_reset_model()
+	})
+}
+
 func (lm *ListModel) Insert(row, count int, dataModifier func()) {
 	RunMain(func() {
 		// Begin the insert operation.
