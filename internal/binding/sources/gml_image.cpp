@@ -99,7 +99,7 @@ int gml_image_load_from_rgba(gml_image img, const char* cdata, int size, int wid
     }
 }
 
-int gml_image_load_from_data(gml_image img, char* data, int size, gml_error err) {
+int gml_image_load_from_data(gml_image img, const char* data, int size, gml_error err) {
     try {
         QImage* qImg = (QImage*)img;
         qImg->loadFromData((const unsigned char*)(data), size);

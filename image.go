@@ -30,9 +30,9 @@ package gml
 // #include <gml.h>
 import "C"
 import (
+	"errors"
 	"fmt"
 	"image"
-	"image/color"
 	"image/draw"
 	"io/ioutil"
 	"runtime"
@@ -88,15 +88,35 @@ func (img *Image) SetTo(other *Image) {
 }
 
 func (img *Image) LoadFromGoImage(gimg image.Image) error {
-	// TODO: check if image is empty.
+	b := gimg.Bounds()
 
-	// Ensure it is an RGBA image.
+	// Get the RGBA image if present.
 	// Otherwise convert to RGBA.
-	if gimg.ColorModel() != color.RGBAModel {
-		b := gimg.Bounds()
-		imgRGBA := image.NewRGBA(b)
+	imgRGBA, ok := gimg.(*image.RGBA)
+	if !ok {
+		imgRGBA = image.NewRGBA(b)
 		draw.Draw(imgRGBA, b, gimg, b.Min, draw.Src)
-		gimg = imgRGBA
+	}
+
+	// Ensure the image is not empty.
+	if len(imgRGBA.Pix) == 0 {
+		return errors.New("empty rgba image")
+	}
+
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	ret := C.gml_image_load_from_rgba(
+		img.img,
+		(*C.char)(unsafe.Pointer(&imgRGBA.Pix[0])),
+		C.int(len(imgRGBA.Pix)),
+		C.int(b.Dx()),
+		C.int(b.Dy()),
+		C.int(imgRGBA.Stride),
+		apiErr.err,
+	)
+	if ret != 0 {
+		return apiErr.Err("failed to load from data")
 	}
 
 	return nil
