@@ -70,7 +70,7 @@ void gml_list_model_cb_register(
     gml_list_model_data_cb      = d_cb;
 }
 
-void gml_list_model_begin_reset_model() {
+void gml_list_model_begin_reset_model(gml_list_model lm) {
     try {
         GmlListModel* glm = (GmlListModel*)lm;
         glm->emitBeginResetModel();
@@ -83,7 +83,7 @@ void gml_list_model_begin_reset_model() {
     }
 }
 
-void gml_list_model_end_reset_model() {
+void gml_list_model_end_reset_model(gml_list_model lm) {
     try {
         GmlListModel* glm = (GmlListModel*)lm;
         glm->emitEndResetModel();
@@ -214,11 +214,11 @@ QVariant GmlListModel::data(const QModelIndex& index, int /*role = Qt::DisplayRo
 }
 
 void GmlListModel::emitBeginResetModel() {
-    emit beginResetModel()
+    emit beginResetModel();
 }
 
 void GmlListModel::emitEndResetModel() {
-    emit endResetModel()
+    emit endResetModel();
 }
 
 void GmlListModel::emitBeginInsertRows(int row, int count) {

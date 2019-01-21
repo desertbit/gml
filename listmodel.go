@@ -100,11 +100,11 @@ func freeListModel(lm *ListModel) {
 func (lm *ListModel) Reset(dataModifier func()) {
 	RunMain(func() {
 		// Begin the reset operation.
-		C.gml_list_model_begin_reset_model()
+		C.gml_list_model_begin_reset_model(lm.lm)
 		// Perform the data modifications.
 		dataModifier()
 		// End the reset operation.
-		C.gml_list_model_end_reset_model()
+		C.gml_list_model_end_reset_model(lm.lm)
 	})
 }
 

@@ -31,6 +31,9 @@ package gml
 import "C"
 import (
 	"fmt"
+	"image"
+	"image/color"
+	"image/draw"
 	"io/ioutil"
 	"runtime"
 	"unsafe"
@@ -82,6 +85,21 @@ func (img *Image) Free() {
 // SetTo performs a shallow copy.
 func (img *Image) SetTo(other *Image) {
 	C.gml_image_set_to(img.img, other.img)
+}
+
+func (img *Image) LoadFromGoImage(gimg image.Image) error {
+	// TODO: check if image is empty.
+
+	// Ensure it is an RGBA image.
+	// Otherwise convert to RGBA.
+	if gimg.ColorModel() != color.RGBAModel {
+		b := gimg.Bounds()
+		imgRGBA := image.NewRGBA(b)
+		draw.Draw(imgRGBA, b, gimg, b.Min, draw.Src)
+		gimg = imgRGBA
+	}
+
+	return nil
 }
 
 func (img *Image) LoadFromFile(path string) error {

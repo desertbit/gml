@@ -57,8 +57,8 @@ void gml_list_model_cb_register(
 );
 
 // Reset model.
-void gml_list_model_begin_reset_model();
-void gml_list_model_end_reset_model();
+void gml_list_model_begin_reset_model(gml_list_model lm);
+void gml_list_model_end_reset_model(gml_list_model lm);
 
 // Insert rows.
 void gml_list_model_begin_insert_rows(gml_list_model lm, int row, int count);

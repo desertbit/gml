@@ -51,7 +51,7 @@ func main() {
 	}
 	defer imgCage2.Free()
 
-	// Create the image provider and set to image 1.
+	// Create the image item and set to image 1.
 	item := gml.NewImageItem("cage")
 	item.SetImage(imgCage1)
 
