@@ -109,7 +109,7 @@ func getPackageImports(dir string) (imports []string, basePath string, err error
 func getPackageImportsRec(pkg *build.Package, mustPrefix, basePath string, imports *[]string) (err error) {
 Loop:
 	for _, imp := range pkg.Imports {
-		if !strings.HasPrefix(imp, pkg.ImportPath) {
+		if !strings.HasPrefix(imp, mustPrefix) {
 			continue Loop
 		}
 
