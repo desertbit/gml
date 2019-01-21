@@ -1,4 +1,5 @@
 # TODO
+- add qml support for int64
 - remove the app completly.
 - code gen: use the direct type instead of interface{} -> properties don't return a QVariant.
 - don't use C.CString instead use the direct byte buffer?

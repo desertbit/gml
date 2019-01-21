@@ -28,6 +28,14 @@
 #include "gml_includes.h"
 #include "gml_error.h"
 
+//###############//
+//### Private ###//
+//###############//
+
+void gml_image_cleanup(void *data) {
+    free(data);
+}
+
 //#############//
 //### C API ###//
 //#############//
@@ -70,7 +78,28 @@ void gml_image_set_to(gml_image img, gml_image other) {
     }
 }
 
-int gml_image_load_from_data(gml_image img, char* data, int size, gml_error err) {
+int gml_image_load_from_rgba(gml_image img, const char* cdata, int size, int width, int height, int stride, gml_error err) {
+    try {
+        QImage* qImg = (QImage*)img;
+
+        // Create a copy of the data.
+        uchar* data = (uchar*)(malloc(size));
+        memcpy(data, cdata, size);
+
+        *qImg = QImage(data, width, height, stride, QImage::Format_RGBA8888, &gml_image_cleanup, data);
+        return 0;
+    }
+    catch (std::exception& e) {
+        gml_error_set_msg(err, e.what());
+        return -1;
+    }
+    catch (...) {
+         gml_error_set_catched_exception_msg(err);
+        return -1;
+    }
+}
+
+int gml_image_load_from_data(gml_image img, const char* data, int size, gml_error err) {
     try {
         QImage* qImg = (QImage*)img;
         qImg->loadFromData((const unsigned char*)(data), size);

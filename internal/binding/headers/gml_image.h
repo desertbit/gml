@@ -39,7 +39,8 @@ typedef void* gml_image;
 gml_image gml_image_new();
 void      gml_image_free(gml_image img);
 void      gml_image_set_to(gml_image img, gml_image other);
-int       gml_image_load_from_data(gml_image img, char* data, int size, gml_error err);
+int       gml_image_load_from_rgba(gml_image img, const char* data, int size, int width, int height, int stride, gml_error err);
+int       gml_image_load_from_data(gml_image img, const char* data, int size, gml_error err);
 
 #ifdef __cplusplus
 }
