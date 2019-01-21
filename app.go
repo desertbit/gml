@@ -101,7 +101,7 @@ func newAppWithArgs(args []string) (a *app, err error) {
 	if err != nil {
 		return
 	}
-	err = a.SetContextProperty("dip", dp)
+	err = a.SetContextProperty("dp", dp)
 	if err != nil {
 		return
 	}
