@@ -43,10 +43,6 @@ type Object struct {
 	ptr unsafe.Pointer
 }
 
-func newObject(ptr unsafe.Pointer) *Object {
-	return &Object{ptr: ptr}
-}
-
 func (o *Object) GMLObject_Pointer() unsafe.Pointer {
 	if o.ptr == nil {
 		panic(fmt.Errorf("gml.Object pointer is nil: did you call GMLInit()?"))
