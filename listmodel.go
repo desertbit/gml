@@ -56,7 +56,10 @@ type ListModelHandler interface {
 }
 
 type ListModel struct {
-	*Object
+	// Object for registering slots etc. on the model (gml.Object).
+	Object
+	// Object for exposing the list model methods to QML.
+	o *Object
 
 	freed bool
 	lm    C.gml_list_model
@@ -70,7 +73,7 @@ func NewListModel(handler ListModelHandler) *ListModel {
 
 	lm.ptr = pointer.Save(lm)
 	lm.lm = C.gml_list_model_new(lm.ptr)
-	lm.Object = newObject(unsafe.Pointer(lm.lm))
+	lm.o = newObject(unsafe.Pointer(lm.lm))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(lm, freeListModel)
