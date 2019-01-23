@@ -36,30 +36,30 @@ import (
 )
 
 type objectGetter interface {
-	GMLObject() *Object
+	GmlObject() *Object
 }
 
 type Object struct {
 	ptr unsafe.Pointer
 }
 
-func (o *Object) GMLObject_Pointer() unsafe.Pointer {
+func (o *Object) GmlObject_Pointer() unsafe.Pointer {
 	if o.ptr == nil {
-		panic(fmt.Errorf("gml.Object pointer is nil: did you call GMLInit()?"))
+		panic(fmt.Errorf("gml.Object pointer is nil: did you call GmlInit()?"))
 	}
 	return o.ptr
 }
 
-func (o *Object) GMLObject_SetPointer(ptr unsafe.Pointer) {
+func (o *Object) GmlObject_SetPointer(ptr unsafe.Pointer) {
 	o.ptr = ptr
 }
 
-func (o *Object) GMLObject() *Object {
+func (o *Object) GmlObject() *Object {
 	return o
 }
 
 func (o *Object) cObject() C.gml_object {
-	return (C.gml_object)(o.GMLObject_Pointer())
+	return (C.gml_object)(o.GmlObject_Pointer())
 }
 
 func toObject(i interface{}) (*Object, error) {
@@ -67,7 +67,7 @@ func toObject(i interface{}) (*Object, error) {
 	case *Object:
 		return v, nil
 	case objectGetter:
-		return v.GMLObject(), nil
+		return v.GmlObject(), nil
 	default:
 		return nil, fmt.Errorf("unknown type: failed to get object %T", v)
 	}

@@ -61,10 +61,10 @@ win32|win64 {
 	Release:DESTDIR = 
 }
 
-INCLUDEPATH += {{.GMLBindingDir}}/headers
+INCLUDEPATH += {{.GmlBindingDir}}/headers
 
-HEADERS += {{.GMLBindingHeadersDir}}/*.h {{.GMLBindingSourcesDir}}/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
-SOURCES += {{.GMLBindingSourcesDir}}/*.cpp {{.CPPGenDir}}/*.cpp
+HEADERS += {{.GmlBindingHeadersDir}}/*.h {{.GmlBindingSourcesDir}}/*.h {{.CGenDir}}/*.h {{.CPPGenDir}}/*.h
+SOURCES += {{.GmlBindingSourcesDir}}/*.cpp {{.CPPGenDir}}/*.cpp
 RESOURCES += {{.QMLResFile}}
 
 OBJECTS_DIR = {{.BuildDir}}
