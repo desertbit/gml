@@ -34,7 +34,6 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
-	"io/ioutil"
 	"runtime"
 	"unsafe"
 )
@@ -82,6 +81,11 @@ func (img *Image) Free() {
 	freeImage(img)
 }
 
+// Reset the image to an empty image.
+func (img *Image) Reset() {
+	C.gml_image_reset(img.img)
+}
+
 // SetTo performs a shallow copy.
 func (img *Image) SetTo(other *Image) {
 	C.gml_image_set_to(img.img, other.img)
@@ -122,13 +126,22 @@ func (img *Image) LoadFromGoImage(gimg image.Image) error {
 	return nil
 }
 
-func (img *Image) LoadFromFile(path string) error {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
+func (img *Image) LoadFromFile(filename string) error {
+	if len(filename) == 0 {
+		return fmt.Errorf("empty filename")
 	}
 
-	return img.LoadFromData(data)
+	filenameC := C.CString(filename)
+	defer C.free(unsafe.Pointer(filenameC))
+
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	ret := C.gml_image_load_from_file(img.img, filenameC, apiErr.err)
+	if ret != 0 {
+		return apiErr.Err("failed to load from file")
+	}
+	return nil
 }
 
 func (img *Image) LoadFromData(data []byte) error {
