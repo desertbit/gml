@@ -79,7 +79,6 @@ func parseDirRecursive(dir string) (gt *genTargets, err error) {
 	return
 }
 
-// TODO: use ast package with ImportsOnly to make this even faster?
 func getPackageImports(dir string) (imports []string, basePath string, err error) {
 	dir, err = filepath.Abs(dir)
 	if err != nil {
