@@ -25,19 +25,23 @@
  * SOFTWARE.
  */
 
-package model
+package main
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/desertbit/gml"
-	"github.com/rs/zerolog/log"
 )
+
+//#############//
+//### Slots ###//
+//#############//
 
 var M *model
 
 type model struct {
-	*gml.ListModel
+	gml.ListModel
 
 	_ struct {
 		get func(row int) string `gml:"slot"`
@@ -54,12 +58,11 @@ func (m *model) Data(row int) interface{} {
 
 func init() {
 	M = &model{}
-	M.ListModel = gml.NewListModel(M)
-	M.GmlInit()
+	gml.InitListModel(M)
 
 	err := gml.SetContextProperty("m", M)
 	if err != nil {
-		log.Fatal().Err(err).Msg("init")
+		log.Fatalln("failed to set model context property")
 	}
 }
 
@@ -68,5 +71,5 @@ func init() {
 //#############//
 
 func (m *model) get(row int) string {
-	return "this is a test, lol"
+	return "slot get called"
 }

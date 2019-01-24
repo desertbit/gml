@@ -89,6 +89,7 @@ func init() {
 
 func (_v *{{$struct.Name}}) GmlInit() {
     goPtr := pointer.Save(_v)
+    _v.GmlObject_SetGoPointer(goPtr)
     _v.GmlObject_SetPointer(unsafe.Pointer(C.{{$struct.CBaseName}}_new(goPtr)))
     runtime.SetFinalizer(_v, func(_v *{{$struct.Name}}) {
         C.{{$struct.CBaseName}}_free((C.{{$struct.CBaseName}})(_v.GmlObject_Pointer()))

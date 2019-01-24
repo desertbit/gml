@@ -35,12 +35,17 @@ import (
 	"unsafe"
 )
 
+type objectInitializer interface {
+	GmlInit()
+}
+
 type objectGetter interface {
 	GmlObject() *Object
 }
 
 type Object struct {
-	ptr unsafe.Pointer
+	ptr   unsafe.Pointer
+	goPtr unsafe.Pointer
 }
 
 func (o *Object) GmlObject_Pointer() unsafe.Pointer {
@@ -52,6 +57,17 @@ func (o *Object) GmlObject_Pointer() unsafe.Pointer {
 
 func (o *Object) GmlObject_SetPointer(ptr unsafe.Pointer) {
 	o.ptr = ptr
+}
+
+func (o *Object) GmlObject_GoPointer() unsafe.Pointer {
+	if o.goPtr == nil {
+		panic(fmt.Errorf("gml.Object go pointer is nil: did you call GmlInit()?"))
+	}
+	return o.goPtr
+}
+
+func (o *Object) GmlObject_SetGoPointer(goPtr unsafe.Pointer) {
+	o.goPtr = goPtr
 }
 
 func (o *Object) GmlObject() *Object {
