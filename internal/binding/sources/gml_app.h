@@ -33,8 +33,7 @@
 #include "gml_image_provider.h"
 #include "gml_image_item.h"
 
-class GmlApp : public QObject
-{
+class GmlApp : public QObject {
     Q_OBJECT
 private:
     int argc;

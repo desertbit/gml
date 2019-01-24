@@ -25,18 +25,13 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+#ifndef GML_HEADER_CPP_H
+#define GML_HEADER_CPP_H
 
-#include "gml_app.h"
-#include "gml_bytes.h"
-#include "gml_error.h"
-#include "gml_image.h"
-#include "gml_image_item.h"
-#include "gml_image_provider.h"
-#include "gml_includes.h"
-#include "gml_list_model.h"
-#include "gml_object.h"
-#include "gml_variant.h"
+#include "../sources/gml_app.h"
+#include "../sources/gml_error.h"
+#include "../sources/gml_image_item.h"
+#include "../sources/gml_image_provider.h"
+#include "../sources/gml_list_model.h"
 
 #endif

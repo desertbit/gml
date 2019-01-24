@@ -220,9 +220,17 @@ func parseDir(gt *genTargets, fset *token.FileSet, dir string) (err error) {
 		for i = 0; i < numFields; i++ {
 			f := s.Field(i)
 
-			// Check if this is an embedded gml.Object field.
-			if f.Embedded() && strings.HasSuffix(f.Type().String(), "/gml.Object") {
-				hasEmbeddedObject = true
+			// Check if this is an embedded gml.Object or gml.ListModel field.
+			if f.Embedded() {
+				typeS := f.Type().String()
+				isGmlListModel := strings.HasSuffix(typeS, "/gml.ListModel")
+
+				hasEmbeddedObject = strings.HasSuffix(typeS, "/gml.Object") || isGmlListModel
+
+				// Set the additional type.
+				if isGmlListModel {
+					gs.AdditionalType = "ListModel"
+				}
 				continue
 			}
 

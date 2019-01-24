@@ -15,4 +15,14 @@ ApplicationWindow {
 		font.pointSize: 24
 		font.bold: true
 	}
+
+	ListView {
+	    anchors.fill: parent
+	    delegate: Text {
+	        color: "red"
+	        text: display
+	    }
+	    model: m
+	    Component.onCompleted: console.log(m.get(5))
+	}
 }

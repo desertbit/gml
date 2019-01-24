@@ -32,6 +32,7 @@
 #include "gml_error.h"
 
 class GmlListModel : public QAbstractListModel {
+    Q_OBJECT
 public:
     GmlListModel(
         void* goPtr

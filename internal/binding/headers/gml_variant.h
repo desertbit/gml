@@ -26,13 +26,14 @@
  */
 
 #ifndef GML_HEADER_VARIANT_H
-#define GML_HEADER_OBJECGML_HEADER_VARIANT_HT_H
+#define GML_HEADER_VARIANT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "gml_includes.h"
+#include "gml_bytes.h"
 
 typedef void* gml_variant;
 

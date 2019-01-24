@@ -29,6 +29,7 @@ package main
 
 import (
 	"github.com/desertbit/gml"
+	_ "github.com/desertbit/gml/samples/hello_world/model"
 )
 
 func main() {

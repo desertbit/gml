@@ -25,18 +25,48 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_H
-#define GML_HEADER_H
+package model
 
-#include "gml_app.h"
-#include "gml_bytes.h"
-#include "gml_error.h"
-#include "gml_image.h"
-#include "gml_image_item.h"
-#include "gml_image_provider.h"
-#include "gml_includes.h"
-#include "gml_list_model.h"
-#include "gml_object.h"
-#include "gml_variant.h"
+import (
+	"strconv"
 
-#endif
+	"github.com/desertbit/gml"
+	"github.com/rs/zerolog/log"
+)
+
+var M *model
+
+type model struct {
+	*gml.ListModel
+
+	_ struct {
+		get func(row int) string `gml:"slot"`
+	}
+}
+
+func (m *model) RowCount() int {
+	return 3
+}
+
+func (m *model) Data(row int) interface{} {
+	return "row: " + strconv.Itoa(row)
+}
+
+func init() {
+	M = &model{}
+	M.ListModel = gml.NewListModel(M)
+	M.GMLInit()
+
+	err := gml.SetContextProperty("m", M)
+	if err != nil {
+		log.Fatal().Err(err).Msg("init")
+	}
+}
+
+//#############//
+//### Slots ###//
+//#############//
+
+func (m *model) get(row int) string {
+	return "this is a test, lol"
+}

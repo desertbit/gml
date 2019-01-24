@@ -48,12 +48,13 @@ type genPackage struct {
 }
 
 type genStruct struct {
-	Name        string
-	CBaseName   string
-	CPPBaseName string
-	Signals     []*genSignal
-	Slots       []*genSlot
-	Properties  []*genProperty
+	Name           string
+	CBaseName      string
+	CPPBaseName    string
+	Signals        []*genSignal
+	Slots          []*genSlot
+	Properties     []*genProperty
+	AdditionalType string
 }
 
 type genSignal struct {
