@@ -138,6 +138,20 @@ Loop:
 }
 
 func parseDir(gt *genTargets, fset *token.FileSet, dir string) (err error) {
+	// Remove the generated go gile if present.
+	// This file might cause errors if it is out-of-date
+	// and might stop the parsing process.
+	genFilePath := filepath.Join(dir, genGoFilename)
+	e, err := utils.Exists(genFilePath)
+	if err != nil {
+		return
+	} else if e {
+		err = os.Remove(genFilePath)
+		if err != nil {
+			return
+		}
+	}
+
 	// Parse go sources and skip gml_gen prefixed files.
 	pkgs, err := parser.ParseDir(fset, dir, func(i os.FileInfo) bool {
 		return !strings.HasPrefix(i.Name(), skipPrefix)
