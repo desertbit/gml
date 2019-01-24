@@ -55,7 +55,7 @@ func (m *model) Data(row int) interface{} {
 func init() {
 	M = &model{}
 	M.ListModel = gml.NewListModel(M)
-	M.GMLInit()
+	M.GmlInit()
 
 	err := gml.SetContextProperty("m", M)
 	if err != nil {
