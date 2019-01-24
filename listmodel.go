@@ -70,7 +70,7 @@ func NewListModel(handler ListModelHandler) *ListModel {
 
 	lm.ptr = pointer.Save(lm)
 	lm.lm = C.gml_list_model_new(lm.ptr)
-	lm.GMLObject_SetPointer(unsafe.Pointer(lm.lm))
+	lm.GmlObject_SetPointer(unsafe.Pointer(lm.lm))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(lm, freeListModel)

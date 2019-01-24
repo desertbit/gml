@@ -130,14 +130,14 @@ func main() {
 	app.SetOrganizationName("Desertbit")
 
 	b2 := &testy.Bridge{}
-	b2.GMLInit()
+	b2.GmlInit()
 	err = app.SetContextProperty("b2", b2)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	b := &Bridge{}
-	b.GMLInit()
+	b.GmlInit()
 	err = app.SetContextProperty("bridge", b)
 	if err != nil {
 		log.Fatalln(err)

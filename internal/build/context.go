@@ -55,9 +55,9 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	GMLBindingDir        string
-	GMLBindingHeadersDir string
-	GMLBindingSourcesDir string
+	GmlBindingDir        string
+	GmlBindingHeadersDir string
+	GmlBindingSourcesDir string
 
 	QMLDir     string
 	QMLResDir  string
@@ -139,9 +139,9 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 	}
 
 	// Obtain the current import path.
-	ctx.GMLBindingDir = bindingPath
-	ctx.GMLBindingHeadersDir = filepath.Join(ctx.GMLBindingDir, "headers")
-	ctx.GMLBindingSourcesDir = filepath.Join(ctx.GMLBindingDir, "sources")
+	ctx.GmlBindingDir = bindingPath
+	ctx.GmlBindingHeadersDir = filepath.Join(ctx.GmlBindingDir, "headers")
+	ctx.GmlBindingSourcesDir = filepath.Join(ctx.GmlBindingDir, "sources")
 
 	// Clean if set.
 	if clean {
