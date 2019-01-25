@@ -51,6 +51,13 @@ func init() {
 	}
 }
 
+// Must exits the application with a fatal log if the error is present.
+func Must(err error) {
+	if err != nil {
+		log.Fatalf("gml must: %v", err)
+	}
+}
+
 // RunMain runs the function on the applications main thread.
 func RunMain(f func()) {
 	gapp.RunMain(f)

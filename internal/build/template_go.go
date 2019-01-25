@@ -73,11 +73,11 @@ import (
 	"github.com/desertbit/gml/pointer"
 )
 
-// Force to use the gml package. The import is not alway required...
+// Force to use the gml package. The import is not always required...
 var _ = gml.Object{}
 
 {{/* Struct loop */ -}}
-{{range $struct := .Structs -}}
+{{range $struct := .Structs}}
 //###
 //### {{$struct.Name}}
 //###
