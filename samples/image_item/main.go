@@ -28,7 +28,6 @@
 package main
 
 import (
-	"log"
 	"time"
 
 	"github.com/desertbit/gml"
@@ -37,18 +36,12 @@ import (
 func main() {
 	// Load image 1.
 	imgCage1 := gml.NewImage()
-	err := imgCage1.LoadFromFile("./cage1.jpg")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	gml.Must(imgCage1.LoadFromFile("./cage1.jpg"))
 	defer imgCage1.Free()
 
 	// Load image 2.
 	imgCage2 := gml.NewImage()
-	err = imgCage2.LoadFromFile("./cage2.jpg")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	gml.Must(imgCage2.LoadFromFile("./cage2.jpg"))
 	defer imgCage2.Free()
 
 	// Create the image item and set to image 1.

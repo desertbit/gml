@@ -28,7 +28,6 @@
 package main
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/desertbit/gml"
@@ -59,11 +58,7 @@ func (m *model) Data(row int) interface{} {
 func init() {
 	M = &model{}
 	gml.InitListModel(M)
-
-	err := gml.SetContextProperty("m", M)
-	if err != nil {
-		log.Fatalln("failed to set model context property")
-	}
+	gml.Must(gml.SetContextProperty("m", M))
 }
 
 //#############//
