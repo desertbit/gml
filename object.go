@@ -78,17 +78,20 @@ func (o *Object) cObject() C.gml_object {
 	return (C.gml_object)(o.GmlObject_Pointer())
 }
 
-func toObject(i interface{}) (*Object, error) {
-	if i == nil {
-		return nil, fmt.Errorf("invalid value: failed to get object: value is nil")
-	}
-
+func toObject(i interface{}) (o *Object, err error) {
 	switch v := i.(type) {
 	case *Object:
-		return v, nil
+		o = v
 	case objectGetter:
-		return v.GmlObject(), nil
+		o = v.GmlObject()
+	case nil:
+		err = fmt.Errorf("failed to get object: value is nil")
 	default:
-		return nil, fmt.Errorf("unknown type: failed to get object %T", v)
+		err = fmt.Errorf("failed to get object: unknown type: %T", v)
 	}
+
+	if o == nil && err == nil {
+		err = fmt.Errorf("failed to get object: object pointer is nil")
+	}
+	return
 }
