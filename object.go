@@ -79,6 +79,10 @@ func (o *Object) cObject() C.gml_object {
 }
 
 func toObject(i interface{}) (*Object, error) {
+	if i == nil {
+		return nil, fmt.Errorf("invalid value: failed to get object: value is nil")
+	}
+
 	switch v := i.(type) {
 	case *Object:
 		return v, nil
