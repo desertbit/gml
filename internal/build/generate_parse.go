@@ -203,10 +203,16 @@ func parseDir(gt *genTargets, fset *token.FileSet, dir string) (err error) {
 			continue
 		}
 
+		// Skip everything what is not a type defintion.
+		_, ok := obj.(*types.TypeName)
+		if !ok {
+			continue
+		}
+
 		objT := obj.Type()
 
 		// Must be a named type.
-		_, ok := objT.(*types.Named)
+		_, ok = objT.(*types.Named)
 		if !ok {
 			continue
 		}
