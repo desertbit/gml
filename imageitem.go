@@ -90,6 +90,16 @@ func (i *ImageItem) SetImage(img *Image) {
 	C.gml_image_item_emit_changed(i.idC)
 }
 
+func (i *ImageItem) ResetImage() {
+	i.mutex.Lock()
+	i.img.Reset()
+	i.mutex.Unlock()
+
+	// Notify the change to QML.
+	// Don't need RunMain, because this emits only a signal.
+	C.gml_image_item_emit_changed(i.idC)
+}
+
 // Release this image item.
 // Don't use it anymore after this call, because memory is freed.
 func (i *ImageItem) Release() {
