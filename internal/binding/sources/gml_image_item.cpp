@@ -61,7 +61,9 @@ GmlImageItem::GmlImageItem(QQuickItem *parent) :
     QQuickPaintedItem(parent),
     src(""),
     transformationMode(Qt::FastTransformation),
-    aspectRatioMode(Qt::KeepAspectRatio)
+    aspectRatioMode(Qt::KeepAspectRatio),
+    imgWidth(0),
+    imgHeight(0)
 {
     QObject::connect(GmlApp::App(), &GmlApp::imageItemChanged,
                      this, &GmlImageItem::onImageItemChanged);
@@ -78,6 +80,14 @@ QString GmlImageItem::source() const {
 void GmlImageItem::setSource(const QString &source) {
     this->src = source;
     emit sourceChanged();
+}
+
+int GmlImageItem::imageWidth() {
+    return imgWidth;
+}
+
+int GmlImageItem::imageHeight() {
+    return imgHeight;
 }
 
 Qt::AspectRatioMode GmlImageItem::getAspectRatioMode() {
@@ -139,11 +149,16 @@ void GmlImageItem::paint(QPainter *painter) {
     QPointF center = bRect.center() - scaled.rect().center();
 
     // Ensure the image is centered.
-    if(center.x() < 0) {
+    if (center.x() < 0) {
         center.setX(0);
     }
-    if(center.y() < 0) {
+    if (center.y() < 0) {
         center.setY(0);
+    }
+
+    // Notify, if the size has changed.
+    if (scaled.width() != imgWidth || scaled.height() != imgHeight) {
+        emit imageSizeChanged();
     }
 
     painter->drawImage(center, scaled);
