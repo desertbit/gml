@@ -63,7 +63,7 @@ func RunMain(f func()) {
 	gapp.RunMain(f)
 }
 
-// Exec load sthe root QML file located at url,
+// Exec load the root QML file located at url,
 // executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.
@@ -71,7 +71,7 @@ func Exec(url string) (retCode int, err error) {
 	return gapp.Exec(url)
 }
 
-// ExecExit load sthe root QML file located at url,
+// ExecExit load the root QML file located at url,
 // executes the app, prints errors and exits
 // the application with the specific exit code.
 func ExecExit(url string) {

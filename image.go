@@ -38,8 +38,6 @@ import (
 	"unsafe"
 )
 
-// TODO: add LoadFromBuffer & LoadFromGoImage
-
 type Image struct {
 	freed bool
 	img   C.gml_image
@@ -123,6 +121,10 @@ func (img *Image) LoadFromGoImage(gimg image.Image) error {
 		return apiErr.Err("failed to load from data")
 	}
 
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	runtime.KeepAlive(gimg)
+
 	return nil
 }
 
@@ -156,5 +158,10 @@ func (img *Image) LoadFromData(data []byte) error {
 	if ret != 0 {
 		return apiErr.Err("failed to load from data")
 	}
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	runtime.KeepAlive(data)
+
 	return nil
 }

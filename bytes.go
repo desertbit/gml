@@ -31,13 +31,11 @@ package gml
 import "C"
 import (
 	"fmt"
-	"runtime"
 	"unsafe"
 )
 
 type bytes struct {
-	freed bool
-	ptr   C.gml_bytes
+	ptr C.gml_bytes
 }
 
 func newBytes() (b *bytes) {
@@ -49,21 +47,11 @@ func newBytes() (b *bytes) {
 	if b.ptr == nil {
 		panic(fmt.Errorf("failed to create gml bytes: C pointer is nil"))
 	}
-
-	runtime.SetFinalizer(b, freeBytes) // Always free the C value.
 	return
 }
 
-func freeBytes(b *bytes) {
-	if b.freed {
-		return
-	}
-	b.freed = true
-	C.gml_bytes_free(b.ptr)
-}
-
 func (b *bytes) Free() {
-	freeBytes(b)
+	C.gml_bytes_free(b.ptr)
 }
 
 func (b *bytes) Bytes() []byte {

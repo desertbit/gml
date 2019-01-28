@@ -106,23 +106,10 @@ func newAppWithArgs(args []string) (a *app, err error) {
 		return
 	}
 
-	// Always free the C value.
-	runtime.SetFinalizer(a, freeApp)
 	return
 }
 
-func freeApp(a *app) {
-	if a.freed {
-		return
-	}
-	a.freed = true
-	C.gml_app_free(a.app)
-	freeCharArray(a.argv, a.argc)
-}
-
-func (a *app) Free() {
-	freeApp(a)
-}
+// TODO: remove gml_app_free
 
 func (a *app) getDp() (dp float64, err error) {
 	apiErr := errorPool.Get()

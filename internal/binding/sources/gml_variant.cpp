@@ -241,21 +241,6 @@ gml_variant gml_variant_new_from_uint64(u_int64_t i) {
     }
 }
 
-gml_variant gml_variant_new_from_rune(int32_t r) {
-    try {
-        QVariant* v = new QVariant(QChar(r));
-        return (gml_variant)v;
-    }
-    catch (std::exception& e) {
-        gml_error_log_exception("variant: " + string(e.what()));
-        return NULL;
-    }
-    catch (...) {
-        gml_error_log_exception("variant");
-        return NULL;
-    }
-}
-
 gml_variant gml_variant_new_from_string(char* s) {
     try {
         QVariant* v = new QVariant(QString(s));
@@ -459,21 +444,6 @@ u_int64_t gml_variant_to_uint64(gml_variant v) {
     try {
         QVariant* qv = (QVariant*)v;
         return (u_int64_t)(qv->toLongLong());
-    }
-    catch (std::exception& e) {
-        gml_error_log_exception("variant: " + string(e.what()));
-        return 0;
-    }
-    catch (...) {
-        gml_error_log_exception("variant");
-        return 0;
-    }
-}
-
-int32_t gml_variant_to_rune(gml_variant v) {
-    try {
-        QVariant* qv = (QVariant*)v;
-        return (int32_t)(qv->toInt());
     }
     catch (std::exception& e) {
         gml_error_log_exception("variant: " + string(e.what()));

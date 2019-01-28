@@ -93,8 +93,6 @@ func ToVariant(i interface{}) *Variant {
 	case uint64:
 		ptr = C.gml_variant_new_from_uint64(C.u_int64_t(d))
 
-	case Char: // TODO: remove?
-		ptr = C.gml_variant_new_from_rune(C.int32_t(d))
 	case string:
 		cstr := C.CString(d)
 		defer C.free(unsafe.Pointer(cstr))
@@ -183,8 +181,6 @@ func (v *Variant) Decode(i interface{}) (err error) {
 	case *uint64:
 		*d = uint64(C.gml_variant_to_uint64(v.ptr))
 
-	case *Char: // TODO: remove?
-		*d = Char(C.gml_variant_to_rune(v.ptr))
 	case *string:
 		b := newBytes()
 		defer b.Free()
