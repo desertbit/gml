@@ -157,7 +157,11 @@ void GmlImageItem::paint(QPainter *painter) {
     }
 
     // Notify, if the size has changed.
-    if (scaled.width() != imgWidth || scaled.height() != imgHeight) {
+    int w = scaled.width();
+    int h = scaled.height();
+    if (w != imgWidth || h != imgHeight) {
+        imgWidth = w;
+        imgHeight = h;
         emit imageSizeChanged();
     }
 
