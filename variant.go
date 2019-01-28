@@ -97,8 +97,12 @@ func ToVariant(i interface{}) *Variant {
 		cstr := C.CString(d)
 		defer C.free(unsafe.Pointer(cstr))
 		ptr = C.gml_variant_new_from_string(cstr) // Makes a deep copy.
+
 	case []byte:
 		ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&d[0])), C.int(len(d))) // Makes a deep copy.
+
+		// Prevent the GC from freeing. Go issue 13347
+		runtime.KeepAlive(d)
 
 	default:
 		data, err := json.Marshal(i)
@@ -109,6 +113,9 @@ func ToVariant(i interface{}) *Variant {
 		} else {
 			ptr = C.gml_variant_new_from_bytes((*C.char)(unsafe.Pointer(&data[0])), C.int(len(data))) // Makes a deep copy.
 		}
+
+		// Prevent the GC from freeing. Go issue 13347
+		runtime.KeepAlive(data)
 	}
 
 	// Prevent the GC from freeing. Go issue 13347
