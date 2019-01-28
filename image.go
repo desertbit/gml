@@ -82,11 +82,18 @@ func (img *Image) Free() {
 // Reset the image to an empty image.
 func (img *Image) Reset() {
 	C.gml_image_reset(img.img)
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
 }
 
 // SetTo performs a shallow copy.
 func (img *Image) SetTo(other *Image) {
 	C.gml_image_set_to(img.img, other.img)
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	runtime.KeepAlive(other)
 }
 
 func (img *Image) LoadFromGoImage(gimg image.Image) error {
@@ -143,6 +150,10 @@ func (img *Image) LoadFromFile(filename string) error {
 	if ret != 0 {
 		return apiErr.Err("failed to load from file")
 	}
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+
 	return nil
 }
 
