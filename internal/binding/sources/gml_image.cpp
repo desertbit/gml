@@ -77,6 +77,20 @@ void gml_image_reset(gml_image img) {
     }
 }
 
+void gml_image_copy(gml_image img, gml_image dst, int x, int y, int width, int height) {
+    try {
+        QImage* qImg = (QImage*)img;
+        QImage* qDst = (QImage*)dst;
+        *qDst = qImg->copy(x, y, width, height);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 void gml_image_set_to(gml_image img, gml_image other) {
     try {
         QImage* qImg = (QImage*)img;
@@ -140,6 +154,34 @@ int gml_image_load_from_data(gml_image img, const char* data, int size, gml_erro
     }
     catch (...) {
          gml_error_set_catched_exception_msg(err);
+        return -1;
+    }
+}
+
+int gml_image_height(gml_image img) {
+    try {
+        return ((QImage*)img)->height();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return -1;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return -1;
+    }
+}
+
+int gml_image_width(gml_image img) {
+    try {
+        return ((QImage*)img)->width();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return -1;
+    }
+    catch (...) {
+        gml_error_log_exception();
         return -1;
     }
 }

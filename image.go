@@ -87,6 +87,18 @@ func (img *Image) Reset() {
 	runtime.KeepAlive(img)
 }
 
+func (img *Image) Copy(x, y, width, height int) *Image {
+	newImg := NewImage()
+
+	// Copy the image.
+	C.gml_image_copy(img.ptr, newImg.ptr, C.int(x), C.int(y), C.int(width), C.int(height))
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+
+	return newImg
+}
+
 // SetTo performs a shallow copy.
 func (img *Image) SetTo(other *Image) {
 	C.gml_image_set_to(img.ptr, other.ptr)
@@ -175,4 +187,18 @@ func (img *Image) LoadFromData(data []byte) error {
 	runtime.KeepAlive(data)
 
 	return nil
+}
+
+func (img *Image) Height() (height int) {
+	height = int(C.gml_image_height(img.ptr))
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	return
+}
+
+func (img *Image) Width() (width int) {
+	width = int(C.gml_image_width(img.ptr))
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	return
 }

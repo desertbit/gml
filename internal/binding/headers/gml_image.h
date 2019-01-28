@@ -39,10 +39,13 @@ typedef void* gml_image;
 gml_image gml_image_new();
 void      gml_image_free(gml_image img);
 void      gml_image_reset(gml_image img);
+void      gml_image_copy(gml_image img, gml_image dst, int x, int y, int width, int height);
 void      gml_image_set_to(gml_image img, gml_image other);
 int       gml_image_load_from_file(gml_image img, const char* filename, gml_error err);
 int       gml_image_load_from_rgba(gml_image img, const char* data, int size, int width, int height, int stride, gml_error err);
 int       gml_image_load_from_data(gml_image img, const char* data, int size, gml_error err);
+int gml_image_height(gml_image img);
+int gml_image_width(gml_image img);
 
 #ifdef __cplusplus
 }
