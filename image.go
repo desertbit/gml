@@ -131,6 +131,7 @@ func (img *Image) LoadFromGoImage(gimg image.Image) error {
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
 	runtime.KeepAlive(gimg)
+	runtime.KeepAlive(imgRGBA)
 
 	return nil
 }
