@@ -40,7 +40,7 @@ import (
 
 type Image struct {
 	freed bool
-	img   C.gml_image
+	ptr   C.gml_image
 }
 
 func NewImage() (img *Image) {
@@ -56,7 +56,7 @@ func newImage(imgC C.gml_image, free bool) (img *Image) {
 
 	img = &Image{
 		freed: !free,
-		img:   imgC,
+		ptr:   imgC,
 	}
 
 	// Always free the C++ value if defined so.
@@ -72,7 +72,7 @@ func freeImage(img *Image) {
 		return
 	}
 	img.freed = true
-	C.gml_image_free(img.img)
+	C.gml_image_free(img.ptr)
 }
 
 func (img *Image) Free() {
@@ -81,7 +81,7 @@ func (img *Image) Free() {
 
 // Reset the image to an empty image.
 func (img *Image) Reset() {
-	C.gml_image_reset(img.img)
+	C.gml_image_reset(img.ptr)
 
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
@@ -89,7 +89,7 @@ func (img *Image) Reset() {
 
 // SetTo performs a shallow copy.
 func (img *Image) SetTo(other *Image) {
-	C.gml_image_set_to(img.img, other.img)
+	C.gml_image_set_to(img.ptr, other.ptr)
 
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
@@ -116,7 +116,7 @@ func (img *Image) LoadFromGoImage(gimg image.Image) error {
 	defer errorPool.Put(apiErr)
 
 	ret := C.gml_image_load_from_rgba(
-		img.img,
+		img.ptr,
 		(*C.char)(unsafe.Pointer(&imgRGBA.Pix[0])),
 		C.int(len(imgRGBA.Pix)),
 		C.int(b.Dx()),
@@ -146,7 +146,7 @@ func (img *Image) LoadFromFile(filename string) error {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
-	ret := C.gml_image_load_from_file(img.img, filenameC, apiErr.err)
+	ret := C.gml_image_load_from_file(img.ptr, filenameC, apiErr.err)
 	if ret != 0 {
 		return apiErr.Err("failed to load from file")
 	}
@@ -165,7 +165,7 @@ func (img *Image) LoadFromData(data []byte) error {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
-	ret := C.gml_image_load_from_data(img.img, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), apiErr.err)
+	ret := C.gml_image_load_from_data(img.ptr, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), apiErr.err)
 	if ret != 0 {
 		return apiErr.Err("failed to load from data")
 	}

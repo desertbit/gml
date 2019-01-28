@@ -235,7 +235,7 @@ func (a *app) AddImageProvider(id string, ip *ImageProvider) error {
 
 	var ret C.int
 	a.RunMain(func() {
-		ret = C.gml_app_add_imageprovider(a.app, idC, ip.ip, apiErr.err)
+		ret = C.gml_app_add_imageprovider(a.app, idC, ip.ptr, apiErr.err)
 	})
 	if ret != 0 {
 		return apiErr.Err("failed to add image provider")

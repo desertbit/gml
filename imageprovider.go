@@ -65,8 +65,8 @@ type ImageProviderCallback func(id string, img *Image) error
 
 type ImageProvider struct {
 	freed bool
-	ip    C.gml_image_provider
-	ptr   unsafe.Pointer
+	ptr   C.gml_image_provider
+	goPtr unsafe.Pointer
 
 	callback ImageProviderCallback
 }
@@ -79,15 +79,15 @@ func NewImageProvider(
 	ip := &ImageProvider{
 		callback: callback,
 	}
-	ip.ptr = pointer.Save(ip)
-	ip.ip = C.gml_image_provider_new(ip.ptr, C.int(aspectRatioMode), C.int(transformMode))
+	ip.goPtr = pointer.Save(ip)
+	ip.ptr = C.gml_image_provider_new(ip.goPtr, C.int(aspectRatioMode), C.int(transformMode))
 
 	// Always free the C++ value.
 	runtime.SetFinalizer(ip, freeImageProvider)
 
 	// Check if something failed.
 	// This should never happen. Otherwise this signalizes a fatal error.
-	if ip.ip == nil {
+	if ip.ptr == nil {
 		panic(fmt.Errorf("failed to create gml imageprovider: C pointer is nil"))
 	}
 
@@ -99,8 +99,8 @@ func freeImageProvider(ip *ImageProvider) {
 		return
 	}
 	ip.freed = true
-	C.gml_image_provider_free(ip.ip)
-	pointer.Unref(ip.ptr)
+	C.gml_image_provider_free(ip.ptr)
+	pointer.Unref(ip.goPtr)
 }
 
 func (ip *ImageProvider) Free() {
@@ -139,7 +139,6 @@ func gml_image_provider_request_go_slot(
 
 		// Emit the finished signal on the image response.
 		// Must always be triggered!
-		// TODO: should run on main?
 		C.gml_image_response_emit_finished(imgResp, errStrC)
 	}()
 }

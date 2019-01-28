@@ -111,6 +111,9 @@ func ToVariant(i interface{}) *Variant {
 		}
 	}
 
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(i)
+
 	return newVariant(ptr)
 }
 
