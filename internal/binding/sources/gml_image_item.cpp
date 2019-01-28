@@ -166,5 +166,6 @@ void GmlImageItem::paint(QPainter *painter) {
     }
 
     painter->drawImage(center, scaled);
+    emit painted();
 }
 

@@ -61,6 +61,7 @@ signals:
     void sourceChanged();
     void modeChanged();
     void imageSizeChanged();
+    void painted();
 
 private:
     QString src;
