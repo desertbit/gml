@@ -87,16 +87,13 @@ func (img *Image) Reset() {
 	runtime.KeepAlive(img)
 }
 
-func (img *Image) Copy(x, y, width, height int) *Image {
-	newImg := NewImage()
-
+func (img *Image) Copy(dst *Image, x, y, width, height int) {
 	// Copy the image.
-	C.gml_image_copy(img.ptr, newImg.ptr, C.int(x), C.int(y), C.int(width), C.int(height))
+	C.gml_image_copy(img.ptr, dst.ptr, C.int(x), C.int(y), C.int(width), C.int(height))
 
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
-
-	return newImg
+	runtime.KeepAlive(dst)
 }
 
 // SetTo performs a shallow copy.
