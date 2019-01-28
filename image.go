@@ -189,6 +189,7 @@ func (img *Image) LoadFromData(data []byte) error {
 
 func (img *Image) Height() (height int) {
 	height = int(C.gml_image_height(img.ptr))
+
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
 	return
@@ -196,6 +197,7 @@ func (img *Image) Height() (height int) {
 
 func (img *Image) Width() (width int) {
 	width = int(C.gml_image_width(img.ptr))
+
 	// Prevent the GC from freeing. Go issue 13347
 	runtime.KeepAlive(img)
 	return
