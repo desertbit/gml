@@ -38,14 +38,18 @@ Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(Qt::TransformationMode transformationMode READ getTransformationMode WRITE setTransformationMode NOTIFY modeChanged)
     Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ getAspectRatioMode WRITE setAspectRatioMode NOTIFY modeChanged)
-    Q_PROPERTY(int imageWidth READ imageWidth NOTIFY imageSizeChanged)
-    Q_PROPERTY(int imageHeight READ imageHeight NOTIFY imageSizeChanged)
+    Q_PROPERTY(int imageX READ imageX NOTIFY imageDimensionsChanged)
+    Q_PROPERTY(int imageY READ imageY NOTIFY imageDimensionsChanged)
+    Q_PROPERTY(int imageWidth READ imageWidth NOTIFY imageDimensionsChanged)
+    Q_PROPERTY(int imageHeight READ imageHeight NOTIFY imageDimensionsChanged)
 
 public:
     GmlImageItem(QQuickItem *parent = nullptr);
 
     QString source() const;
     void    setSource(const QString &source);
+    int     imageX();
+    int     imageY();
     int     imageWidth();
     int     imageHeight();
 
@@ -60,7 +64,7 @@ public:
 signals:
     void sourceChanged();
     void modeChanged();
-    void imageSizeChanged();
+    void imageDimensionsChanged();
     void painted();
 
 private:
@@ -68,7 +72,7 @@ private:
     QImage  img;
     Qt::TransformationMode transformationMode;
     Qt::AspectRatioMode    aspectRatioMode;
-    int imgWidth, imgHeight;
+    int imgX, imgY, imgWidth, imgHeight;
 
 private slots:
     void onRequestUpdate();
