@@ -124,11 +124,11 @@ func Pull(container string) (err error) {
 		return
 	}
 
-	err = utils.RunCommand(
-		os.Environ(), "",
-		"docker", "pull", containerPrefix+container,
-	)
-	return
+	c := exec.Command("docker", "pull", containerPrefix+container)
+	c.Stderr = os.Stderr
+	c.Stdout = os.Stdout
+
+	return c.Run()
 }
 
 func checkIfValidContainer(container string) error {
