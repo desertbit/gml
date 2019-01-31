@@ -40,7 +40,7 @@ import (
 )
 
 const (
-	staticLibName      = "libgml.a" // TODO:
+	staticLibName      = "libgml.a"
 	proFileName        = "gml.pro"
 	qmlDir             = "qml"
 	qmlResDir          = "resources"

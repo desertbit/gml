@@ -58,7 +58,7 @@ CONFIG += staticlib
 
 win32|win64 {
 	CONFIG += release
-	Release:DESTDIR = 
+	Release:DESTDIR = {{.BuildDir}}
 }
 
 INCLUDEPATH += {{.GmlBindingDir}}/headers
@@ -70,6 +70,6 @@ RESOURCES += {{.QMLResFile}}
 OBJECTS_DIR = {{.BuildDir}}
 MOC_DIR = {{.BuildDir}}
 UI_DIR = {{.BuildDir}}
-TARGET = {{.BuildDir}}/gml
-DESTDIR = 
+DESTDIR = {{.BuildDir}}
+TARGET = gml
 `

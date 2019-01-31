@@ -1,8 +1,9 @@
-CROSSBUILD_IMAGES = linux windows_64_static
+CROSSBUILD_IMAGES = linux android windows windows_64_static windows_32_static
 
-$(CROSSBUILD_IMAGES): %:
-	echo "# This file is auto-generated." > $@/Dockerfile
-	awk '/import common.base/{system("cat common/base");next}1' $@/Dockerfile.in >> $@/Dockerfile
+$(CROSSBUILD_IMAGES): %: generate
 	docker build ./ -f $@/Dockerfile -t desertbit/gml:$@
+
+generate:
+	go run generate.go
 
 .PHONY: $(CROSSBUILD_IMAGES)

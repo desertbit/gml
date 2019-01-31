@@ -1,10 +1,44 @@
-FROM ubuntu:18.04
+FROM debian:8
 MAINTAINER team@desertbit.com
 
 # Install dependencies.
+# https://mxe.cc/#requirements
 RUN apt-get -y update && \
-    apt-get -y install build-essential sudo git wget nano make pkg-config \
-        qt5-default qttools5-dev-tools qtdeclarative5-dev && \
+    apt-get -y install \
+        sudo \
+        nano \
+        autoconf \
+        automake \
+        autopoint \
+        bash \
+        bison \
+        bzip2 \
+        flex \
+        g++ \
+        g++-multilib \
+        gettext \
+        git \
+        gperf \
+        intltool \
+        libc6-dev-i386 \
+        libgdk-pixbuf2.0-dev \
+        libltdl-dev \
+        libssl-dev \
+        libtool-bin \
+        libxml-parser-perl \
+        lzip \
+        make \
+        openssl \
+        p7zip-full \
+        patch \
+        perl \
+        pkg-config \
+        python \
+        ruby \
+        sed \
+        unzip \
+        wget \
+        xz-utils && \
     apt-get -y clean
 
 # Install the Go compiler.
@@ -39,3 +73,11 @@ ADD common/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["gml"]
+
+# https://mxe.cc
+# https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
+RUN export MXE_COMMIT="744f553022aabe5c9946828235b6a5dd9416a6d0" && \
+    git clone https://github.com/mxe/mxe.git /mxe && \
+    cd /mxe && \
+    git checkout "${MXE_COMMIT}"
+

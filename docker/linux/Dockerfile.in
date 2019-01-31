@@ -1,7 +1,10 @@
-FROM therecipe/qt:linux
+FROM ubuntu:18.04
+MAINTAINER team@desertbit.com
 
-ENV QT_ROOT="/opt/Qt/5.12.0/gcc_64" \
-    GOOS=linux \
-    GOARCH=amd64
+# Install dependencies.
+RUN apt-get -y update && \
+    apt-get -y install build-essential sudo git wget nano make pkg-config \
+        qt5-default qttools5-dev-tools qtdeclarative5-dev && \
+    apt-get -y clean
 
-#import common.base
+#import common/base
