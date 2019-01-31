@@ -54,7 +54,7 @@ const qtProData = `
 QT += core qml quick
 
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++11
 
 win32|win64 {
 	CONFIG += release
