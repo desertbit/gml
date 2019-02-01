@@ -5,7 +5,7 @@ MAINTAINER team@desertbit.com
 # http://doc.qt.io/qt-5/android-getting-started.html
 RUN dpkg --add-architecture i386 && \
     apt-get -y update && \
-    apt-get -y install android-sdk ant openjdk-8-jdk \
+    apt-get -y install unzip \
         libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 && \
     apt-get -y clean
 
@@ -20,15 +20,17 @@ RUN mkdir /tmp/ndk && cd /tmp/ndk && \
     rm -rf /tmp/ndk
 ENV PATH="/ndk:$PATH"
 
-# Prepare the android SDK.
-RUN android update sdk
+# Patch NDK for gomobile.
+# https://github.com/golang/go/issues/29706
+RUN sed -i "s|flags = '-target {} -stdlib=libc++'.format(target)|flags = '-target {}'.format(target)|g" /ndk/build/tools/make_standalone_toolchain.py
 
 # Install gomobile.
 # https://github.com/golang/go/wiki/Mobile
-ENV GOPATH="/gomobile:$GOPATH" \
+ENV GOPATH="$GOPATH:/gomobile" \
     PATH="/gomobile/bin:$PATH"
 RUN mkdir -p /gomobile && cd /gomobile && \
     export GOPATH="/gomobile" && \
     go get golang.org/x/mobile/cmd/gomobile && \
-    gomobile init
+    gomobile init -ndk /ndk
 
+# TODO: Finish this

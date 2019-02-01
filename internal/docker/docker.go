@@ -46,7 +46,10 @@ const (
 var (
 	containers = []string{
 		"linux",
+		"windows_32_static",
 		"windows_64_static",
+		"windows_32_shared",
+		"windows_64_shared",
 	}
 )
 
