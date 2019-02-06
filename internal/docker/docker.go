@@ -60,19 +60,23 @@ func Containers() []string {
 func Build(
 	container string,
 	sourceDir, buildDir, destDir string,
-	clean, noStrip bool,
+	clean, noStrip, customContainer bool,
 ) (err error) {
 	ctx, err := newContext(sourceDir, buildDir, destDir)
 	if err != nil {
 		return
 	}
 
-	err = checkIfValidContainer(container)
-	if err != nil {
-		return
-	}
-
 	utils.PrintColorln("> docker build: " + container)
+
+	if !customContainer {
+		err = checkIfValidContainer(container)
+		if err != nil {
+			return
+		}
+
+		container = containerPrefix + container
+	}
 
 	user, err := user.Current()
 	if err != nil {
@@ -99,7 +103,7 @@ func Build(
 	}
 
 	args = append(args,
-		containerPrefix+container,
+		container,
 		"gml", "build",
 		"--source-dir", filepath.Join("/work", ctx.ImportPath),
 		"--build-dir", "/work/pkg/gml-build",

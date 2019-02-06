@@ -55,7 +55,10 @@ func init() {
 		Name:      "docker",
 		Help:      "build a gml project with docker",
 		AllowArgs: true,
-		Run:       runBuildDocker,
+		Flags: func(f *grumble.Flags) {
+			f.BoolL("custom", false, "use a custom docker image")
+		},
+		Run: runBuildDocker,
 	})
 }
 
@@ -83,5 +86,6 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.String("dest-dir"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
+		c.Flags.Bool("custom"),
 	)
 }
