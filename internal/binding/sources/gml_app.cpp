@@ -45,6 +45,9 @@ void gml_app_run_main_cb_register(gml_app_run_main_cb_t cb) {
 
 gml_app gml_app_new(int argc, char** argv, gml_error err) {
     try {
+        // Initialize the Qt resources and plugins.
+        Q_INIT_RESOURCE(gml_gen_resources);
+
         GmlApp* a = new GmlApp(argc, argv);
         return (gml_app)a;
     }
@@ -260,7 +263,6 @@ GmlApp::GmlApp(int& argc, char** argv) :
     argc(argc),
     app(this->argc, argv) // use this->argc, because QGuiApplication uses an int reference. https://bugreports.qt.io/browse/QTBUG-59510
 {
-    Q_INIT_RESOURCE(gml_gen_resources);
     QObject::connect(this, &GmlApp::requestRunMain,
                      this, &GmlApp::runMain);
 

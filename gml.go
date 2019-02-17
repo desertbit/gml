@@ -27,7 +27,7 @@
 
 package gml
 
-// #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick
+// #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick Qt5QuickControls2
 // #cgo CFLAGS: -I${SRCDIR}/internal/binding/headers
 // #cgo LDFLAGS: -lstdc++
 // #include <gml.h>

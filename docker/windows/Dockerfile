@@ -61,8 +61,9 @@ RUN mkdir -p /tmp/go && cd /tmp/go && \
     export GOPATH="/tmp/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    go get github.com/desertbit/gml/cmd/gml && \
+    go get github.com/desertbit/gml/cmd/... && \
     mv -f /tmp/go/bin/gml /bin/gml && \
+    mv -f /tmp/go/bin/gml-copy-dlls /bin/gml-copy-dlls && \
     rm -rf /tmp/go
 
 RUN mkdir /work

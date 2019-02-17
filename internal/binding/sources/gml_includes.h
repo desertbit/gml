@@ -34,6 +34,7 @@
 #include <iostream>
 #include <string>
 
+#include <QtPlugin>
 #include <QObject>
 #include <QUrl>
 #include <QString>

@@ -17,3 +17,7 @@ ENV PATH="/mxe/usr/bin:/mxe/usr/${CROSS_TRIPLE}/qt5/bin:$PATH" \
 
 # Patch to include some missing libraries for cgo. Otherwise the linker fails.
 RUN sed -i "s|Libs.private:|Libs.private: -lstdc++ |g" "/mxe/usr/${CROSS_TRIPLE}/qt5/lib/pkgconfig/Qt5Core.pc"
+ADD common/deploy-dlls.sh /bin/deploy-dlls
+RUN chmod +x /bin/deploy-dlls
+ENV GML_BUILD_POST_HOOKS="/bin/deploy-dlls"
+

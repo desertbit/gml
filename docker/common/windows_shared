@@ -1,0 +1,3 @@
+ADD common/deploy-dlls.sh /bin/deploy-dlls
+RUN chmod +x /bin/deploy-dlls
+ENV GML_BUILD_POST_HOOKS="/bin/deploy-dlls"

@@ -29,8 +29,13 @@ package build
 
 import (
 	"os"
+	"strings"
 
 	"github.com/desertbit/gml/internal/utils"
+)
+
+const (
+	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
 func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error) {
@@ -83,6 +88,12 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 		}
 	}
 
+	// Run post hooks if available.
+	err = runPostHooks(ctx)
+	if err != nil {
+		return
+	}
+
 	return
 }
 
@@ -126,4 +137,46 @@ func buildGo(ctx *Context, clean bool) (err error) {
 
 func stripBinary(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.DestDir, "strip", ctx.OutputFile)
+}
+
+func runPostHooks(ctx *Context) (err error) {
+	var value string
+
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		if len(pair) != 2 || pair[0] != PostHookName {
+			continue
+		}
+		value = pair[1]
+		break
+	}
+	if value == "" {
+		return
+	}
+
+	utils.PrintColorln("> running post hooks")
+
+	scripts := strings.Split(value, ",")
+	for _, script := range scripts {
+		script = strings.TrimSpace(script)
+		if script == "" {
+			continue
+		}
+
+		err = utils.RunCommand(
+			ctx.Env(
+				"GML_SOURCE_DIR="+ctx.SourceDir,
+				"GML_BUILD_DIR="+ctx.BuildDir,
+				"GML_DEST_DIR="+ctx.DestDir,
+				"GML_DEST_BINARY="+ctx.OutputFile,
+			),
+			ctx.DestDir,
+			script,
+		)
+		if err != nil {
+			return
+		}
+	}
+
+	return
 }
