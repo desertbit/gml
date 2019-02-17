@@ -1,4 +1,5 @@
 /build
+/deps
 /signals_slots
 gml_gen*
 *.qrc
