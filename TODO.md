@@ -17,5 +17,6 @@
 - use everythwere constData instead of data (strings).
 
 ## Docker
+- deploy-dlls.sh adds common required Qt plugins. This should be configurable instead?
 - Finish the windows static build containers. See the TODO in the docker folder.
 - Finish the Android docker containers.
