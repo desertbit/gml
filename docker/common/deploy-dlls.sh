@@ -21,7 +21,7 @@ gml-copy-dlls \
     -input "$input" \
     -dest "$destDir"   \
     -src "/mxe/usr/${CROSS_TRIPLE}" \
-    -enforce "/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/platforms,/mxe/usr/${CROSS_TRIPLE}/qt5/qml" \
+    -enforce "/mxe/usr/${CROSS_TRIPLE}/qt5/qml,/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/platforms,/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/imageformats,/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/position,/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/geoservices" \
     -objdump "/mxe/usr/bin/${CROSS_TRIPLE}-objdump"
 
 mv -f "$destDir/qml/"* "$destDir/"
