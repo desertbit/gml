@@ -202,3 +202,11 @@ func (img *Image) Width() (width int) {
 	runtime.KeepAlive(img)
 	return
 }
+
+func (img *Image) IsEmpty() (empty bool) {
+	empty = (C.gml_image_is_empty(img.ptr) != 0)
+
+	// Prevent the GC from freeing. Go issue 13347
+	runtime.KeepAlive(img)
+	return
+}

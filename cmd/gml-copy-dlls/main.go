@@ -206,7 +206,7 @@ func copyDeps() (err error) {
 			continue
 		}
 
-		err = utils.CopyFile(path, filepath.Join(destDir, filepath.Base(path)))
+		err = utils.CopyFile(path, filepath.Join(destDir, filepath.Base(path)), false)
 		if err != nil {
 			return
 		}
@@ -227,7 +227,7 @@ func copyEnforcedDirs() error {
 			}
 		}
 
-		err = utils.CopyDir(src, dest)
+		err = utils.CopyDir(src, dest, false)
 		if err != nil {
 			return err
 		}

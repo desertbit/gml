@@ -90,7 +90,7 @@ func FirstCharToUpper(s string) string {
 // destination file exists, all it's contents will be replaced by the contents
 // of the source file. The file mode will be copied from the source and
 // the copied data is synced/flushed to stable storage.
-func CopyFile(src, dst string) (err error) {
+func CopyFile(src, dst string, sync bool) (err error) {
 	in, err := os.Open(src)
 	if err != nil {
 		return
@@ -112,9 +112,11 @@ func CopyFile(src, dst string) (err error) {
 		return
 	}
 
-	err = out.Sync()
-	if err != nil {
-		return
+	if sync {
+		err = out.Sync()
+		if err != nil {
+			return
+		}
 	}
 
 	si, err := os.Stat(src)
@@ -132,7 +134,7 @@ func CopyFile(src, dst string) (err error) {
 // CopyDir recursively copies a directory tree, attempting to preserve permissions.
 // Source directory must exist, destination directory must *not* exist.
 // Symlinks are ignored and skipped.
-func CopyDir(src string, dst string) (err error) {
+func CopyDir(src string, dst string, sync bool) (err error) {
 	src = filepath.Clean(src)
 	dst = filepath.Clean(dst)
 
@@ -167,7 +169,7 @@ func CopyDir(src string, dst string) (err error) {
 		dstPath := filepath.Join(dst, entry.Name())
 
 		if entry.IsDir() {
-			err = CopyDir(srcPath, dstPath)
+			err = CopyDir(srcPath, dstPath, sync)
 			if err != nil {
 				return
 			}
@@ -177,7 +179,7 @@ func CopyDir(src string, dst string) (err error) {
 				continue
 			}
 
-			err = CopyFile(srcPath, dstPath)
+			err = CopyFile(srcPath, dstPath, sync)
 			if err != nil {
 				return
 			}

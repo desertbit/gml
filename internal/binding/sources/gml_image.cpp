@@ -109,6 +109,10 @@ int gml_image_load_from_file(gml_image img, const char* filename, gml_error err)
     try {
         QImage* qImg = (QImage*)img;
         *qImg = QImage(QString(filename));
+        if (qImg->isNull()) {
+            gml_error_set_msg(err, "failed to load image from file");
+            return -1;
+        }
         return 0;
     }
     catch (std::exception& e) {
@@ -146,6 +150,10 @@ int gml_image_load_from_data(gml_image img, const char* data, int size, gml_erro
     try {
         QImage* qImg = (QImage*)img;
         qImg->loadFromData((const unsigned char*)(data), size);
+        if (qImg->isNull()) {
+            gml_error_set_msg(err, "failed to load image from data");
+            return -1;
+        }
         return 0;
     }
     catch (std::exception& e) {
@@ -175,6 +183,24 @@ int gml_image_height(gml_image img) {
 int gml_image_width(gml_image img) {
     try {
         return ((QImage*)img)->width();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return -1;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return -1;
+    }
+}
+
+int gml_image_is_empty(gml_image img) {
+    try {
+        if (((QImage*)img)->isNull()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
     catch (std::exception& e) {
         gml_error_log_exception(e.what());

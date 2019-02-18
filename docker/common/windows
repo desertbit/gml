@@ -1,6 +1,6 @@
 RUN cd /mxe && \
     export NUM_CORES="$(grep -c processor /proc/cpuinfo)" && \
-    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtlocation
+    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtimageformats qtlocation
 
 ENV PATH="/mxe/usr/bin:/mxe/usr/${CROSS_TRIPLE}/qt5/bin:$PATH" \
     PKG_CONFIG="/mxe/usr/bin/${CROSS_TRIPLE}-pkg-config" \
