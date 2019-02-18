@@ -7,7 +7,7 @@ ENV CROSS_TRIPLE="x86_64-w64-mingw32.static" \
 
 RUN cd /mxe && \
     export NUM_CORES="$(grep -c processor /proc/cpuinfo)" && \
-    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols2
+    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtlocation
 
 ENV PATH="/mxe/usr/bin:/mxe/usr/${CROSS_TRIPLE}/qt5/bin:$PATH" \
     PKG_CONFIG="/mxe/usr/bin/${CROSS_TRIPLE}-pkg-config" \

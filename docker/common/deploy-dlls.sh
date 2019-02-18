@@ -13,6 +13,10 @@ elif [[ "$destDir" == "" ]]; then
     exit 1
 fi
 
+if [[ -d "$destDir" ]]; then
+    rm -rf "$destDir"
+fi
+
 gml-copy-dlls \
     -input "$input" \
     -dest "$destDir"   \
@@ -20,5 +24,5 @@ gml-copy-dlls \
     -enforce "/mxe/usr/${CROSS_TRIPLE}/qt5/plugins/platforms,/mxe/usr/${CROSS_TRIPLE}/qt5/qml" \
     -objdump "/mxe/usr/bin/${CROSS_TRIPLE}-objdump"
 
-mv "$destDir/qml/"* "$destDir/"
+mv -f "$destDir/qml/"* "$destDir/"
 rm -rf "$destDir/qml"
