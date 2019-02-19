@@ -127,7 +127,7 @@ func buildGo(ctx *Context, clean bool) (err error) {
 
 	// Hide the terminal window on windows bullshit systems.
 	if build.Default.GOOS == "windows" {
-		args = append(args, "-ldflags -H=windowsgui")
+		args = append(args, "-ldflags", "-H=windowsgui")
 	}
 
 	err = utils.RunCommand(
