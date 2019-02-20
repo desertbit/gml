@@ -4,6 +4,9 @@
 ## Go
 - remove the app completly.
 
+## QML - Go Bridge
+- check, if msgpack can be used with [this](https://github.com/msgpack/msgpack-javascript) javascript lib
+
 ## Code Gen
 - use the direct type instead of interface{} -> properties don't return a QVariant.
 - test variant as return type and in functions
