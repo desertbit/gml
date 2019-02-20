@@ -28,6 +28,7 @@
 package build
 
 import (
+	"go/build"
 	"os"
 	"strings"
 
@@ -122,6 +123,11 @@ func buildGo(ctx *Context, clean bool) (err error) {
 	args := []string{"build", "-o", ctx.OutputFile}
 	if clean {
 		args = append(args, "-a")
+	}
+
+	// Hide the terminal window on windows bullshit systems.
+	if build.Default.GOOS == "windows" {
+		args = append(args, "-ldflags", "-H=windowsgui")
 	}
 
 	err = utils.RunCommand(
