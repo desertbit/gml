@@ -45,7 +45,7 @@ RUN apt-get -y update && \
 
 # https://mxe.cc
 # https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
-RUN export MXE_COMMIT="744f553022aabe5c9946828235b6a5dd9416a6d0" && \
+RUN export MXE_COMMIT="ef6f397c92d7c2e17eab307a3d96b5a60ca331e7" && \
     git clone https://github.com/mxe/mxe.git /mxe && \
     cd /mxe && \
     git checkout "${MXE_COMMIT}"

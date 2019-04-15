@@ -8,8 +8,8 @@ RUN apt-get -y update && \
     apt-get -y clean
 
 # Install the Go compiler.
-RUN export GO_VERSION="1.11.5" && \
-    export GO_CHECKSUM="ff54aafedff961eb94792487e827515da683d61a5f9482f668008832631e5d25" && \
+RUN export GO_VERSION="1.12.4" && \
+    export GO_CHECKSUM="d7d1f1f88ddfe55840712dc1747f37a790cbcaa448f6c9cf51bbe10aa65442f5" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -40,3 +40,4 @@ ADD common/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["gml"]
+
