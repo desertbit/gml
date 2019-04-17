@@ -42,7 +42,8 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	GoPath string
+	BinName string
+	GoPath  string
 }
 
 func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
@@ -72,10 +73,17 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	}
 	goPath := goPaths[0]
 
+	// Set the bin name.
+	binName := filepath.Base(sourceDir)
+	if binName == "" || binName == "." {
+		binName = "gml-app"
+	}
+
 	ctx = &Context{
 		SourceDir: sourceDir,
 		BuildDir:  buildDir,
 		DestDir:   destDir,
+		BinName:   binName,
 		GoPath:    goPath,
 	}
 

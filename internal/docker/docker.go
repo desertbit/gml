@@ -96,7 +96,7 @@ func Build(
 		"-e", "GOPATH=/work/go",
 		"-e", "GOCACHE=/work/build/go-cache",
 		"-v", ctx.GoPath + ":/work/go",
-		"-v", ctx.SourceDir + ":/work/src",
+		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
 	}
@@ -104,7 +104,7 @@ func Build(
 	args = append(args,
 		container,
 		"gml", "build",
-		"--source-dir", "/work/src",
+		"--source-dir", "/work/"+ctx.BinName,
 		"--build-dir", "/work/build/gml-build",
 		"--dest-dir", "/work/bin")
 
