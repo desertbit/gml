@@ -53,12 +53,12 @@ RUN export GO_VERSION="1.12.4" && \
     rm -rf /tmp/go
 ENV PATH="$PATH:/usr/local/go/bin" \
     GOROOT=/usr/local/go \
-    GOPATH=/work \
     CGO_ENABLED=1
 
 # Install the gml tool.
 RUN mkdir -p /tmp/go && cd /tmp/go && \
     export GOPATH="/tmp/go" && \
+    export GOCACHE="/tmp/go/cache" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
     go get github.com/desertbit/gml/cmd/... && \
