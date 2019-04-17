@@ -32,7 +32,6 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
-	"path/filepath"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -93,20 +92,20 @@ func Build(
 		"run", "--rm", "-i" + ttyArg,
 		"-e", "UID=" + user.Uid,
 		"-e", "GID=" + user.Gid,
-		"-e", "GOPATH=/work:/work/vendor",
-		"-v", ctx.GoPath + "/src:/work/src",
-		"-v", ctx.BuildDir + ":/work/pkg",
+		"-e", "GOBIN=/work/bin",
+		"-e", "GOPATH=/work/go",
+		"-e", "GOCACHE=/work/build/go-cache",
+		"-v", ctx.GoPath + ":/work/go",
+		"-v", ctx.SourceDir + ":/work/src",
+		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
-	}
-	if ctx.GoPathBinding != "" && ctx.GoPathBinding != ctx.GoPath {
-		args = append(args, "-v", ctx.GoPathBinding+":/work/vendor/")
 	}
 
 	args = append(args,
 		container,
 		"gml", "build",
-		"--source-dir", filepath.Join("/work", ctx.ImportPath),
-		"--build-dir", "/work/pkg/gml-build",
+		"--source-dir", "/work/src",
+		"--build-dir", "/work/build/gml-build",
 		"--dest-dir", "/work/bin")
 
 	if clean {

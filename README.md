@@ -3,7 +3,7 @@
 ## Install
 
 ```
-go get -u github.com/desertbit/gml/cmd/...
+go get -u github.com/desertbit/gml/cmd/gml
 ```
 
 ## Docker Build Containers

@@ -9,7 +9,14 @@ if [[ -n $UID ]] && [[ -n $GID ]]; then
     export HOME="/home/builder"
     groupadd -o -g $GID builder 2> /dev/null
     useradd -d "${HOME}" -o -m -g $GID -u $UID -s /bin/bash builder 2> /dev/null
-    chown builder:builder /work 
+    chown builder:builder /work
+
+    # Copy SSH known hosts from root if present.
+    if [ -f /root/.ssh/known_hosts ]; then
+        mkdir -p "${HOME}/.ssh"
+        cp /root/.ssh/known_hosts "${HOME}/.ssh/known_hosts"
+        chown -R builder:builder "${HOME}/.ssh"
+    fi
 
     # Run the command as the specified user/group.
     exec sudo -E -H -u builder \

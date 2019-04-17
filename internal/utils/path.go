@@ -25,38 +25,51 @@
  * SOFTWARE.
  */
 
-package docker
+package utils
 
 import (
 	"fmt"
 	"go/build"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/desertbit/gml/internal/utils"
 )
 
-type Context struct {
-	SourceDir string
-	BuildDir  string
-	DestDir   string
+const (
+	// TODO: maybe use reflect.TypeOf(*ctx).PkgPath() ?
+	goImportPath = "github.com/desertbit/gml"
+)
 
-	GoPath string
-}
-
-func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
-	// Get absolute paths.
-	sourceDir, err = filepath.Abs(sourceDir)
+func FindBindingPath(projectRootDir string) (path string, err error) {
+	projectRootDir, err = filepath.Abs(projectRootDir)
 	if err != nil {
 		return
 	}
-	buildDir, err = filepath.Abs(buildDir)
+
+	// Obtain the import path including the version from the go.mod file.
+	data, err := ioutil.ReadFile(filepath.Join(projectRootDir, "go.mod"))
 	if err != nil {
 		return
 	}
-	destDir, err = filepath.Abs(destDir)
-	if err != nil {
+
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		if !strings.Contains(line, goImportPath) {
+			continue
+		}
+
+		fields := strings.Fields(strings.TrimPrefix(strings.TrimSpace(line), "require"))
+		if len(fields) != 2 || fields[0] != goImportPath {
+			continue
+		}
+
+		path = fields[0] + "@" + fields[1]
+		break
+	}
+
+	if path == "" {
+		err = fmt.Errorf("failed to find gml import in go.mod file")
 		return
 	}
 
@@ -72,50 +85,17 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	}
 	goPath := goPaths[0]
 
-	ctx = &Context{
-		SourceDir: sourceDir,
-		BuildDir:  buildDir,
-		DestDir:   destDir,
-		GoPath:    goPath,
-	}
+	// Our final binding path.
+	path = filepath.Join(goPath, "pkg", "mod", path, "internal", "binding")
 
-	err = ctx.createDirsIfNotExists()
+	// Ensure it exists.
+	e, err := Exists(path)
 	if err != nil {
+		return
+	} else if !e {
+		err = fmt.Errorf("gml binding path does not exists: '%s'", path)
 		return
 	}
 
-	err = ctx.checkForRequiredDirs()
-	return
-}
-
-func (c *Context) createDirsIfNotExists() (err error) {
-	dirs := []string{
-		c.BuildDir,
-		c.DestDir,
-		c.GoPath,
-	}
-
-	for _, d := range dirs {
-		err = os.MkdirAll(d, 0755)
-		if err != nil {
-			return
-		}
-	}
-	return
-}
-
-func (c *Context) checkForRequiredDirs() (err error) {
-	dirs := []string{
-		c.SourceDir,
-	}
-
-	for _, d := range dirs {
-		e, err := utils.Exists(d)
-		if err != nil {
-			return err
-		} else if !e {
-			return fmt.Errorf("required directory does not exists: '%s'", d)
-		}
-	}
 	return
 }

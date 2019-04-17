@@ -29,12 +29,9 @@ package build
 
 import (
 	"fmt"
-	"go/build"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
-	"strings"
 
 	"github.com/desertbit/gml/internal/utils"
 )
@@ -104,37 +101,9 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		QtProFile:      filepath.Join(buildDir, proFileName),
 	}
 
-	// Obtain the current GOPATH.
-	goPathEnv := os.Getenv("GOPATH")
-	if goPathEnv == "" {
-		goPathEnv = build.Default.GOPATH
-	}
-
-	goPaths := strings.Split(goPathEnv, ":")
-
-	var bindingPath string
-	for _, gp := range goPaths {
-		gp, err = filepath.Abs(gp)
-		if err != nil {
-			return
-		}
-
-		// Check in which go path the binding dir exists.
-		var exists bool
-		path := filepath.Join(gp, "src", filepath.Dir(reflect.TypeOf(*ctx).PkgPath()), "binding")
-		exists, err = utils.Exists(path)
-		if err != nil {
-			return
-		}
-		if exists {
-			bindingPath, err = filepath.Abs(path)
-			if err != nil {
-				return
-			}
-		}
-	}
-	if bindingPath == "" {
-		err = fmt.Errorf("binding directory is not within the GoPath")
+	// Obtain the full path to the C bindings.
+	bindingPath, err := utils.FindBindingPath(sourceDir)
+	if err != nil {
 		return
 	}
 
