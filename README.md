@@ -1,5 +1,11 @@
 # Go QML Bindings
 
+## Install
+
+```
+go get -u github.com/desertbit/gml/cmd/...
+```
+
 ## Docker Build Containers
 
 The docker image url is: `desertbit/gml`
