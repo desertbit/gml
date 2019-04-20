@@ -31,7 +31,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/build"
-	"go/importer"
 	"go/parser"
 	"go/token"
 	"go/types"
@@ -47,14 +46,6 @@ const (
 	skipPrefix    = "gml_gen_"
 	cBasePrefix   = "gml_gen"
 	cppBasePrefix = "GMLGen"
-)
-
-var (
-	typesConf = types.Config{
-		Importer:         importer.For("source", nil),
-		IgnoreFuncBodies: true,
-		FakeImportC:      true,
-	}
 )
 
 // TODO: make concurrent with multiple goroutines.
@@ -189,6 +180,12 @@ func parseDir(gt *genTargets, fset *token.FileSet, dir string) (err error) {
 
 	info := &types.Info{
 		Defs: make(map[*ast.Ident]types.Object),
+	}
+
+	typesConf := types.Config{
+		Importer:         newImporter(fset),
+		IgnoreFuncBodies: true,
+		FakeImportC:      true,
 	}
 
 	// Type-check the package containing only file f.
