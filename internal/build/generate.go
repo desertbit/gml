@@ -104,7 +104,7 @@ func generate(ctx *Context) (err error) {
 		return
 	}
 
-	// Create dummies if not C & C++ files will be generated.
+	// Create dummies if no C & C++ files will be generated.
 	if len(gt.Packages) == 0 {
 		return generateDummyFiles(ctx)
 	}
