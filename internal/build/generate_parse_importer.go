@@ -54,14 +54,3 @@ func (i *Importer) Import(path string) (p *types.Package, err error) {
 	err = nil
 	return
 }
-
-func (i *Importer) ImportFrom(path, dir string, mode types.ImportMode) (p *types.Package, err error) {
-	p, err = i.imp.Import(path)
-	if err == nil {
-		return
-	}
-
-	p = types.NewPackage(path, filepath.Base(path))
-	err = nil
-	return
-}

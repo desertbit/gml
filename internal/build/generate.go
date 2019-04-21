@@ -192,7 +192,6 @@ func generateGoFile(gp *genPackage) (err error) {
 	return goTmpl.Execute(f, gp)
 }
 
-// TODO: add package prefix!
 func generateCHeaderFile(gp *genPackage, genDir string) (err error) {
 	filename := filepath.Join(genDir, gp.PackageName+".h")
 
@@ -211,7 +210,6 @@ func generateCHeaderFile(gp *genPackage, genDir string) (err error) {
 	return cHeaderTmpl.Execute(f, gp)
 }
 
-// TODO: add package prefix!
 func generateCPPSourceFile(gp *genPackage, genDir string) (err error) {
 	filename := filepath.Join(genDir, gp.PackageName+".cpp")
 
@@ -230,7 +228,6 @@ func generateCPPSourceFile(gp *genPackage, genDir string) (err error) {
 	return cppSourceTmpl.Execute(f, gp)
 }
 
-// TODO: add package prefix!
 func generateCPPHeaderFile(gp *genPackage, genDir string) (err error) {
 	filename := filepath.Join(genDir, gp.PackageName+".h")
 
