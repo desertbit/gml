@@ -1,5 +1,8 @@
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/desertbit/closer v2.0.1+incompatible h1:vC58rDu6nwxrBvibQ/TEmtPGnfscC8n0GExFzYXsLjE=
 github.com/desertbit/closer v2.0.1+incompatible/go.mod h1:kYgYVgfyW2gRrbZ/trEqb+RPqaYczGtpIINsZD2tNbk=
+github.com/desertbit/closer/v3 v3.0.1 h1:mZORDd9VbXIgH8OrUyKrS+0sdvNwpR47JB5cgnBTc0I=
+github.com/desertbit/closer/v3 v3.0.1/go.mod h1:AAC4KRd8DC40nwvV967J/kDFhujMEiuwIKQfN0IDxXw=
 github.com/desertbit/columnize v2.1.0+incompatible h1:h55rYmdrWoTj7w9aAnCkxzM3C2Eb8zuFa2W41t0o5j0=
 github.com/desertbit/columnize v2.1.0+incompatible/go.mod h1:5kPrzQwKbQ8E5D28nvTVPqIBJyj+8jvJzwt6HXZvXgI=
 github.com/desertbit/go-shlex v0.0.0-20150515145356-3f9db97f8568 h1:Kt3BVZKcFOZ3xaI1G6EHd2eM8boRvm5qCs/AZBr9ysQ=
@@ -25,6 +28,9 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9AWI=
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 golang.org/x/crypto v0.0.0-20190411191339-88737f569e3a h1:Igim7XhdOpBnWPuYJ70XcNpq8q3BCACtVgNfoJxOV7g=
 golang.org/x/crypto v0.0.0-20190411191339-88737f569e3a/go.mod h1:WFFai1msRO1wXaEeE5yQxYXgSfI8pQAWXbQop6sCtWE=
 golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223 h1:DH4skfRX4EBpamg7iV4ZlCpblAHI6s6TDM39bFZumv8=
