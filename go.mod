@@ -3,6 +3,7 @@ module github.com/desertbit/gml
 go 1.12
 
 require (
+	github.com/desertbit/closer/v3 v3.0.1 // indirect
 	github.com/desertbit/grumble v1.0.2
 	github.com/fatih/color v1.7.0
 	github.com/json-iterator/go v1.1.6

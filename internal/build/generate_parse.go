@@ -41,6 +41,7 @@ import (
 	"sync"
 	"unicode"
 
+	"github.com/desertbit/closer/v3"
 	"github.com/desertbit/gml/internal/utils"
 )
 
@@ -61,82 +62,78 @@ func parseDirRecursive(dir string) (gt *genTargets, err error) {
 	}
 
 	var (
+		wg          sync.WaitGroup
+		parseImport func(path string)
+
+		cl         = closer.New()
 		numWorkers = runtime.NumCPU()
-		importChan = make(chan string, numWorkers)
-		dirChan    = make(chan string, numWorkers)
+		imports    = make(map[string]bool)
+		mx         = sync.Mutex{}
 		errChan    = make(chan error, numWorkers)
 	)
 
-	// Start the parse workers.
-	for i := 0; i < numWorkers; i++ {
-		go func() {
-			for {
-				// Obtain the next parse task or exit if closed.
-				dir, ok := <-dirChan
-				if !ok {
-					errChan <- nil
-					return
-				}
+	// Define the worker routine.
+	parseImport = func(path string) {
+		defer wg.Done()
 
-				// Parse the main directory.
-				err = parseDir(gt, dir, importChan)
-				if err != nil {
-					errChan <- err
-					return
-				}
-			}
-		}()
-	}
-
-	var (
-		importsMutex sync.Mutex
-		imports      = make(map[string]bool)
-	)
-
-	// Add new imports routine.
-	go func() {
-	Loop:
-		for {
-			// TODO: closed chan.
-			select {
-			case path := <-importChan:
-				// We are only interested in imported project packages.
-				if !strings.HasPrefix(path, rootImport) {
-					continue Loop
-				}
-
-				// Only add if not present in map.
-				importsMutex.Lock()
-				if _, ok := imports[path]; !ok {
-					imports[path] = false
-				}
-				importsMutex.Unlock()
-			}
+		// Check, if the closer is closing.
+		if cl.IsClosing() {
+			return
 		}
-	}()
 
-Loop:
-	for {
-		select {
-		case path := <-importChan:
+		gPkg, importPaths, err := parseDir(filepath.Join(dir, strings.TrimPrefix(path, rootImport)))
+		if err != nil {
+			errChan <- err
+			return
+		}
+
+		mx.Lock()
+		if gPkg != nil && len(gPkg.Structs) > 0 {
+			gt.Packages = append(gt.Packages, gPkg)
+		}
+		mx.Unlock()
+
+		for _, path := range importPaths {
 			// We are only interested in imported project packages.
 			if !strings.HasPrefix(path, rootImport) {
-				continue Loop
+				continue
 			}
 
 			// Skip if already handled.
+			mx.Lock()
 			if imports[path] {
-				continue Loop
+				mx.Unlock()
+				continue
 			}
 			imports[path] = true
+			mx.Unlock()
 
-			pkgDir := filepath.Join(dir, strings.TrimPrefix(dir, rootImport))
-
-			// Send the new task.
-			dirChan <- pkgDir
+			// Start a new routine for each import path.
+			wg.Add(1)
+			go parseImport(path)
 		}
 	}
 
+	// Start with the root import.
+	wg.Add(1)
+	go parseImport(rootImport)
+
+	// Close the closer if no routine is running anymore.
+	go func() {
+		wg.Wait()
+		cl.Close()
+	}()
+
+	// Read potential errors from the error chan.
+	select {
+	case <-cl.ClosedChan():
+		select {
+		case err = <-errChan:
+		default:
+		}
+	case err = <-errChan:
+		cl.Close()
+	}
 	return
 }
 
@@ -162,8 +159,8 @@ func parseGoMod(path string) (rootImport string, err error) {
 	return
 }
 
-func parseDir(gt *genTargets, dir string, importChan chan<- string) (err error) {
-	// Remove the generated go gile if present.
+func parseDir(dir string) (gPkg *genPackage, imports []string, err error) {
+	// Remove the generated go file if present.
 	// This file might cause errors if it is out-of-date
 	// and might stop the parsing process.
 	genFilePath := filepath.Join(dir, genGoFilename)
@@ -191,7 +188,8 @@ func parseDir(gt *genTargets, dir string, importChan chan<- string) (err error) 
 	// There should be only one package in the map,
 	// if the go source is valid and correct.
 	if len(pkgs) != 1 {
-		return fmt.Errorf("invalid package: multiple package definitions")
+		err = fmt.Errorf("invalid package: multiple package definitions")
+		return
 	}
 
 	// Obtain the single package.
@@ -204,32 +202,27 @@ func parseDir(gt *genTargets, dir string, importChan chan<- string) (err error) 
 	}
 
 	// Our parsed results for the package.
-	gp := &genPackage{
+	gPkg = &genPackage{
 		Dir:         dir,
 		PackageName: pkgName,
 	}
 
 	// Parse all the go source files.
 	for _, f := range pkg.Files {
-		err = parseFile(gp, fset, f, importChan)
+		imports, err = parseFile(gPkg, fset, f)
 		if err != nil {
 			return
 		}
 	}
 
-	// Skip if the package is empty.
-	if len(gp.Structs) > 0 {
-		gt.Packages = append(gt.Packages, gp)
-	}
-
 	return
 }
 
-func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File, importChan chan<- string) (err error) {
-	// Obtain and send all the imports to the main routine.
-	for _, i := range f.Imports {
-		path := strings.Trim(i.Path.Value, "\"")
-		importChan <- path
+func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File) (imports []string, err error) {
+	// Obtain all imports.
+	imports = make([]string, len(f.Imports))
+	for i, imp := range f.Imports {
+		imports[i] = strings.Trim(imp.Path.Value, "\"")
 	}
 
 	// Search for struct definitions.
@@ -309,7 +302,8 @@ func parseFile(gp *genPackage, fset *token.FileSet, f *ast.File, importChan chan
 
 		// There must be one embedded gml.Object field.
 		if !hasEmbeddedObject {
-			return newParseError(fset, decl.Pos(), fmt.Errorf("invalid struct: gml.Object must be embedded"))
+			err = newParseError(fset, decl.Pos(), fmt.Errorf("invalid struct: gml.Object must be embedded"))
+			return
 		}
 
 		gp.Structs = append(gp.Structs, gs)
