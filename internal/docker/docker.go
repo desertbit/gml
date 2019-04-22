@@ -32,6 +32,8 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path/filepath"
+	"strings"
 
 	"golang.org/x/crypto/ssh/terminal"
 
@@ -61,21 +63,31 @@ func Build(
 	sourceDir, buildDir, destDir string,
 	clean, noStrip, customContainer bool,
 ) (err error) {
-	ctx, err := newContext(sourceDir, buildDir, destDir)
-	if err != nil {
-		return
-	}
-
-	utils.PrintColorln("> docker build: " + container)
-
 	if !customContainer {
 		err = checkIfValidContainer(container)
 		if err != nil {
 			return
 		}
-
 		container = containerPrefix + container
 	}
+
+	// Obtain the build architecture.
+	var arch string
+	pos := strings.Index(container, ":")
+	if pos > 0 {
+		arch = strings.TrimSpace(container[pos+1:])
+	}
+
+	ctx, err := newContext(
+		sourceDir,
+		filepath.Join(buildDir, arch),
+		filepath.Join(destDir, arch),
+	)
+	if err != nil {
+		return
+	}
+
+	utils.PrintColorln("> docker build: " + container)
 
 	user, err := user.Current()
 	if err != nil {
