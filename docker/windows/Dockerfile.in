@@ -1,4 +1,4 @@
-FROM debian:8
+FROM ubuntu:18.04
 MAINTAINER team@desertbit.com
 
 # Install dependencies.
