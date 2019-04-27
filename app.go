@@ -109,8 +109,6 @@ func newAppWithArgs(args []string) (a *app, err error) {
 	return
 }
 
-// TODO: remove gml_app_free
-
 func (a *app) getDp() (dp float64, err error) {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
@@ -123,36 +121,6 @@ func (a *app) getDp() (dp float64, err error) {
 	// Magic.
 	dp /= 140.0
 	return
-	/*
-		TODO:
-		currentType := core.QOperatingSystemVersion_CurrentType()
-
-		dpi := screen.LogicalDotsPerInch() * screen.DevicePixelRatio()
-
-		if currentType == core.QOperatingSystemVersion__IOS {
-			dpi = screen.PhysicalDotsPerInch()
-		} else if currentType == core.QOperatingSystemVersion__Android {
-			var env androidextras.QAndroidJniEnvironment
-			activity := androidextras.QtAndroid_AndroidActivity()
-			res := activity.CallObjectMethod2("getResources", "()Landroid/content/res/Resources;")
-			if env.ExceptionCheck() {
-				env.ExceptionDescribe()
-				env.ExceptionClear()
-				err = errors.New("android environment exception")
-				return
-			}
-
-			metrics := res.CallObjectMethod2("getDisplayMetrics", "()Landroid/util/DisplayMetrics;")
-			if env.ExceptionCheck() {
-				env.ExceptionDescribe()
-				env.ExceptionClear()
-				err = errors.New("android environment exception; display metrics")
-				return
-			}
-			dpi = float64(metrics.GetFieldInt("densityDpi"))
-		}
-
-		dp = dpi / 140.0*/
 }
 
 // RunMain runs the function on the applications main thread.
@@ -215,7 +183,6 @@ func (a *app) LoadData(data string) error {
 	return nil
 }
 
-// TODO: Remove? Currently not used.
 // AddImportPath adds the given import path to the app engine.
 // Hint: Must be called within main thread.
 func (a *app) AddImportPath(path string) {

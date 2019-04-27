@@ -103,3 +103,9 @@ func AddImageProvider(id string, ip *ImageProvider) error {
 func SetContextProperty(name string, v interface{}) (err error) {
 	return gapp.SetContextProperty(name, v)
 }
+
+// AddImportPath adds the given import path to the app engine.
+// Hint: Must be called within main thread.
+func AddImportPath(path string) {
+	gapp.AddImportPath(path)
+}
