@@ -25,38 +25,26 @@
  * SOFTWARE.
  */
 
-#ifndef GML_INCLUDES_H
-#define GML_INCLUDES_H
+#include "gml_includes.h"
+#include "gml_error.h"
 
-#include "../headers/gml.h"
+//#############//
+//### C API ###//
+//#############//
 
-#include <stdlib.h>
-#include <iostream>
-#include <string>
+void gml_global_set_search_paths(const char* prefix, const char** paths, int paths_size) {
+    try {
+        QStringList list;
+        for (int i=0; i < paths_size; ++i) {
+            list.append(QString(paths[i]));
+        }
 
-#include <QtPlugin>
-#include <QObject>
-#include <QUrl>
-#include <QString>
-#include <QVariant>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QDir>
-#include <QImage>
-#include <QQuickTextureFactory>
-#include <QQuickAsyncImageProvider>
-#include <QQuickImageResponse>
-#include <QAbstractListModel>
-#include <QModelIndex>
-#include <QScreen>
-#include <QQuickPaintedItem>
-#include <QQuickItem>
-#include <QPainter>
-
-using std::string;
-using std::cout;
-using std::cerr;
-using std::endl;
-
-#endif
+        QDir::setSearchPaths(QString(prefix), list);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}

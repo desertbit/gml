@@ -36,6 +36,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"unsafe"
 )
 
 // Global app variable.
@@ -108,4 +109,21 @@ func SetContextProperty(name string, v interface{}) (err error) {
 // Hint: Must be called within main thread.
 func AddImportPath(path string) {
 	gapp.AddImportPath(path)
+}
+
+// SetSearchPaths sets or replaces Qt's search paths for file names with the prefix prefix to searchPaths.
+// To specify a prefix for a file name, prepend the prefix followed by a single colon (e.g., "images:undo.png", "xmldocs:books.xml"). prefix can only contain letters or numbers (e.g., it cannot contain a colon, nor a slash).
+// Qt uses this search path to locate files with a known prefix. The search path entries are tested in order, starting with the first entry.
+func SetSearchPaths(prefix string, searchPaths []string) {
+	if len(prefix) == 0 || len(searchPaths) == 0 {
+		return
+	}
+
+	prefixC := C.CString(prefix)
+	defer C.free(unsafe.Pointer(prefixC))
+
+	pathsC := toCharArray(searchPaths)
+	defer freeCharArray(pathsC, len(searchPaths))
+
+	C.gml_global_set_search_paths(prefixC, pathsC, C.int(len(searchPaths)))
 }

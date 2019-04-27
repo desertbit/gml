@@ -111,11 +111,14 @@ func Build(
 		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
+		container, "gml",
 	}
 
-	args = append(args,
-		container,
-		"gml", "build",
+	if utils.Verbose {
+		args = append(args, "-v")
+	}
+
+	args = append(args, "build",
 		"--source-dir", "/work/"+ctx.BinName,
 		"--build-dir", "/work/build/gml-build",
 		"--dest-dir", "/work/bin")

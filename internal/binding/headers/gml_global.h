@@ -25,38 +25,19 @@
  * SOFTWARE.
  */
 
-#ifndef GML_INCLUDES_H
-#define GML_INCLUDES_H
+#ifndef GML_GLOBAL_H
+#define GML_GLOBAL_H
 
-#include "../headers/gml.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <stdlib.h>
-#include <iostream>
-#include <string>
+#include "gml_error.h"
 
-#include <QtPlugin>
-#include <QObject>
-#include <QUrl>
-#include <QString>
-#include <QVariant>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QDir>
-#include <QImage>
-#include <QQuickTextureFactory>
-#include <QQuickAsyncImageProvider>
-#include <QQuickImageResponse>
-#include <QAbstractListModel>
-#include <QModelIndex>
-#include <QScreen>
-#include <QQuickPaintedItem>
-#include <QQuickItem>
-#include <QPainter>
+void gml_global_set_search_paths(const char* prefix, const char** paths, int paths_size);
 
-using std::string;
-using std::cout;
-using std::cerr;
-using std::endl;
+#ifdef __cplusplus
+}
+#endif
 
 #endif

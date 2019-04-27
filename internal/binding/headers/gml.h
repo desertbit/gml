@@ -28,6 +28,7 @@
 #ifndef GML_HEADER_H
 #define GML_HEADER_H
 
+#include "gml_global.h"
 #include "gml_app.h"
 #include "gml_bytes.h"
 #include "gml_error.h"
