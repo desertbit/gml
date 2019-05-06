@@ -50,6 +50,9 @@ func init() {
 	if err != nil {
 		log.Fatalf("gml: failed to create global application: %v", err)
 	}
+
+	SetSearchPaths("qml", []string{":/qml"})
+	SetSearchPaths("res", []string{":/resources"})
 }
 
 // Must exits the application with a fatal log if the error is present.
@@ -127,3 +130,52 @@ func SetSearchPaths(prefix string, searchPaths []string) {
 
 	C.gml_global_set_search_paths(prefixC, pathsC, C.int(len(searchPaths)))
 }
+
+/*
+func ExecDev(basePath, url string) (retCode int, err error) {
+	AddImportPath(basePath)
+
+	w := watcher.New()
+	w.SetMaxEvents(1)
+
+	go func() {
+		for {
+			select {
+			case event := <-w.Event:
+				RunMain(func() {
+					fmt.Println(event) // Print the event's info. TODO: log
+					gapp.ClearComponentCache()
+				})
+
+			case err := <-w.Error:
+				log.Println("dev file watcher error: %v", err)
+
+			case <-w.Closed:
+				return
+			}
+		}
+	}()
+
+	err = w.AddRecursive(filepath.Join(basePath, "qml"))
+	if err != nil {
+		return
+	}
+
+	go func() {
+		err := w.Start(time.Millisecond * 250)
+		if err != nil {
+			log.Println("dev file watcher failed: %v", err)
+		}
+	}()
+
+	return Exec(url)
+}
+
+func ExecDevExit(basePath, url string) {
+	ret, err := ExecDev(basePath, url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	os.Exit(ret)
+}
+*/
