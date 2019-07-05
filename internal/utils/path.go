@@ -59,6 +59,12 @@ func FindBindingPath(projectRootDir string) (path string, err error) {
 			continue
 		}
 
+		// Remove comments from the line first.
+		pos := strings.Index(line, "//")
+		if pos >= 0 {
+			line = line[:pos]
+		}
+
 		fields := strings.Fields(strings.TrimPrefix(strings.TrimSpace(line), "require"))
 		if len(fields) != 2 || fields[0] != goImportPath {
 			continue
