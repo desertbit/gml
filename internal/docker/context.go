@@ -44,6 +44,9 @@ type Context struct {
 
 	BinName string
 	GoPath  string
+
+	CGoLDFLAGS string
+	CGoCFLAGS  string
 }
 
 func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
@@ -79,12 +82,26 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 		binName = "gml-app"
 	}
 
+	// Obtain the cgo flags from the current environment.
+	osEnv := os.Environ()
+	cgoLDFLAGS := "CGO_LDFLAGS="
+	cgoCFLAGS := "CGO_CFLAGS="
+	for _, e := range osEnv {
+		if strings.HasPrefix(e, "CGO_LDFLAGS=") {
+			cgoLDFLAGS = e
+		} else if strings.HasPrefix(e, "CGO_CFLAGS=") {
+			cgoCFLAGS = e
+		}
+	}
+
 	ctx = &Context{
-		SourceDir: sourceDir,
-		BuildDir:  buildDir,
-		DestDir:   destDir,
-		BinName:   binName,
-		GoPath:    goPath,
+		SourceDir:  sourceDir,
+		BuildDir:   buildDir,
+		DestDir:    destDir,
+		BinName:    binName,
+		GoPath:     goPath,
+		CGoLDFLAGS: cgoLDFLAGS,
+		CGoCFLAGS:  cgoCFLAGS,
 	}
 
 	err = ctx.createDirsIfNotExists()

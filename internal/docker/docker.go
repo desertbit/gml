@@ -107,6 +107,8 @@ func Build(
 		"-e", "GOBIN=/work/bin",
 		"-e", "GOPATH=/work/go",
 		"-e", "GOCACHE=/work/build/go-cache",
+		"-e", ctx.CGoLDFLAGS,
+		"-e", ctx.CGoCFLAGS,
 		"-v", ctx.GoPath + ":/work/go",
 		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
 		"-v", ctx.BuildDir + ":/work/build",
