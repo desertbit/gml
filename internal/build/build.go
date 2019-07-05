@@ -28,6 +28,7 @@
 package build
 
 import (
+	"fmt"
 	"go/build"
 	"os"
 	"strings"
@@ -124,6 +125,9 @@ func buildGo(ctx *Context, clean bool) (err error) {
 	if clean {
 		args = append(args, "-a")
 	}
+	if utils.Verbose {
+		args = append(args, "-v")
+	}
 
 	// Hide the terminal window on windows bullshit systems.
 	if build.Default.GOOS == "windows" {
@@ -145,8 +149,13 @@ func buildGo(ctx *Context, clean bool) (err error) {
 	cgoLDFLAGS += " " + ctx.StaticLibPath
 	cgoCFLAGS += " -I" + ctx.CGenIncludeDir + " -I" + ctx.GmlBindingHeadersDir
 
+	env := ctx.Env(cgoLDFLAGS, cgoCFLAGS)
+	if utils.Verbose {
+		fmt.Println("build environment variables:", env)
+	}
+
 	err = utils.RunCommand(
-		ctx.Env(cgoLDFLAGS, cgoCFLAGS),
+		env,
 		ctx.SourceDir,
 		"go", args...,
 	)
