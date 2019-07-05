@@ -130,11 +130,23 @@ func buildGo(ctx *Context, clean bool) (err error) {
 		args = append(args, "-ldflags", "-H=windowsgui")
 	}
 
+	// Don't overwrite already set cgo flags.
+	// Let's extend them.
+	osEnv := os.Environ()
+	cgoLDFLAGS := "CGO_LDFLAGS="
+	cgoCFLAGS := "CGO_CFLAGS="
+	for _, e := range osEnv {
+		if strings.HasPrefix(e, "CGO_LDFLAGS=") {
+			cgoLDFLAGS = e
+		} else if strings.HasPrefix(e, "CGO_CFLAGS=") {
+			cgoCFLAGS = e
+		}
+	}
+	cgoLDFLAGS += " " + ctx.StaticLibPath
+	cgoCFLAGS += " -I" + ctx.CGenIncludeDir + " -I" + ctx.GmlBindingHeadersDir
+
 	err = utils.RunCommand(
-		ctx.Env(
-			"CGO_LDFLAGS="+ctx.StaticLibPath,
-			"CGO_CFLAGS=-I"+ctx.CGenIncludeDir+" -I"+ctx.GmlBindingHeadersDir,
-		),
+		ctx.Env(cgoLDFLAGS, cgoCFLAGS),
 		ctx.SourceDir,
 		"go", args...,
 	)
