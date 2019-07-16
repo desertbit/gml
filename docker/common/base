@@ -1,6 +1,6 @@
 # Install the Go compiler.
-RUN export GO_VERSION="1.12.4" && \
-    export GO_CHECKSUM="d7d1f1f88ddfe55840712dc1747f37a790cbcaa448f6c9cf51bbe10aa65442f5" && \
+RUN export GO_VERSION="1.12.7" && \
+    export GO_CHECKSUM="66d83bfb5a9ede000e33c6579a91a29e6b101829ad41fffb5c5bb6c900e109d9" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
