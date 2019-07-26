@@ -22,3 +22,7 @@ The docker image url is: `desertbit/gml`
 | windows_64_shared | Linux x86_64 | Windows x86_64 | dynamic      |                       |
 | windows_32_static | Linux x86_64 | Windows i686   | static       | Not usable - See TODO |
 | windows_64_static | Linux x86_64 | Windows x86_64 | static       | Not usable - See TODO |
+
+## Debugging
+
+To debug windows problems, use the [MSYS2](https://www.msys2.org/) console.
