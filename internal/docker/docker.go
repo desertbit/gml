@@ -62,6 +62,7 @@ func Build(
 	container string,
 	sourceDir, buildDir, destDir string,
 	clean, noStrip, customContainer bool,
+	tags string,
 ) (err error) {
 	if !customContainer {
 		err = checkIfValidContainer(container)
@@ -130,6 +131,12 @@ func Build(
 	}
 	if noStrip {
 		args = append(args, "--no-strip")
+	}
+
+	// Add the tags if defined.
+	tags = strings.TrimSpace(tags)
+	if len(tags) > 0 {
+		args = append(args, "--tags", tags)
 	}
 
 	c := exec.Command("docker", args...)

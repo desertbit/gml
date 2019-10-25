@@ -40,7 +40,7 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error) {
+func Build(sourceDir, buildDir, destDir string, clean, noStrip bool, tags string) (err error) {
 	ctx, err := newContext(sourceDir, buildDir, destDir, clean)
 	if err != nil {
 		return
@@ -76,7 +76,7 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool) (err error)
 
 	// Run go build.
 	utils.PrintColorln("> building Go source")
-	err = buildGo(ctx, clean)
+	err = buildGo(ctx, tags, clean)
 	if err != nil {
 		return
 	}
@@ -108,7 +108,7 @@ func buildCLib(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
-func buildGo(ctx *Context, clean bool) (err error) {
+func buildGo(ctx *Context, tags string, clean bool) (err error) {
 	// Delete the output binary to force relinking.
 	// This is faster than building with the -a option.
 	e, err := utils.Exists(ctx.OutputFile)
@@ -127,6 +127,12 @@ func buildGo(ctx *Context, clean bool) (err error) {
 	}
 	if utils.Verbose {
 		args = append(args, "-v")
+	}
+
+	// Add the go build tags if defined.
+	tags = strings.TrimSpace(tags)
+	if len(tags) > 0 {
+		args = append(args, "-tags", tags)
 	}
 
 	// Hide the terminal window on windows bullshit systems.

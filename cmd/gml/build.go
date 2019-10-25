@@ -46,6 +46,7 @@ func init() {
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
+			f.String("t", "tags", "", "go build tags")
 		},
 		Run: runBuild,
 	}
@@ -69,6 +70,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.String("dest-dir"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
+		c.Flags.String("tags"),
 	)
 }
 
@@ -87,5 +89,6 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
 		c.Flags.Bool("custom"),
+		c.Flags.String("tags"),
 	)
 }
