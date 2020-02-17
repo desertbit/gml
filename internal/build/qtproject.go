@@ -54,11 +54,19 @@ const qtProData = `
 QT += core qml quick
 
 TEMPLATE = lib
-CONFIG += staticlib c++11
+
+{{ if .DebugBuild -}}
+CONFIG += debug staticlib c++11
+{{- else -}}
+CONFIG += release staticlib c++11
+{{- end}}
 
 win32|win64 {
-	CONFIG += release
-	Release:DESTDIR = {{.BuildDir}}
+    {{ if .DebugBuild -}}
+    Debug:DESTDIR = {{.BuildDir}}
+    {{- else -}}
+    Release:DESTDIR = {{.BuildDir}}
+    {{- end}}
 }
 
 INCLUDEPATH += {{.GmlBindingDir}}/headers

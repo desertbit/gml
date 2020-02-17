@@ -40,8 +40,13 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir string, clean, noStrip bool, tags string) (err error) {
-	ctx, err := newContext(sourceDir, buildDir, destDir, clean)
+func Build(sourceDir, buildDir, destDir string, clean, noStrip, debugBuild bool, tags string) (err error) {
+	// Force no strip if this is a debug build.
+	if debugBuild {
+		noStrip = true
+	}
+
+	ctx, err := newContext(sourceDir, buildDir, destDir, clean, debugBuild)
 	if err != nil {
 		return
 	}
@@ -76,18 +81,9 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip bool, tags string
 
 	// Run go build.
 	utils.PrintColorln("> building Go source")
-	err = buildGo(ctx, tags, clean)
+	err = buildGo(ctx, tags, clean, noStrip)
 	if err != nil {
 		return
-	}
-
-	// Finally strip the binary.
-	if !noStrip {
-		utils.PrintColorln("> stripping binary")
-		err = stripBinary(ctx)
-		if err != nil {
-			return
-		}
 	}
 
 	// Run post hooks if available.
@@ -108,7 +104,7 @@ func buildCLib(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
-func buildGo(ctx *Context, tags string, clean bool) (err error) {
+func buildGo(ctx *Context, tags string, clean, noStrip bool) (err error) {
 	// Delete the output binary to force relinking.
 	// This is faster than building with the -a option.
 	e, err := utils.Exists(ctx.OutputFile)
@@ -121,9 +117,20 @@ func buildGo(ctx *Context, tags string, clean bool) (err error) {
 		}
 	}
 
-	args := []string{"build", "-o", ctx.OutputFile}
+	var (
+		ldflags []string
+		args    = []string{"build", "-o", ctx.OutputFile}
+	)
+
 	if clean {
 		args = append(args, "-a")
+	}
+	if !noStrip {
+		args = append(args, "-trimpath")
+		ldflags = append(ldflags, "-s", "-w")
+	}
+	if ctx.DebugBuild {
+		ldflags = append(ldflags, "-compressdwarf=false")
 	}
 	if utils.Verbose {
 		args = append(args, "-v")
@@ -137,7 +144,12 @@ func buildGo(ctx *Context, tags string, clean bool) (err error) {
 
 	// Hide the terminal window on windows bullshit systems.
 	if build.Default.GOOS == "windows" {
-		args = append(args, "-ldflags", "-H=windowsgui")
+		ldflags = append(ldflags, "-H=windowsgui")
+	}
+
+	// Combine ldflags passed by arguments.
+	if len(ldflags) > 0 {
+		args = append(args, "-ldflags", strings.Join(ldflags, " "))
 	}
 
 	// Don't overwrite already set cgo flags.
@@ -166,10 +178,6 @@ func buildGo(ctx *Context, tags string, clean bool) (err error) {
 		"go", args...,
 	)
 	return
-}
-
-func stripBinary(ctx *Context) (err error) {
-	return utils.RunCommand(ctx.Env(), ctx.DestDir, "strip", ctx.OutputFile)
 }
 
 func runPostHooks(ctx *Context) (err error) {

@@ -67,9 +67,11 @@ type Context struct {
 	OutputFile    string
 	StaticLibPath string
 	QtProFile     string
+
+	DebugBuild bool
 }
 
-func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, err error) {
+func newContext(sourceDir, buildDir, destDir string, clean bool, debugBuild bool) (ctx *Context, err error) {
 	// Get absolute paths.
 	sourceDir, err = filepath.Abs(sourceDir)
 	if err != nil {
@@ -99,6 +101,7 @@ func newContext(sourceDir, buildDir, destDir string, clean bool) (ctx *Context, 
 		OutputFile:     filepath.Join(destDir, filepath.Base(sourceDir)),
 		StaticLibPath:  filepath.Join(buildDir, staticLibName),
 		QtProFile:      filepath.Join(buildDir, proFileName),
+		DebugBuild:     debugBuild,
 	}
 
 	// Obtain the full path to the C bindings.
