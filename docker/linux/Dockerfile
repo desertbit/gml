@@ -8,8 +8,8 @@ RUN apt-get -y update && \
     apt-get -y clean
 
 # Install the Go compiler.
-RUN export GO_VERSION="1.13.3" && \
-    export GO_CHECKSUM="0804bf02020dceaa8a7d7275ee79f7a142f1996bfd0c39216ccb405f93f994c0" && \
+RUN export GO_VERSION="1.13.8" && \
+    export GO_CHECKSUM="0567734d558aef19112f2b2873caa0c600f1b4a5827930eb5a7f35235219e9d8" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
