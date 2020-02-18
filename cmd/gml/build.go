@@ -44,6 +44,7 @@ func init() {
 			f.Bool("c", "clean", false, "clean build files first")
 			f.BoolL("no-strip", false, "don't strip the final binary")
 			f.BoolL("debug", false, "build a debug binary (disables strip)")
+			f.BoolL("race", false, "enable data race detection")
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
@@ -72,6 +73,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
 		c.Flags.Bool("debug"),
+		c.Flags.Bool("race"),
 		c.Flags.String("tags"),
 	)
 }
@@ -91,6 +93,7 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
 		c.Flags.Bool("debug"),
+		c.Flags.Bool("race"),
 		c.Flags.Bool("custom"),
 		c.Flags.String("tags"),
 	)

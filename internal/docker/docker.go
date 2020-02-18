@@ -61,7 +61,7 @@ func Containers() []string {
 func Build(
 	container string,
 	sourceDir, buildDir, destDir string,
-	clean, noStrip, debugBuild, customContainer bool,
+	clean, noStrip, debugBuild, race, customContainer bool,
 	tags string,
 ) (err error) {
 	if !customContainer {
@@ -134,6 +134,9 @@ func Build(
 	}
 	if debugBuild {
 		args = append(args, "--debug")
+	}
+	if race {
+		args = append(args, "--race")
 	}
 
 	// Add the tags if defined.

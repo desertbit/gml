@@ -40,7 +40,7 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir string, clean, noStrip, debugBuild bool, tags string) (err error) {
+func Build(sourceDir, buildDir, destDir string, clean, noStrip, debugBuild, race bool, tags string) (err error) {
 	// Force no strip if this is a debug build.
 	if debugBuild {
 		noStrip = true
@@ -81,7 +81,7 @@ func Build(sourceDir, buildDir, destDir string, clean, noStrip, debugBuild bool,
 
 	// Run go build.
 	utils.PrintColorln("> building Go source")
-	err = buildGo(ctx, tags, clean, noStrip)
+	err = buildGo(ctx, tags, clean, noStrip, race)
 	if err != nil {
 		return
 	}
@@ -104,7 +104,7 @@ func buildCLib(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
-func buildGo(ctx *Context, tags string, clean, noStrip bool) (err error) {
+func buildGo(ctx *Context, tags string, clean, noStrip, race bool) (err error) {
 	// Delete the output binary to force relinking.
 	// This is faster than building with the -a option.
 	e, err := utils.Exists(ctx.OutputFile)
@@ -131,6 +131,9 @@ func buildGo(ctx *Context, tags string, clean, noStrip bool) (err error) {
 	}
 	if ctx.DebugBuild {
 		ldflags = append(ldflags, "-compressdwarf=false")
+	}
+	if race {
+		args = append(args, "-race")
 	}
 	if utils.Verbose {
 		args = append(args, "-v")
