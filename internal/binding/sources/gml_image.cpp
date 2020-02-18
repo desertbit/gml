@@ -131,6 +131,9 @@ int gml_image_load_from_rgba(gml_image img, const char* cdata, int size, int wid
 
         // Create a copy of the data.
         uchar* data = (uchar*)(malloc(size));
+        if (data == NULL) {
+            throw std::runtime_error("failed to malloc image memory");
+        }
         memcpy(data, cdata, size);
 
         *qImg = QImage(data, width, height, stride, QImage::Format_RGBA8888, &gml_image_cleanup, data);

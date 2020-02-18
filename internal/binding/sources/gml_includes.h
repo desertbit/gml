@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <stdexcept>
 
 #include <QtPlugin>
 #include <QObject>
