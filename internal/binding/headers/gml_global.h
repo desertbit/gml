@@ -35,6 +35,8 @@ extern "C" {
 #include "gml_error.h"
 
 void gml_global_set_search_paths(const char* prefix, const char** paths, int paths_size);
+void gml_global_set_icon_theme_name(const char* name);
+void gml_global_set_icon_theme_search_paths(const char** paths, int paths_size);
 
 #ifdef __cplusplus
 }

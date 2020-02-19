@@ -45,6 +45,7 @@
 #include <QQmlContext>
 #include <QDir>
 #include <QImage>
+#include <QIcon>
 #include <QQuickTextureFactory>
 #include <QQuickAsyncImageProvider>
 #include <QQuickImageResponse>

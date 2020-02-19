@@ -48,3 +48,32 @@ void gml_global_set_search_paths(const char* prefix, const char** paths, int pat
         gml_error_log_exception();
     }
 }
+
+void gml_global_set_icon_theme_name(const char* name) {
+    try {
+        QIcon::setThemeName(QString(name));
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
+void gml_global_set_icon_theme_search_paths(const char** paths, int paths_size) {
+    try {
+        QStringList list;
+        for (int i=0; i < paths_size; ++i) {
+            list.append(QString(paths[i]));
+        }
+
+        QIcon::setThemeSearchPaths(list);
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}

@@ -131,6 +131,26 @@ func SetSearchPaths(prefix string, searchPaths []string) {
 	C.gml_global_set_search_paths(prefixC, pathsC, C.int(len(searchPaths)))
 }
 
+// SetIconThemeName sets the current icon theme to name.
+func SetIconThemeName(name string) {
+	nameC := C.CString(name)
+	defer C.free(unsafe.Pointer(nameC))
+
+	C.gml_global_set_icon_theme_name(nameC)
+}
+
+// SetIconThemeSearchPaths sets the search paths for icon themes to paths.
+func SetIconThemeSearchPaths(searchPaths []string) {
+	if len(searchPaths) == 0 {
+		return
+	}
+
+	pathsC := toCharArray(searchPaths)
+	defer freeCharArray(pathsC, len(searchPaths))
+
+	C.gml_global_set_icon_theme_search_paths(pathsC, C.int(len(searchPaths)))
+}
+
 /*
 func ExecDev(basePath, url string) (retCode int, err error) {
 	AddImportPath(basePath)
