@@ -140,7 +140,7 @@ func SetIconThemeName(name string) {
 }
 
 // SetIconThemeSearchPaths sets the search paths for icon themes to paths.
-func SetIconThemeSearchPaths(searchPaths []string) {
+func SetIconThemeSearchPaths(searchPaths ...string) {
 	if len(searchPaths) == 0 {
 		return
 	}
