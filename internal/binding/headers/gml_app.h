@@ -57,6 +57,7 @@ int     gml_app_set_root_context_property_object(gml_app app, const char* name, 
 int     gml_app_set_root_context_property_variant(gml_app app, const char* name, gml_variant gml_v, gml_error err);
 void    gml_app_set_application_name(gml_app app, const char* name);
 void    gml_app_set_organization_name(gml_app app, const char* name);
+void    gml_app_set_application_version(gml_app app, const char* version);
 
 double  gml_app_get_dp(gml_app app, gml_error err);
 

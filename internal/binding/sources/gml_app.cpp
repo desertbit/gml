@@ -239,6 +239,19 @@ void gml_app_set_organization_name(gml_app app, const char* name) {
     }
 }
 
+void gml_app_set_application_version(gml_app app, const char* version) {
+    try {
+        GmlApp* a = (GmlApp*)app;
+        a->app.setApplicationVersion(QString(version));
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+    }
+    catch (...) {
+        gml_error_log_exception();
+    }
+}
+
 double gml_app_get_dp(gml_app app, gml_error err) {
     try {
         GmlApp* a  = (GmlApp*)app;
