@@ -315,6 +315,15 @@ func (a *app) SetOrganizationName(name string) {
 	})
 }
 
+func (a *app) SetApplicationVersion(version string) {
+	versionC := C.CString(version)
+	defer C.free(unsafe.Pointer(versionC))
+
+	a.RunMain(func() {
+		C.gml_app_set_application_version(a.app, versionC)
+	})
+}
+
 //#####################//
 //### Exported to C ###//
 //#####################//
