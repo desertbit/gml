@@ -55,8 +55,13 @@ func parseDirRecursive(dir string) (gt *genTargets, err error) {
 	// Our parsed results.
 	gt = &genTargets{}
 
+	modPath, err := utils.FindModPath(dir)
+	if err != nil {
+		return
+	}
+
 	// Parse the go.mod file to obtain the root import path.
-	rootImport, err := parseGoMod(filepath.Join(dir, "go.mod"))
+	rootImport, err := parseGoMod(modPath)
 	if err != nil {
 		return
 	}
