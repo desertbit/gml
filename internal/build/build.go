@@ -46,6 +46,9 @@ func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debug
 		noStrip = true
 	}
 
+	// Convert the comma separated qt modules list to a whitespace separated one.
+	qtModules = strings.Join(strings.Split(qtModules, ","), " ")
+
 	ctx, err := newContext(sourceDir, buildDir, destDir, qtModules, clean, debugBuild)
 	if err != nil {
 		return
