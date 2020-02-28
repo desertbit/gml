@@ -30,5 +30,4 @@
 package gml
 
 // #cgo pkg-config: --static Qt5Core Qt5Qml Qt5Quick
-// #cgo LDFLAGS: -static
 import "C"
