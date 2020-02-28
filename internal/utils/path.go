@@ -28,6 +28,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"go/build"
 	"io/ioutil"
@@ -41,14 +42,36 @@ const (
 	goImportPath = "github.com/desertbit/gml"
 )
 
+func FindModPath(dir string) (path string, err error) {
+	for {
+		path = filepath.Join(dir, "go.mod")
+		if fi, err := os.Stat(path); err == nil && !fi.IsDir() {
+			return path, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+
+	return "", errors.New("go.mod not found")
+}
+
 func FindBindingPath(projectRootDir string) (path string, err error) {
 	projectRootDir, err = filepath.Abs(projectRootDir)
 	if err != nil {
 		return
 	}
 
+	modPath, err := FindModPath(projectRootDir)
+	if err != nil {
+		return
+	}
+
 	// Obtain the import path including the version from the go.mod file.
-	data, err := ioutil.ReadFile(filepath.Join(projectRootDir, "go.mod"))
+	data, err := ioutil.ReadFile(modPath)
 	if err != nil {
 		return
 	}
