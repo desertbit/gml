@@ -60,7 +60,7 @@ func Containers() []string {
 
 func Build(
 	container string,
-	sourceDir, buildDir, destDir string,
+	sourceDir, buildDir, destDir, qtModules string,
 	clean, noStrip, debugBuild, race, customContainer bool,
 	tags string,
 ) (err error) {
@@ -90,7 +90,7 @@ func Build(
 
 	utils.PrintColorln("> docker build: " + container)
 
-	user, err := user.Current()
+	usr, err := user.Current()
 	if err != nil {
 		return
 	}
@@ -103,8 +103,8 @@ func Build(
 
 	args := []string{
 		"run", "--rm", "-i" + ttyArg,
-		"-e", "UID=" + user.Uid,
-		"-e", "GID=" + user.Gid,
+		"-e", "UID=" + usr.Uid,
+		"-e", "GID=" + usr.Gid,
 		"-e", "GOBIN=/work/bin",
 		"-e", "GOPATH=/work/go",
 		"-e", "GOCACHE=/work/build/go-cache",
@@ -124,7 +124,8 @@ func Build(
 	args = append(args, "build",
 		"--source-dir", "/work/"+ctx.BinName,
 		"--build-dir", "/work/build/gml-build",
-		"--dest-dir", "/work/bin")
+		"--dest-dir", "/work/bin",
+		"--qt-modules", qtModules)
 
 	if clean {
 		args = append(args, "--clean")

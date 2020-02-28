@@ -40,13 +40,13 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir string, clean, noStrip, debugBuild, race bool, tags string) (err error) {
+func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debugBuild, race bool, tags string) (err error) {
 	// Force no strip if this is a debug build.
 	if debugBuild {
 		noStrip = true
 	}
 
-	ctx, err := newContext(sourceDir, buildDir, destDir, clean, debugBuild)
+	ctx, err := newContext(sourceDir, buildDir, destDir, qtModules, clean, debugBuild)
 	if err != nil {
 		return
 	}
