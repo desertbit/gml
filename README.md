@@ -22,6 +22,10 @@ The docker image url is: `desertbit/gml`
 | windows_64_shared | Linux x86_64 | Windows x86_64 | dynamic      |                       |
 | android           | Linux x86_64 | Android        | -            | Not usable - See TODO |
 
+## Build Tags
+
+- static: run pkg-config with the static flag. Required for static Qt builds.
+
 ## Debugging
 
 To debug windows problems, use the [MSYS2](https://www.msys2.org/) console.

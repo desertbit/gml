@@ -1,11 +1,8 @@
 # TODO
-- Create tests and check with vargrant for memory correctness.
+- Implement hot reloading
 
 ## Go
 - remove the app completly.
-
-## QML - Go Bridge
-- check, if msgpack can be used with [this](https://github.com/msgpack/msgpack-javascript) javascript lib
 
 ## Code Gen
 - use the direct type instead of interface{} -> properties don't return a QVariant.
@@ -17,7 +14,7 @@
 ## C++ Binding
 - add qml support for int64
 - don't use C.CString instead use the direct byte buffer? (UTF-8 encoding?)
-- use everythwere constData instead of data (strings).
+- use everyhwere constData instead of data (strings).
 
 ## Docker
 - deploy-dlls.sh adds common required Qt plugins. This should be configurable instead?
