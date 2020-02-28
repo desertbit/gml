@@ -51,7 +51,7 @@ func prepareQtProject(ctx *Context) (err error) {
 }
 
 const qtProData = `
-QT += core qml quick
+QT += core qml quick {{ .QTModules }}
 
 TEMPLATE = lib
 

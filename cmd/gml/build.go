@@ -49,6 +49,7 @@ func init() {
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
 			f.String("t", "tags", "", "go build tags")
+			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
 		},
 		Run: runBuild,
 	}
@@ -70,6 +71,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
+		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
 		c.Flags.Bool("debug"),
@@ -90,6 +92,7 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
+		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
 		c.Flags.Bool("debug"),
