@@ -1,5 +1,9 @@
 # Go QML Bindings
 
+## Pre-Alpha
+
+Please note that this project is in pre-alpha phase. Documentation is missing and some bugs need to be fixed. Right now, we do not recommend anyone to use anything you find here ;)
+
 ## Install
 
 ```
