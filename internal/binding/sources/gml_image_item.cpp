@@ -132,7 +132,7 @@ void GmlImageItem::onSourceChanged() {
     // Call to go.
     try {
         gml_image_item_request_cb(
-            src.toLocal8Bit().data(),
+            src.toUtf8().data(),
             (gml_image)(&img)
         );
     }

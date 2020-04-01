@@ -192,7 +192,7 @@ func tmplFuncCPPToCValue(goType, name string) (s string) {
 	case "byte":
 		return "char(" + name + ")"
 	case "string":
-		return name + ".toLocal8Bit().data()" // Be careful! Only as long as the object lives.
+		return name + ".toUtf8().data()" // Be careful! Only as long as the object lives.
 	case "rune":
 		return "int32_t(" + name + ")"
 

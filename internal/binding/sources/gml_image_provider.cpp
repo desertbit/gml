@@ -108,7 +108,7 @@ GmlAsyncImageResponse::GmlAsyncImageResponse(
         gml_image_provider_request_cb(
             ipGoPtr,
             (gml_image_response)(this),
-            id.toLocal8Bit().data(),
+            id.toUtf8().data(),
             (gml_image)(&img)
         );
     }
