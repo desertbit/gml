@@ -243,7 +243,7 @@ gml_variant gml_variant_new_from_uint64(u_int64_t i) {
 
 gml_variant gml_variant_new_from_string(char* s) {
     try {
-        QVariant* v = new QVariant(QString(s));
+        QVariant* v = new QVariant(QString::fromUtf8(s));
         return (gml_variant)v;
     }
     catch (std::exception& e) {
@@ -459,7 +459,7 @@ void gml_variant_to_string(gml_variant v, gml_bytes b)  {
     try {
         QVariant* qv = (QVariant*)v;
         QByteArray* qb = (QByteArray*)b;
-        *qb = qv->toString().toLocal8Bit(); // TODO: can we use toByteArray instead?
+        *qb = qv->toString().toUtf8();
     }
     catch (std::exception& e) {
         gml_error_log_exception("variant: " + string(e.what()));
