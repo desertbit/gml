@@ -61,6 +61,7 @@ func init() {
 		AllowArgs: true,
 		Flags: func(f *grumble.Flags) {
 			f.BoolL("custom", false, "use a custom docker image")
+			f.StringL("args", "", "pass additional arguments to docker")
 		},
 		Run: runBuildDocker,
 	})
@@ -99,5 +100,6 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.Bool("race"),
 		c.Flags.Bool("custom"),
 		c.Flags.String("tags"),
+		c.Flags.String("args"),
 	)
 }

@@ -35,9 +35,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"golang.org/x/crypto/ssh/terminal"
-
 	"github.com/desertbit/gml/internal/utils"
+	"github.com/desertbit/go-shlex"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
@@ -62,7 +62,7 @@ func Build(
 	container string,
 	sourceDir, buildDir, destDir, qtModules string,
 	clean, noStrip, debugBuild, race, customContainer bool,
-	tags string,
+	tags string, dockerArgs string,
 ) (err error) {
 	if !customContainer {
 		err = checkIfValidContainer(container)
@@ -114,8 +114,18 @@ func Build(
 		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
-		container, "gml",
 	}
+
+	// Add the custom docker arguments.
+	dockerArgsSplit, err := shlex.Split(dockerArgs, true)
+	if err != nil {
+		err = fmt.Errorf("failed to parse custom docker arguments: %w", err)
+		return
+	}
+	args = append(args, dockerArgsSplit...)
+
+	// Container and gml command.
+	args = append(args, container, "gml")
 
 	if utils.Verbose {
 		args = append(args, "-v")
