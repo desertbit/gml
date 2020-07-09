@@ -40,7 +40,7 @@ private:
     static GmlApp* globalApp;
 
 public:
-    QGuiApplication       app;
+    QApplication       app;
     QQmlApplicationEngine engine;
 
     GmlApp(int& argc, char** argv);

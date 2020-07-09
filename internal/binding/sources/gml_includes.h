@@ -40,7 +40,7 @@
 #include <QUrl>
 #include <QString>
 #include <QVariant>
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDir>
