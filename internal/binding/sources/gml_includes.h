@@ -44,6 +44,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDir>
+#include <QWidget>
 #include <QImage>
 #include <QIcon>
 #include <QQuickTextureFactory>
