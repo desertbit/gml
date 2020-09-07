@@ -29,5 +29,5 @@
 
 package gml
 
-// #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick
+// #cgo pkg-config: Qt5Core Qt5Qml Qt5Quick Qt5Widgets
 import "C"

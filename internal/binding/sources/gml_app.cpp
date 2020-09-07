@@ -254,8 +254,6 @@ void gml_app_set_application_version(gml_app app, const char* version) {
 
 int gml_app_get_active_window_state(gml_app app, gml_error err) {
     try {
-        GmlApp* a = (GmlApp*)app;
-
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
             throw std::runtime_error("no active window found");
@@ -275,8 +273,6 @@ int gml_app_get_active_window_state(gml_app app, gml_error err) {
 
 void gml_app_set_active_window_state(gml_app app, int visibility, gml_error err) {
     try {
-        GmlApp* a = (GmlApp*)app;
-
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
             throw std::runtime_error("no active window found");
