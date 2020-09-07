@@ -258,7 +258,7 @@ int gml_app_get_active_window_state(gml_app app, gml_error err) {
 
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
-            throw std::runtime_exception("no active window found");
+            throw std::runtime_error("no active window found");
         }
 
         return w->windowState();
@@ -279,7 +279,7 @@ void gml_app_set_active_window_state(gml_app app, int visibility, gml_error err)
 
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
-            throw std::runtime_exception("no active window found");
+            throw std::runtime_error("no active window found");
         }
 
         w->setWindowState(static_cast<Qt::WindowState>(visibility));
