@@ -353,9 +353,10 @@ func (a *app) SetActiveWindowState(ws WindowState) (err error) {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
 
+	var ret C.int
 	a.RunMain(func() {
-		ws = WindowState(C.gml_app_set_active_window_state(a.app, C.int(ws), apiErr.err))
-		if ws < 0 {
+		ret = C.gml_app_set_active_window_state(a.app, C.int(ws), apiErr.err)
+		if ret < 0 {
 			err = apiErr.Err("failed to set active window visibility")
 			return
 		}

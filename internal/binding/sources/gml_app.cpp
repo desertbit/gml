@@ -271,7 +271,7 @@ int gml_app_get_active_window_state(gml_app app, gml_error err) {
     return -1;
 }
 
-void gml_app_set_active_window_state(gml_app app, int visibility, gml_error err) {
+int gml_app_set_active_window_state(gml_app app, int visibility, gml_error err) {
     try {
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
@@ -279,6 +279,7 @@ void gml_app_set_active_window_state(gml_app app, int visibility, gml_error err)
         }
 
         w->setWindowState(static_cast<Qt::WindowState>(visibility));
+        return 0;
     }
     catch (std::exception& e) {
         gml_error_set_msg(err, e.what());
@@ -286,6 +287,8 @@ void gml_app_set_active_window_state(gml_app app, int visibility, gml_error err)
     catch (...) {
         gml_error_log_exception();
     }
+
+    return -1;
 }
 
 double gml_app_get_dp(gml_app app, gml_error err) {
