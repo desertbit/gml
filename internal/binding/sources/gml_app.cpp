@@ -252,26 +252,6 @@ void gml_app_set_application_version(gml_app app, const char* version) {
     }
 }
 
-int gml_get_top_level_window_state(gml_error err) {
-    try {
-        QList<QWindow*> windows = QGuiApplication::topLevelWindows();
-        if (windows.size() == 0) {
-            throw std::runtime_error("no top-level window found");
-        }
-
-        // TODO: 2020/09/07 skaldesh: We just assume 1 top-level window for now.
-        return static_cast<int>(windows.at(0)->windowState());
-    }
-    catch (std::exception& e) {
-        gml_error_set_msg(err, e.what());
-    }
-    catch (...) {
-        gml_error_log_exception();
-    }
-
-    return -1;
-}
-
 int gml_set_top_level_window_state(int visibility, gml_error err) {
     try {
         QList<QWindow*> windows = QGuiApplication::topLevelWindows();

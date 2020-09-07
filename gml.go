@@ -152,10 +152,6 @@ func SetIconThemeSearchPaths(searchPaths ...string) {
 	C.gml_global_set_icon_theme_search_paths(pathsC, C.int(len(searchPaths)))
 }
 
-func GetTopLevelWindowState() (ws WindowState, err error) {
-	return gapp.GetTopLevelWindowState()
-}
-
 func SetTopLevelWindowState(ws WindowState) error {
 	return gapp.SetTopLevelWindowState(ws)
 }

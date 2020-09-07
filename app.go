@@ -334,21 +334,6 @@ const (
 	WindowActive WindowState = 8
 )
 
-func (a *app) GetTopLevelWindowState() (ws WindowState, err error) {
-	apiErr := errorPool.Get()
-	defer errorPool.Put(apiErr)
-
-	a.RunMain(func() {
-		ws = WindowState(C.gml_get_top_level_window_state(apiErr.err))
-		if ws < 0 {
-			err = apiErr.Err("failed to get top-level window visibility")
-			return
-		}
-	})
-
-	return
-}
-
 func (a *app) SetTopLevelWindowState(ws WindowState) (err error) {
 	apiErr := errorPool.Get()
 	defer errorPool.Put(apiErr)
