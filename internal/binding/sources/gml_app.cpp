@@ -260,7 +260,7 @@ int gml_get_top_level_window_state(gml_error err) {
         }
 
         // TODO: 2020/09/07 skaldesh: We just assume 1 top-level window for now.
-        return windows.at(0)->windowState();
+        return static_cast<int>(windows.at(0)->windowState());
     }
     catch (std::exception& e) {
         gml_error_set_msg(err, e.what());
