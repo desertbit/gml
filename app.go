@@ -217,7 +217,7 @@ func (a *app) AddImageProvider(id string, ip *ImageProvider) error {
 	return nil
 }
 
-// Exec load sthe root QML file located at url,
+// Exec loads the root QML file located at url,
 // executes the application and returns the exit code.
 // This method is blocking.
 // Hint: Must be called within main thread.
@@ -322,6 +322,46 @@ func (a *app) SetApplicationVersion(version string) {
 	a.RunMain(func() {
 		C.gml_app_set_application_version(a.app, versionC)
 	})
+}
+
+type WindowState int
+
+const (
+	WindowNoState WindowState = 0
+	WindowMinimized WindowState = 1
+	WindowMaximized WindowState = 2
+	WindowFullscreen WindowState = 4
+	WindowActive WindowState = 8
+)
+
+func (a *app) GetActiveWindowState() (ws WindowState, err error) {
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	a.RunMain(func() {
+		ws = WindowState(C.gml_app_get_active_window_state(a.app, apiErr.err))
+		if ws < 0 {
+			err = apiErr.Err("failed to get active window visibility")
+			return
+		}
+	})
+
+	return
+}
+
+func (a *app) SetActiveWindowState(ws WindowState) (err error) {
+	apiErr := errorPool.Get()
+	defer errorPool.Put(apiErr)
+
+	a.RunMain(func() {
+		ws = WindowState(C.gml_app_set_active_window_state(a.app, C.int(ws), apiErr.err))
+		if ws < 0 {
+			err = apiErr.Err("failed to set active window visibility")
+			return
+		}
+	})
+
+	return
 }
 
 //#####################//
