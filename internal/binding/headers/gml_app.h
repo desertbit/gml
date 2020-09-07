@@ -58,8 +58,8 @@ int     gml_app_set_root_context_property_variant(gml_app app, const char* name,
 void    gml_app_set_application_name(gml_app app, const char* name);
 void    gml_app_set_organization_name(gml_app app, const char* name);
 void    gml_app_set_application_version(gml_app app, const char* version);
-int     gml_app_get_active_window_state(gml_app app, gml_error err);
-int     gml_app_set_active_window_state(gml_app app, int visibility, gml_error err);
+int     gml_app_get_active_window_state(gml_error err);
+int     gml_app_set_active_window_state(int visibility, gml_error err);
 
 double  gml_app_get_dp(gml_app app, gml_error err);
 

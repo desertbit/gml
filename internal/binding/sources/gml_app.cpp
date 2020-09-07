@@ -252,7 +252,7 @@ void gml_app_set_application_version(gml_app app, const char* version) {
     }
 }
 
-int gml_app_get_active_window_state(gml_app app, gml_error err) {
+int gml_app_get_active_window_state(gml_error err) {
     try {
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
@@ -271,7 +271,7 @@ int gml_app_get_active_window_state(gml_app app, gml_error err) {
     return -1;
 }
 
-int gml_app_set_active_window_state(gml_app app, int visibility, gml_error err) {
+int gml_app_set_active_window_state(int visibility, gml_error err) {
     try {
         QWidget* w = QApplication::activeWindow();
         if (w == nullptr) {
