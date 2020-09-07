@@ -152,6 +152,14 @@ func SetIconThemeSearchPaths(searchPaths ...string) {
 	C.gml_global_set_icon_theme_search_paths(pathsC, C.int(len(searchPaths)))
 }
 
+func GetActiveWindowState() (ws WindowState, err error) {
+	return gapp.GetActiveWindowState()
+}
+
+func SetActiveWindowState(ws WindowState) error {
+	return gapp.SetActiveWindowState(ws)
+}
+
 /*
 func ExecDev(basePath, url string) (retCode int, err error) {
 	AddImportPath(basePath)
