@@ -48,6 +48,8 @@
 #include <QWidget>
 #include <QImage>
 #include <QIcon>
+#include <QList>
+#include <QWindow>
 #include <QQuickTextureFactory>
 #include <QQuickAsyncImageProvider>
 #include <QQuickImageResponse>

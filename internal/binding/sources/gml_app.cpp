@@ -273,12 +273,13 @@ int gml_app_get_active_window_state(gml_error err) {
 
 int gml_app_set_active_window_state(int visibility, gml_error err) {
     try {
-        QWidget* w = QApplication::activeWindow();
-        if (w == nullptr) {
-            throw std::runtime_error("no active window found");
+        QList<QWindow*> windows = QGuiApplication::topLevelWindows();
+        if (windows.size() == 0) {
+            throw std::runtime_error("no top-level window found");
         }
 
-        w->setWindowState(static_cast<Qt::WindowState>(visibility));
+        // TODO: 2020/09/07 skaldesh: We just assume 1 top-level window for now.
+        windows.at(0)->setWindowState(static_cast<Qt::WindowState>(visibility));
         return 0;
     }
     catch (std::exception& e) {
