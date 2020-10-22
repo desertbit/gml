@@ -8,6 +8,8 @@ package codegen
 import "fmt"
 
 func (g *generator) goFile(path string, pkg *Package) error {
+	g.writefLn("// %s\n", header)
+
 	g.writefLn("package %s\n", pkg.PackageName)
 
 	// Compiler directives and C headers.

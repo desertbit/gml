@@ -12,6 +12,8 @@ import (
 // TODO: doc correct?
 // This should be in a separate directory, so no unnecessary files are in the global include dir.
 func (g *generator) cMainHeaderFile(pkgs []*Package, genDir string) error {
+	g.writefLn("// %s\n", header)
+
 	// Ifndef.
 	g.writeLn("#ifndef GML_GEN_C_INCLUDE_H")
 	g.writeLn("#define GML_GEN_C_INCLUDE_H")
@@ -28,6 +30,8 @@ func (g *generator) cMainHeaderFile(pkgs []*Package, genDir string) error {
 }
 
 func (g *generator) cHeaderFile(path string, pkg *Package) (err error) {
+	g.writefLn("// %s\n", header)
+
 	// Ifndef.
 	g.writefLn("#ifndef GML_GEN_C_%s_H", pkg.PackageName)
 	g.writefLn("#define GML_GEN_C_%s_H\n", pkg.PackageName)

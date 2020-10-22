@@ -6,6 +6,8 @@
 package codegen
 
 func (g *generator) cppHeaderFile(path string, pkg *Package) error {
+	g.writefLn("// %s\n", header)
+
 	// Ifndef.
 	g.writefLn("#ifndef GML_GEN_CPP_%s_H", pkg.PackageName)
 	g.writefLn("#define GML_GEN_CPP_%s_H\n", pkg.PackageName)
@@ -130,6 +132,8 @@ func (g *generator) cppStructHeader(str *Struct) {
 
 // TODO: add some catch exception handlers?
 func (g *generator) cppSourceFile(path string, pkg *Package) error {
+	g.writefLn("// %s\n", header)
+
 	g.writefLn(`#include "%s.h"`, pkg.PackageName)
 	g.ln()
 
