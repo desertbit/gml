@@ -25,20 +25,25 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_IMAGE_ITEM_H
-#define GML_HEADER_IMAGE_ITEM_H
+#ifndef GML_BYTES_H
+#define GML_BYTES_H
+
+#include "gml_includes.h"
+#include "gml_error.h"
+
+//#############//
+//### C API ###//
+//#############//
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*gml_image_item_request_cb_t)(
-    char*      id,
-    gml_image  img
-);
-void gml_image_item_request_cb_register(gml_image_item_request_cb_t cb);
+    typedef void* gml_bytes;
 
-void gml_image_item_emit_changed(const char* id);
+    gml_bytes   gml_bytes_new ();
+    void        gml_bytes_free(gml_bytes b);
+    const char* gml_bytes_get (gml_bytes b, int* size);
 
 #ifdef __cplusplus
 }

@@ -25,49 +25,19 @@
  * SOFTWARE.
  */
 
-#include "gml_includes.h"
+#ifndef GML_HEADER_H
+#define GML_HEADER_H
+
+#include "gml_app.h"
+#include "gml_bytes.h"
 #include "gml_error.h"
+#include "gml_global.h"
+#include "gml_image.h"
+#include "gml_image_item.h"
+#include "gml_image_provider.h"
+#include "gml_includes.h"
+#include "gml_list_model.h"
+#include "gml_object.h"
+#include "gml_variant.h"
 
-//#############//
-//### C API ###//
-//#############//
-
-gml_bytes gml_bytes_new() {
-    try {
-        QByteArray* qb = new QByteArray();
-        return (gml_bytes)qb;
-    }
-    catch (std::exception& e) {
-        gml_error_log_exception(e.what());
-        return NULL;
-    }
-    catch (...) {
-        gml_error_log_exception();
-        return NULL;
-    }
-}
-
-void gml_bytes_free(gml_bytes b) {
-    if (b == NULL) {
-        return;
-    }
-    QByteArray* qb = (QByteArray*)b;
-    delete qb;
-    b = NULL;
-}
-
-const char* gml_bytes_get(gml_bytes b, int* size) {
-    try {
-        QByteArray* qb = (QByteArray*)b;
-        *size = qb->length();
-        return qb->constData();
-    }
-    catch (std::exception& e) {
-        gml_error_log_exception(e.what());
-        return NULL;
-    }
-    catch (...) {
-        gml_error_log_exception();
-        return NULL;
-    }
-}
+#endif

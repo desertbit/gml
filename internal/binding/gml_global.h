@@ -25,40 +25,25 @@
  * SOFTWARE.
  */
 
-#ifndef GML_INCLUDES_H
-#define GML_INCLUDES_H
+#ifndef GML_GLOBAL_H
+#define GML_GLOBAL_H
 
-#include "../headers/gml.h"
+#include "gml_error.h"
 
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <stdexcept>
+//#############//
+//### C API ###//
+//#############//
 
-#include <QtPlugin>
-#include <QObject>
-#include <QUrl>
-#include <QString>
-#include <QVariant>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QDir>
-#include <QImage>
-#include <QIcon>
-#include <QQuickTextureFactory>
-#include <QQuickAsyncImageProvider>
-#include <QQuickImageResponse>
-#include <QAbstractListModel>
-#include <QModelIndex>
-#include <QScreen>
-#include <QQuickPaintedItem>
-#include <QQuickItem>
-#include <QPainter>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-using std::string;
-using std::cout;
-using std::cerr;
-using std::endl;
+    void gml_global_set_search_paths(const char* prefix, const char** paths, int paths_size);
+    void gml_global_set_icon_theme_name(const char* name);
+    void gml_global_set_icon_theme_search_paths(const char** paths, int paths_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

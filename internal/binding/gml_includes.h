@@ -25,10 +25,11 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_INCLUDES_H
-#define GML_HEADER_INCLUDES_H
+#ifndef GML_INCLUDES_H
+#define GML_INCLUDES_H
 
-#include <stdlib.h>
+#include "../headers/gml.h"
+
 #include <stdint.h>
 
 #if defined(_WIN32)
@@ -37,5 +38,36 @@
     typedef uint32_t u_int32_t;
     typedef uint64_t u_int64_t;
 #endif
+
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+#include <QtPlugin>
+#include <QObject>
+#include <QUrl>
+#include <QString>
+#include <QVariant>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QDir>
+#include <QImage>
+#include <QIcon>
+#include <QQuickTextureFactory>
+#include <QQuickAsyncImageProvider>
+#include <QQuickImageResponse>
+#include <QAbstractListModel>
+#include <QModelIndex>
+#include <QScreen>
+#include <QQuickPaintedItem>
+#include <QQuickItem>
+#include <QPainter>
+
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 #endif

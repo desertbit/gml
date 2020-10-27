@@ -83,9 +83,9 @@ const char* gml_error_get_msg(gml_error err) {
     }
 }
 
-//################//
-//### Internal ###//
-//################//
+//###########//
+//### C++ ###//
+//###########//
 
 void gml_error_set_msg(gml_error err, const std::string& msg) {
     GmlError* gerr = (GmlError*)err;

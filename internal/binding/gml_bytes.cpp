@@ -25,47 +25,48 @@
  * SOFTWARE.
  */
 
-#ifndef GML_HEADER_IMAGEPROVIDER_H
-#define GML_HEADER_IMAGEPROVIDER_H
+#include "gml_bytes.h"
 
-#define GML_IGNORE_ASPECT_RATIO            0
-#define GML_KEEP_ASPECT_RATIO              1
-#define GML_KEEP_ASPECT_RATIO_BY_EXPANDING 2
+//#############//
+//### C API ###//
+//#############//
 
-#define GML_FAST_TRANSFORMATION   0
-#define GML_SMOOTH_TRANSFORMATION 1
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "gml_image.h"
-
-typedef void* gml_image_provider;
-typedef void* gml_image_response;
-
-gml_image_provider gml_image_provider_new(
-    void* go_ptr,
-    int   aspect_ratio_mode,
-    int   transformation_mode
-);
-void gml_image_provider_free(gml_image_provider ip);
-
-typedef void (*gml_image_provider_request_cb_t)(
-    void*              go_ptr,
-    gml_image_response img_resp,
-    char*              id,
-    gml_image          img
-);
-void gml_image_provider_request_cb_register(gml_image_provider_request_cb_t cb);
-
-void gml_image_response_emit_finished(
-    gml_image_response img_resp,
-    char* error_string
-);
-
-#ifdef __cplusplus
+gml_bytes gml_bytes_new() {
+    try {
+        QByteArray* qb = new QByteArray();
+        return (gml_bytes)qb;
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
 }
-#endif
 
-#endif
+void gml_bytes_free(gml_bytes b) {
+    if (b == NULL) {
+        return;
+    }
+    QByteArray* qb = (QByteArray*)b;
+    delete qb;
+    b = NULL;
+}
+
+const char* gml_bytes_get(gml_bytes b, int* size) {
+    try {
+        QByteArray* qb = (QByteArray*)b;
+        *size = qb->length();
+        return qb->constData();
+    }
+    catch (std::exception& e) {
+        gml_error_log_exception(e.what());
+        return NULL;
+    }
+    catch (...) {
+        gml_error_log_exception();
+        return NULL;
+    }
+}

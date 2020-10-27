@@ -25,16 +25,7 @@
  * SOFTWARE.
  */
 
-#include "gml_includes.h"
-#include "gml_error.h"
-
-//###############//
-//### Private ###//
-//###############//
-
-void gml_image_cleanup(void *data) {
-    free(data);
-}
+#include "gml_image.h"
 
 //#############//
 //### C API ###//
@@ -213,4 +204,12 @@ int gml_image_is_empty(gml_image img) {
         gml_error_log_exception();
         return -1;
     }
+}
+
+//###############//
+//### Private ###//
+//###############//
+
+void gml_image_cleanup(void *data) {
+    free(data);
 }

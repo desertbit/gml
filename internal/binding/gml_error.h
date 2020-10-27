@@ -25,54 +25,42 @@
  * SOFTWARE.
  */
 
-#ifndef GML_IMAGE_PROVIDER_H
-#define GML_IMAGE_PROVIDER_H
+#ifndef GML_ERROR_H
+#define GML_ERROR_H
 
 #include "gml_includes.h"
 
-class GmlAsyncImageResponse : public QQuickImageResponse
-{
-public:
-    GmlAsyncImageResponse(
-        void*                  ipGoPtr,
-        const QString          &id,
-        const QSize            &requestedSize,
-        Qt::AspectRatioMode    aspectRatioMode,
-        Qt::TransformationMode transformMode
-    );
+//#############//
+//### C API ###//
+//#############//
 
-    QQuickTextureFactory* textureFactory() const override;
-    QString 	          errorString() const override;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void finalize(const QString& errorString);
+    typedef void* gml_error;
 
-private:
-    void*                  ipGoPtr;
-    QImage                 img;
-    QSize                  requestedSize;
-    QString                errorStr;
-    Qt::AspectRatioMode    aspectRatioMode;
-    Qt::TransformationMode transformMode;
-};
+    gml_error   gml_error_new();
+    void        gml_error_free   (gml_error err);
+    void        gml_error_reset  (gml_error err);
+    const char* gml_error_get_msg(gml_error err);
 
-class GmlImageProvider : public QQuickAsyncImageProvider
-{
-public:
-    GmlImageProvider(
-        void*                  goPtr,
-        Qt::AspectRatioMode    aspectRatioMode,
-        Qt::TransformationMode transformMode
-    );
+#ifdef __cplusplus
+}
+#endif
 
-    QQuickImageResponse* requestImageResponse(
-        const QString& id,
-        const QSize& requestedSize
-    ) override;
+//###########//
+//### C++ ###//
+//###########//
 
-private:
-    void*                  goPtr;
-    Qt::AspectRatioMode    aspectRatioMode;
-    Qt::TransformationMode transformMode;
-};
+#ifdef __cplusplus
+    struct GmlError {
+        string msg;
+    };
+
+    void gml_error_set_msg(gml_error err, const string& msg);
+    void gml_error_set_catched_exception_msg(gml_error err);
+    void gml_error_log_exception(const string& msg = "");
+#endif
 
 #endif
