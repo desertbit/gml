@@ -52,7 +52,7 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
-	QTModules string
+	QTModules string // TODO: Move this to gml.yaml
 
 	GmlBindingDir        string
 	GmlBindingHeadersDir string

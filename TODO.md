@@ -1,4 +1,13 @@
 # TODO
+- create a gml.yaml
+  - include min gml version
+  - include other gml deps
+  - custom resources dir
+- new code gen
+- merge binding header files
+- allow gml modules
+- new docker containers with static builds
+- use cmake instead?
 - Implement hot reloading
 
 ## Go

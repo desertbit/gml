@@ -119,7 +119,7 @@ func (a *app) getDp() (dp float64, err error) {
 	}
 
 	// Magic.
-	dp /= 140.0
+	dp /= 160.0
 	return
 }
 
