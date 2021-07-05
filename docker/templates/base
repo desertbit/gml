@@ -1,0 +1,48 @@
+FROM ubuntu:20.04
+MAINTAINER team@desertbit.com
+
+RUN mkdir /work
+VOLUME /work
+WORKDIR /work
+
+# Install dependencies.
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y update && \
+    apt-get -y install \
+        build-essential \
+        sudo \
+        git \
+        wget \
+        nano \
+        make \
+        pkg-config && \
+    apt-get -y clean
+
+# Install go.
+RUN export GO_VERSION="1.15.6" && \
+    export GO_CHECKSUM="3918e6cc85e7eaaa6f859f1bdbaac772e7a825b0eb423c63d3ae68b21f84b844" && \
+    mkdir -p /tmp/go && \
+    cd /tmp/go && \
+    wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
+    echo "${GO_CHECKSUM}  go.tar.gz" | sha256sum -c && \
+    tar -xf go.tar.gz && \
+    mv go /usr/local && \
+    rm -rf /tmp/go
+ENV PATH="$PATH:/usr/local/go/bin" \
+    GOROOT=/usr/local/go \
+    CGO_ENABLED=1
+
+# TODO:
+# Install the gml tool.
+#RUN mkdir -p /tmp/go && cd /tmp/go && \
+#    export GOPATH="/tmp/go" && \
+#    export GOCACHE="/tmp/go/cache" && \
+#    go get github.com/desertbit/gml/cmd/... && \
+#    mv -f /tmp/go/bin/gml /bin/gml && \
+#    mv -f /tmp/go/bin/gml-copy-dlls /bin/gml-copy-dlls && \
+#    rm -rf /tmp/go
+
+ADD scripts/entrypoint.sh /entrypoint
+RUN chmod +x /entrypoint
+ENTRYPOINT ["/entrypoint"]
+CMD ["gml"]

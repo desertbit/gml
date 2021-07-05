@@ -1,0 +1,60 @@
+# Install dependencies.
+# https://mxe.cc/#requirements
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y update && \
+    apt-get -y install \
+        sudo \
+        nano \
+        autoconf \
+        automake \
+        autopoint \
+        bash \
+        bison \
+        bzip2 \
+        flex \
+        g++ \
+        g++-multilib \
+        gettext \
+        git \
+        gperf \
+        intltool \
+        libc6-dev-i386 \
+        libgdk-pixbuf2.0-dev \
+        libltdl-dev \
+        libssl-dev \
+        libtool-bin \
+        libxml-parser-perl \
+        lzip \
+        make \
+        openssl \
+        p7zip-full \
+        patch \
+        perl \
+        pkg-config \
+        python \
+        python-mako \
+        ruby \
+        sed \
+        unzip \
+        wget \
+        xz-utils && \
+    apt-get -y clean
+
+# https://mxe.cc
+# https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
+RUN export MXE_COMMIT="72cde72b73fbbb9eb6f272785298eb41ff13bab9" && \
+    git clone https://github.com/mxe/mxe.git /mxe && \
+    cd /mxe && \
+    git checkout "${MXE_COMMIT}" && \
+    export NUM_CORES="$(grep -c processor /proc/cpuinfo)" && \
+    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtimageformats qtlocation
+
+ENV PATH="/mxe/usr/bin:/mxe/usr/${CROSS_TRIPLE}/qt5/bin:$PATH" \
+    PKG_CONFIG="/mxe/usr/bin/${CROSS_TRIPLE}-pkg-config" \
+    PKG_CONFIG_PATH="/mxe/usr/${CROSS_TRIPLE}/qt5/lib/pkgconfig:$PKG_CONFIG_PATH" \
+    CC="${CROSS_TRIPLE}-gcc" \
+    CXX="${CROSS_TRIPLE}-g++"
+
+# TODO: Check if still required.
+# Patch to include some missing libraries for cgo. Otherwise the linker fails.
+RUN sed -i "s|Libs.private:|Libs.private: -lstdc++ |g" "/mxe/usr/${CROSS_TRIPLE}/qt5/lib/pkgconfig/Qt5Core.pc"

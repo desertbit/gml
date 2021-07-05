@@ -1,9 +1,10 @@
-CROSSBUILD_IMAGES = linux android windows windows_64_shared windows_32_shared
+VERSION = v0.1.0
+CROSSBUILD_IMAGES = linux linux-static win64 win64-static
 
 $(CROSSBUILD_IMAGES): %: generate
-	docker build --pull --no-cache ./ -f $@/Dockerfile -t desertbit/gml:$@
+	docker build --pull --no-cache ./ -f .$@.dockerfile.gen -t desertbit/gml:$@-$(VERSION)
 
 generate:
-	go run generate.go
+	go run scripts/generate.go ./ $(VERSION)
 
 .PHONY: $(CROSSBUILD_IMAGES)

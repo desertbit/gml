@@ -1,0 +1,4 @@
+/home/r0l1/projects/github/desertbit/gml/_test/build/CMakeFiles/rebuild_cache.dir
+/home/r0l1/projects/github/desertbit/gml/_test/build/CMakeFiles/edit_cache.dir
+/home/r0l1/projects/github/desertbit/gml/_test/build/CMakeFiles/test.dir
+/home/r0l1/projects/github/desertbit/gml/_test/build/CMakeFiles/test_autogen.dir

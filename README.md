@@ -19,12 +19,12 @@ See the **[GML Samples Repo](https://github.com/desertbit/gml-samples)**.
 The docker image url is: `desertbit/gml`
 **[DockerHub Link](https://hub.docker.com/r/desertbit/gml)**
 
-| Image Tag         | Host OS      | Target OS      | Qt Link Type | Note                  |
-|:------------------|:-------------|:---------------|:-------------|-----------------------|
-| linux             | Linux x86_64 | Linux x86_64   | dynamic      |                       |
-| windows_32_shared | Linux x86_64 | Windows i686   | dynamic      |                       |
-| windows_64_shared | Linux x86_64 | Windows x86_64 | dynamic      |                       |
-| android           | Linux x86_64 | Android        | -            | Not usable - See TODO |
+| Image Tag    | Host OS      | Target OS      | Qt Link Type | Note |
+|:-------------|:-------------|:---------------|:-------------|------|
+| linux        | Linux x86_64 | Linux x86_64   | dynamic      |      |
+| linux-static | Linux x86_64 | Linux x86_64   | static       |      |
+| win64        | Linux x86_64 | Windows x86_64 | dynamic      |      |
+| win64-static | Linux x86_64 | Windows x86_64 | static       |      |
 
 ## Build Tags
 
@@ -33,3 +33,4 @@ The docker image url is: `desertbit/gml`
 ## Debugging
 
 To debug windows problems, use the [MSYS2](https://www.msys2.org/) console.
+

@@ -1,4 +1,6 @@
 # TODO
+- while running gml tool check with go mod version and stop if the gml tool is not up-to-date
+- use ccache for faster builds.
 - create a gml.yaml
   - include min gml version
   - include other gml deps
