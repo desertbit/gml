@@ -56,15 +56,18 @@ ENV PATH="$PATH:/usr/local/go/bin" \
     CGO_ENABLED=1
 
 # Install the gml tool.
-RUN mkdir -p /tmp/go && cd /tmp/go && \
-    export GOPATH="/tmp/go" && \
-    export GOCACHE="/tmp/go/cache" && \
+RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    go get github.com/desertbit/gml/cmd/... && \
-    mv -f /tmp/go/bin/gml /bin/gml && \
-    mv -f /tmp/go/bin/gml-copy-dlls /bin/gml-copy-dlls && \
-    rm -rf /tmp/go
+    export VERSION="v0.0.22" && \
+    mkdir -p "${GOPATH}/bin" && \
+    cd /tmp/gml && \
+    go mod init gml/build && \
+    go get -v "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
+    go get -v "github.com/desertbit/gml/cmd/gml-copy-dlls@${VERSION}" && \
+    mv "${GOPATH}/bin/gml" /bin/gml && \
+    mv "${GOPATH}/bin/gml-copy-dlls" /bin/gml-copy-dlls && \
+    rm -rf /tmp/gml
 
 RUN mkdir /work
 VOLUME /work
