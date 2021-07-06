@@ -42,8 +42,8 @@ RUN apt-get -y update && \
     apt-get -y clean
 
 # Install the Go compiler.
-RUN export GO_VERSION="1.15.3" && \
-    export GO_CHECKSUM="010a88df924a81ec21b293b5da8f9b11c176d27c0ee3962dc1738d2352d3c02d" && \
+RUN export GO_VERSION="1.16.5" && \
+    export GO_CHECKSUM="b12c23023b68de22f74c0524f10b753e7b08b1504cb7e417eccebdd3fae49061" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -81,7 +81,7 @@ CMD ["gml"]
 
 # https://mxe.cc
 # https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
-RUN export MXE_COMMIT="5fa54789ffb38ccd5a78b5166e6c0d5b94c40c04" && \
+RUN export MXE_COMMIT="2174541a944340478a9bcbf6fe01c1f36409b5fc" && \
     git clone https://github.com/mxe/mxe.git /mxe && \
     cd /mxe && \
     git checkout "${MXE_COMMIT}"
