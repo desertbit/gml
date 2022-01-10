@@ -8,13 +8,8 @@ RUN apt-get -y update && \
     apt-get -y clean
 
 # Install the Go compiler.
-<<<<<<< Updated upstream
-RUN export GO_VERSION="1.16.5" && \
-    export GO_CHECKSUM="b12c23023b68de22f74c0524f10b753e7b08b1504cb7e417eccebdd3fae49061" && \
-=======
 RUN export GO_VERSION="1.17.6" && \
     export GO_CHECKSUM="231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2" && \
->>>>>>> Stashed changes
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
