@@ -25,36 +25,27 @@
  * SOFTWARE.
  */
 
-#ifndef GML_APP_H
-#define GML_APP_H
+package main
 
-#include "gml_includes.h"
-#include "gml_error.h"
-#include "gml_image_provider.h"
-#include "gml_image_item.h"
+import (
+	"fmt"
 
-class GmlApp : public QObject {
-    Q_OBJECT
-private:
-    int argc;
-    static GmlApp* globalApp;
+	"github.com/desertbit/grumble"
+)
 
-public:
-    QApplication          app;
-    QQmlApplicationEngine engine;
-    string                language;
-    QTranslator           translator;
+const Version = "v0.0.23"
 
-    GmlApp(int& argc, char** argv);
+func init() {
+	versionCmd := &grumble.Command{
+		Name:      "version",
+		Help:      "print the version of gml",
+		AllowArgs: false,
+		Run:       runVersion,
+	}
+	App.AddCommand(versionCmd)
+}
 
-    static GmlApp* App();
-
-signals:
-    void requestRunMain(void* goPtr);
-    void imageItemChanged(const QString id);
-
-private slots:
-    void runMain(void* goPtr);
-};
-
-#endif
+func runVersion(c *grumble.Context) error {
+	fmt.Printf("GML %s\n", Version)
+	return nil
+}

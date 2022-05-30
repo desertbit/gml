@@ -59,6 +59,8 @@ void    gml_app_set_application_name(gml_app app, const char* name);
 void    gml_app_set_organization_name(gml_app app, const char* name);
 void    gml_app_set_application_version(gml_app app, const char* version);
 
+int     gml_app_switch_language(gml_app app, const char* language, gml_error err);
+
 double  gml_app_get_dp(gml_app app, gml_error err);
 
 #ifdef __cplusplus

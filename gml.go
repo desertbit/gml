@@ -105,8 +105,12 @@ func AddImageProvider(id string, ip *ImageProvider) error {
 	return gapp.AddImageProvider(id, ip)
 }
 
-func SetContextProperty(name string, v interface{}) (err error) {
+func SetContextProperty(name string, v interface{}) error {
 	return gapp.SetContextProperty(name, v)
+}
+
+func SwitchLanguage(lang string) error {
+	return gapp.SwitchLanguage(lang)
 }
 
 // AddImportPath adds the given import path to the app engine.

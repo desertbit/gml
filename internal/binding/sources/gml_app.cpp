@@ -252,6 +252,36 @@ void gml_app_set_application_version(gml_app app, const char* version) {
     }
 }
 
+int gml_app_switch_language(gml_app app, const char* language, gml_error err) {
+    try {
+        GmlApp* a  = (GmlApp*)app;
+        
+        // If this language is already installed, do nothing.
+        string lang = language;
+        if (a->language == lang) {
+            return 0;
+        }
+
+        // Remove current translator.
+        if (!a->translator.isEmpty()) {
+            a->app.removeTranslator(&a->translator);
+        }
+
+        a->translator.load(QStringLiteral(":/resources/languages/app_") + QString(language));
+        a->app.installTranslator(&a->translator);
+        a->engine.retranslate();
+
+        return 0;
+    }
+    catch (std::exception& e) {
+        gml_error_set_msg(err, e.what());
+    }
+    catch (...) {
+        gml_error_set_catched_exception_msg(err);
+    }
+    return -1;
+}
+
 double gml_app_get_dp(gml_app app, gml_error err) {
     try {
         GmlApp* a  = (GmlApp*)app;

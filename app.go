@@ -324,6 +324,24 @@ func (a *app) SetApplicationVersion(version string) {
 	})
 }
 
+func (a *app) SwitchLanguage(lang string) error {
+	langC := C.CString(lang)
+	defer C.free(unsafe.Pointer(langC))
+
+	cErr := errorPool.Get()
+	defer errorPool.Put(cErr)
+
+	var ret C.int
+	a.RunMain(func() {
+		ret = C.gml_app_switch_language(a.app, langC, cErr.err)
+	})
+	if ret != 0 {
+		return cErr.Err("failed to switch language")
+	}
+
+	return nil
+}
+
 //#####################//
 //### Exported to C ###//
 //#####################//

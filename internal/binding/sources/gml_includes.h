@@ -55,6 +55,7 @@
 #include <QQuickPaintedItem>
 #include <QQuickItem>
 #include <QPainter>
+#include <QTranslator>
 
 using std::string;
 using std::cout;
