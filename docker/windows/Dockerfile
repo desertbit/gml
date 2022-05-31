@@ -1,9 +1,10 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 MAINTAINER team@desertbit.com
 
 # Install dependencies.
 # https://mxe.cc/#requirements
-RUN apt-get -y update && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y update && \
     apt-get -y install \
         sudo \
         nano \
@@ -82,7 +83,8 @@ CMD ["gml"]
 
 # https://mxe.cc
 # https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
-RUN export MXE_COMMIT="29aac96601e6428900b1e9b2befb4cc567aff298" && \
+# Version 2.4.8
+RUN export MXE_COMMIT="b989c665c243e7e370dfd36fee9b1198a24a0a23" && \
     git clone https://github.com/mxe/mxe.git /mxe && \
     cd /mxe && \
     git checkout "${MXE_COMMIT}"

@@ -1,8 +1,9 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 MAINTAINER team@desertbit.com
 
 # Install dependencies.
-RUN apt-get -y update && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y update && \
     apt-get -y install build-essential sudo git wget nano make pkg-config \
         qt5-default qttools5-dev-tools qtdeclarative5-dev libqt5charts5-dev libqt5charts5 && \
     apt-get -y clean
