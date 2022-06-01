@@ -23,11 +23,10 @@ ENV PATH="$PATH:/usr/local/go/bin" \
     CGO_ENABLED=1
 
 # Install the gml tool.
-# TODO: use new release version
 RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    export VERSION="translate" && \
+    export VERSION="v0.0.23" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
     go mod init gml/build && \
