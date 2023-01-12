@@ -20,3 +20,6 @@
 - deploy-dlls.sh adds common required Qt plugins. This should be configurable instead?
 - Finish the windows static build containers. See the TODO in the docker folder.
 - Finish the Android docker containers.
+
+- vor dem bauen committen und taggen, damit das bauen funktioniert
+- erst windows bauen und hochladen, bevor 32/64_shared 
