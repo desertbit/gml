@@ -16,7 +16,7 @@ ENV PATH="$PATH:/usr/local/go/bin" \
 RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    export VERSION="v0.0.23" && \
+    export VERSION="v0.0.24" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
     go mod init gml/build && \
