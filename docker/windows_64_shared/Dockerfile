@@ -5,9 +5,11 @@ ENV CROSS_TRIPLE="x86_64-w64-mingw32.shared" \
     GOOS=windows \
     GOARCH=amd64
 
+# TODO: Remove DONT_CHECK_REQUIREMENTS=1
+# See https://github.com/mxe/mxe/issues/2907 why this is necessary now.
 RUN cd /mxe && \
     export NUM_CORES="$(grep -c processor /proc/cpuinfo)" && \
-    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtimageformats qtlocation qtcharts qtgraphicaleffects
+    make -j${NUM_CORES} MXE_TARGETS="${CROSS_TRIPLE}" qtbase qtquickcontrols qtquickcontrols2 qtimageformats qtlocation qtcharts qtgraphicaleffects qtvirtualkeyboard DONT_CHECK_REQUIREMENTS=1
 
 ENV PATH="/mxe/usr/bin:/mxe/usr/${CROSS_TRIPLE}/qt5/bin:$PATH" \
     PKG_CONFIG="/mxe/usr/bin/${CROSS_TRIPLE}-pkg-config" \

@@ -19,9 +19,8 @@ RUN export GOPATH="/tmp/gml/go" && \
     export VERSION="v0.0.24" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
-    go mod init gml/build && \
-    go get -v "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
-    go get -v "github.com/desertbit/gml/cmd/gml-copy-dlls@${VERSION}" && \
+    go install "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
+    go install "github.com/desertbit/gml/cmd/gml-copy-dlls@${VERSION}" && \
     mv "${GOPATH}/bin/gml" /bin/gml && \
     mv "${GOPATH}/bin/gml-copy-dlls" /bin/gml-copy-dlls && \
     rm -rf /tmp/gml

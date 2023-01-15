@@ -9,8 +9,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y clean
 
 # Install the Go compiler.
-RUN export GO_VERSION="1.17.10" && \
-    export GO_CHECKSUM="87fc728c9c731e2f74e4a999ef53cf07302d7ed3504b0839027bd9c10edaa3fd" && \
+RUN export GO_VERSION="1.19.5" && \
+    export GO_CHECKSUM="36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -26,12 +26,11 @@ ENV PATH="$PATH:/usr/local/go/bin" \
 RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    export VERSION="v0.0.23" && \
+    export VERSION="v0.0.24" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
-    go mod init gml/build && \
-    go get -v "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
-    go get -v "github.com/desertbit/gml/cmd/gml-copy-dlls@${VERSION}" && \
+    go install "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
+    go install "github.com/desertbit/gml/cmd/gml-copy-dlls@${VERSION}" && \
     mv "${GOPATH}/bin/gml" /bin/gml && \
     mv "${GOPATH}/bin/gml-copy-dlls" /bin/gml-copy-dlls && \
     rm -rf /tmp/gml
