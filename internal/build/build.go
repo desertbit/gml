@@ -122,9 +122,12 @@ func buildGo(ctx *Context, tags string, clean, noStrip, race bool, buildvcs stri
 
 	var (
 		ldflags []string
-		args    = []string{"build", "-o", ctx.OutputFile, "-buildvcs", buildvcs}
+		args    = []string{"build", "-o", ctx.OutputFile}
 	)
 
+	if buildvcs != "" {
+		args = append(args, "-buildvcs=", buildvcs)
+	}
 	if clean {
 		args = append(args, "-a")
 	}
