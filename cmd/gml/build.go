@@ -37,14 +37,14 @@ import (
 
 func init() {
 	BuildCmd := &grumble.Command{
-		Name:      "build",
-		Help:      "build a gml project",
-		AllowArgs: false,
+		Name: "build",
+		Help: "build a gml project",
 		Flags: func(f *grumble.Flags) {
 			f.Bool("c", "clean", false, "clean build files first")
 			f.BoolL("no-strip", false, "don't strip the final binary")
 			f.BoolL("debug", false, "build a debug binary (disables strip)")
 			f.BoolL("race", false, "enable data race detection")
+			f.StringL("buildvcs", "auto", "value of go build -buildvcs flag")
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
@@ -56,12 +56,26 @@ func init() {
 	App.AddCommand(BuildCmd)
 
 	BuildCmd.AddCommand(&grumble.Command{
-		Name:      "docker",
-		Help:      "build a gml project with docker",
-		AllowArgs: true,
+		Name: "docker",
+		Help: "build a gml project with docker",
 		Flags: func(f *grumble.Flags) {
+			// TODO: Copied from parent command because of grumble change with flag handling
+			f.Bool("c", "clean", false, "clean build files first")
+			f.BoolL("no-strip", false, "don't strip the final binary")
+			f.BoolL("debug", false, "build a debug binary (disables strip)")
+			f.BoolL("race", false, "enable data race detection")
+			f.StringL("buildvcs", "auto", "value of go build -buildvcs flag")
+			f.String("s", "source-dir", "./", "source directorty")
+			f.String("b", "build-dir", "./build", "build directorty")
+			f.String("d", "dest-dir", "./", "destination directorty")
+			f.String("t", "tags", "", "go build tags")
+			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
+
 			f.BoolL("custom", false, "use a custom docker image")
 			f.StringL("args", "", "pass additional arguments to docker")
+		},
+		Args: func(a *grumble.Args) {
+			a.String("container", "the name of the container used for building")
 		},
 		Run: runBuildDocker,
 	})
@@ -78,6 +92,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.Bool("debug"),
 		c.Flags.Bool("race"),
 		c.Flags.String("tags"),
+		c.Flags.String("buildvcs"),
 	)
 }
 
@@ -89,7 +104,7 @@ func runBuildDocker(c *grumble.Context) error {
 	}
 
 	return docker.Build(
-		c.Args[0],
+		c.Args.String("container"),
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
@@ -101,5 +116,6 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.Bool("custom"),
 		c.Flags.String("tags"),
 		c.Flags.String("args"),
+		c.Flags.String("buildvcs"),
 	)
 }

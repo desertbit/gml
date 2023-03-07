@@ -36,18 +36,19 @@ import (
 
 func init() {
 	DockerCmd := &grumble.Command{
-		Name:      "docker",
-		Help:      "manage gml docker containers",
-		AllowArgs: false,
-		Run:       runDocker,
+		Name: "docker",
+		Help: "manage gml docker containers",
+		Run:  runDocker,
 	}
 	App.AddCommand(DockerCmd)
 
 	DockerCmd.AddCommand(&grumble.Command{
-		Name:      "pull",
-		Help:      "pull latest docker container",
-		AllowArgs: true,
-		Run:       runDockerPull,
+		Name: "pull",
+		Help: "pull latest docker container",
+		Args: func(a *grumble.Args) {
+			a.String("container", "the name of the container to pull")
+		},
+		Run: runDockerPull,
 	})
 }
 
@@ -66,5 +67,5 @@ func runDockerPull(c *grumble.Context) error {
 		return fmt.Errorf("too many args")
 	}
 
-	return docker.Pull(c.Args[0])
+	return docker.Pull(c.Args.String("container"))
 }

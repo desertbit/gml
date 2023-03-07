@@ -62,7 +62,7 @@ func Build(
 	container string,
 	sourceDir, buildDir, destDir, qtModules string,
 	clean, noStrip, debugBuild, race, customContainer bool,
-	tags string, dockerArgs string,
+	tags, dockerArgs, buildvcs string,
 ) (err error) {
 	if !customContainer {
 		err = checkIfValidContainer(container)
@@ -135,7 +135,8 @@ func Build(
 		"--source-dir", "/work/"+ctx.BinName,
 		"--build-dir", "/work/build/gml-build",
 		"--dest-dir", "/work/bin",
-		"--qt-modules", qtModules)
+		"--qt-modules", qtModules,
+		"--buildvcs", buildvcs)
 
 	if clean {
 		args = append(args, "--clean")

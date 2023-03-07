@@ -40,7 +40,7 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debugBuild, race bool, tags string) (err error) {
+func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debugBuild, race bool, tags, buildvcs string) (err error) {
 	// Force no strip if this is a debug build.
 	if debugBuild {
 		noStrip = true
@@ -84,7 +84,7 @@ func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debug
 
 	// Run go build.
 	utils.PrintColorln("> building Go source")
-	err = buildGo(ctx, tags, clean, noStrip, race)
+	err = buildGo(ctx, tags, clean, noStrip, race, buildvcs)
 	if err != nil {
 		return
 	}
@@ -107,7 +107,7 @@ func buildCLib(ctx *Context) (err error) {
 	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
 }
 
-func buildGo(ctx *Context, tags string, clean, noStrip, race bool) (err error) {
+func buildGo(ctx *Context, tags string, clean, noStrip, race bool, buildvcs string) (err error) {
 	// Delete the output binary to force relinking.
 	// This is faster than building with the -a option.
 	e, err := utils.Exists(ctx.OutputFile)
@@ -122,7 +122,7 @@ func buildGo(ctx *Context, tags string, clean, noStrip, race bool) (err error) {
 
 	var (
 		ldflags []string
-		args    = []string{"build", "-o", ctx.OutputFile}
+		args    = []string{"build", "-o", ctx.OutputFile, "-buildvcs", buildvcs}
 	)
 
 	if clean {

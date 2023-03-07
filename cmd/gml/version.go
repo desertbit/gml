@@ -37,10 +37,9 @@ const Version = "v0.0.23"
 
 func init() {
 	versionCmd := &grumble.Command{
-		Name:      "version",
-		Help:      "print the version of gml",
-		AllowArgs: false,
-		Run:       runVersion,
+		Name: "version",
+		Help: "print the version of gml",
+		Run:  runVersion,
 	}
 	App.AddCommand(versionCmd)
 }
