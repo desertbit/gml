@@ -5,6 +5,12 @@ ENV CROSS_TRIPLE="x86_64-w64-mingw32.shared" \
     GOOS=windows \
     GOARCH=amd64
 
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y update && \
+    apt-get -y install \
+        python3-mako && \
+    apt-get -y clean
+
 # TODO: Remove DONT_CHECK_REQUIREMENTS=1
 # See https://github.com/mxe/mxe/issues/2907 why this is necessary now.
 RUN cd /mxe && \

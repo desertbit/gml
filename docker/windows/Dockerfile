@@ -81,8 +81,8 @@ CMD ["gml"]
 
 # https://mxe.cc
 # https://stackoverflow.com/questions/14170590/building-qt-5-on-linux-for-windows/14170591#14170591
-# Version 2.4.8
-RUN export MXE_COMMIT="d9d6278894c6d50bfca638857fe86a96335c56e6" && \
+# Version Master
+RUN export MXE_COMMIT="b56ec73c7e746634c80103146d8711e87fd25cff" && \
     git clone https://github.com/mxe/mxe.git /mxe && \
     cd /mxe && \
     git checkout "${MXE_COMMIT}"
