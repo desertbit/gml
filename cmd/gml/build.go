@@ -28,8 +28,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/desertbit/gml/internal/build"
 	"github.com/desertbit/gml/internal/docker"
 	"github.com/desertbit/grumble"
@@ -97,12 +95,6 @@ func runBuild(c *grumble.Context) error {
 }
 
 func runBuildDocker(c *grumble.Context) error {
-	if len(c.Args) == 0 {
-		return fmt.Errorf("invalid args: pass a docker container")
-	} else if len(c.Args) > 1 {
-		return fmt.Errorf("too many args")
-	}
-
 	return docker.Build(
 		c.Args.String("container"),
 		c.Flags.String("source-dir"),

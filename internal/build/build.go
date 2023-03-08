@@ -126,7 +126,7 @@ func buildGo(ctx *Context, tags string, clean, noStrip, race bool, buildvcs stri
 	)
 
 	if buildvcs != "" {
-		args = append(args, "-buildvcs=", buildvcs)
+		args = append(args, fmt.Sprintf("-buildvcs=%s", buildvcs))
 	}
 	if clean {
 		args = append(args, "-a")
