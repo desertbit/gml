@@ -33,7 +33,7 @@ import (
 	"github.com/desertbit/grumble"
 )
 
-const Version = "v0.0.29"
+const Version = "v0.0.31"
 
 func init() {
 	versionCmd := &grumble.Command{
