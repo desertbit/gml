@@ -60,7 +60,7 @@ func Containers() []string {
 
 func Build(
 	container string,
-	sourceDir, buildDir, destDir, qtModules string,
+	sourceDir, buildDir, destDir, goRootImport, qtModules string,
 	clean, noStrip, debugBuild, race, customContainer bool,
 	tags, dockerArgs, buildvcs string,
 ) (err error) {
@@ -135,6 +135,7 @@ func Build(
 		"--source-dir", "/work/"+ctx.BinName,
 		"--build-dir", "/work/build/gml-build",
 		"--dest-dir", "/work/bin",
+		"--go-root-import", goRootImport,
 		"--qt-modules", qtModules,
 		"--buildvcs", buildvcs)
 

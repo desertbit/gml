@@ -51,19 +51,23 @@ const (
 	cppBasePrefix = "GMLGen"
 )
 
-func parseDirRecursive(dir string) (gt *genTargets, err error) {
+func parseDirRecursive(dir, rootImport string) (gt *genTargets, err error) {
 	// Our parsed results.
 	gt = &genTargets{}
 
-	modPath, err := utils.FindModPath(dir)
-	if err != nil {
-		return
-	}
+	// If the root import is not given, try to parse it from the go.mod file.
+	if rootImport == "" {
+		var modPath string
+		modPath, err = utils.FindModPath(dir)
+		if err != nil {
+			return
+		}
 
-	// Parse the go.mod file to obtain the root import path.
-	rootImport, err := parseGoMod(modPath)
-	if err != nil {
-		return
+		// Parse the go.mod file to obtain the root import path.
+		rootImport, err = parseGoMod(modPath)
+		if err != nil {
+			return
+		}
 	}
 
 	var (

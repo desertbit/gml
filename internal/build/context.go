@@ -52,6 +52,8 @@ type Context struct {
 	BuildDir  string
 	DestDir   string
 
+	GoRootImport string
+
 	QTModules string
 
 	GmlBindingDir        string
@@ -73,7 +75,7 @@ type Context struct {
 	DebugBuild bool
 }
 
-func newContext(sourceDir, buildDir, destDir, qtModules string, clean bool, debugBuild bool) (ctx *Context, err error) {
+func newContext(sourceDir, buildDir, destDir, goRootImport, qtModules string, clean bool, debugBuild bool) (ctx *Context, err error) {
 	// Get absolute paths.
 	sourceDir, err = filepath.Abs(sourceDir)
 	if err != nil {
@@ -94,6 +96,7 @@ func newContext(sourceDir, buildDir, destDir, qtModules string, clean bool, debu
 		SourceDir:      sourceDir,
 		BuildDir:       buildDir,
 		DestDir:        destDir,
+		GoRootImport:   goRootImport,
 		QTModules:      qtModules,
 		QMLDir:         filepath.Join(sourceDir, qmlDir),
 		QMLResDir:      filepath.Join(sourceDir, qmlResDir),

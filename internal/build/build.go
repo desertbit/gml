@@ -40,7 +40,7 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debugBuild, race bool, tags, buildvcs string) (err error) {
+func Build(sourceDir, buildDir, destDir, goRootImport, qtModules string, clean, noStrip, debugBuild, race bool, tags, buildvcs string) (err error) {
 	// Force no strip if this is a debug build.
 	if debugBuild {
 		noStrip = true
@@ -49,7 +49,7 @@ func Build(sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debug
 	// Convert the comma separated qt modules list to a whitespace separated one.
 	qtModules = strings.Join(strings.Split(qtModules, ","), " ")
 
-	ctx, err := newContext(sourceDir, buildDir, destDir, qtModules, clean, debugBuild)
+	ctx, err := newContext(sourceDir, buildDir, destDir, goRootImport, qtModules, clean, debugBuild)
 	if err != nil {
 		return
 	}
