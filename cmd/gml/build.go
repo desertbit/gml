@@ -46,7 +46,7 @@ func init() {
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
-			f.StringL("go-root-import", "", "name of the go module. If empty, parsed from go.mod file in source directory")
+			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
 			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
 		},
@@ -67,7 +67,7 @@ func init() {
 			f.String("s", "source-dir", "./", "source directorty")
 			f.String("b", "build-dir", "./build", "build directorty")
 			f.String("d", "dest-dir", "./", "destination directorty")
-			f.StringL("go-root-import", "", "name of the go module. If empty, parsed from go.mod file in source directory")
+			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
 			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
 
@@ -86,7 +86,7 @@ func runBuild(c *grumble.Context) error {
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
-		c.Flags.String("go-root-import"),
+		c.Flags.String("go-mod-file-path"),
 		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
@@ -103,7 +103,7 @@ func runBuildDocker(c *grumble.Context) error {
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
-		c.Flags.String("go-root-import"),
+		c.Flags.String("go-mod-file-path"),
 		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),

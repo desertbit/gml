@@ -99,7 +99,7 @@ type genParam struct {
 
 // TODO: make concurrent with multiple goroutines.
 func generate(ctx *Context) (err error) {
-	gt, err := parseDirRecursive(ctx.SourceDir, ctx.GoRootImport)
+	gt, err := parseDirRecursive(ctx.SourceDir, ctx.GoModFilePath)
 	if err != nil {
 		return
 	}

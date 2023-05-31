@@ -51,23 +51,22 @@ const (
 	cppBasePrefix = "GMLGen"
 )
 
-func parseDirRecursive(dir, rootImport string) (gt *genTargets, err error) {
+func parseDirRecursive(dir, goModFilePath string) (gt *genTargets, err error) {
 	// Our parsed results.
 	gt = &genTargets{}
 
-	// If the root import is not given, try to parse it from the go.mod file.
-	if rootImport == "" {
-		var modPath string
-		modPath, err = utils.FindModPath(dir)
+	// If the go mod file path is not given, try to find it in the directory.
+	if goModFilePath == "" {
+		goModFilePath, err = utils.FindModPath(dir)
 		if err != nil {
 			return
 		}
+	}
 
-		// Parse the go.mod file to obtain the root import path.
-		rootImport, err = parseGoMod(modPath)
-		if err != nil {
-			return
-		}
+	// Parse the go.mod file to obtain the root import path.
+	goRootImport, err := parseGoMod(goModFilePath)
+	if err != nil {
+		return
 	}
 
 	var (
@@ -90,7 +89,7 @@ func parseDirRecursive(dir, rootImport string) (gt *genTargets, err error) {
 			return
 		}
 
-		gPkg, importPaths, err := parseDir(filepath.Join(dir, strings.TrimPrefix(path, rootImport)))
+		gPkg, importPaths, err := parseDir(filepath.Join(dir, strings.TrimPrefix(path, goRootImport)))
 		if err != nil {
 			errChan <- err
 			return
@@ -104,7 +103,7 @@ func parseDirRecursive(dir, rootImport string) (gt *genTargets, err error) {
 
 		for _, path := range importPaths {
 			// We are only interested in imported project packages.
-			if !strings.HasPrefix(path, rootImport) {
+			if !strings.HasPrefix(path, goRootImport) {
 				continue
 			}
 
@@ -125,7 +124,7 @@ func parseDirRecursive(dir, rootImport string) (gt *genTargets, err error) {
 
 	// Start with the root import.
 	wg.Add(1)
-	go parseImport(rootImport)
+	go parseImport(goRootImport)
 
 	// Close the closer if no routine is running anymore.
 	go func() {
