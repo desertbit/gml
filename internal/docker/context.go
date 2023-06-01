@@ -38,13 +38,13 @@ import (
 )
 
 type Context struct {
-	RootDir   string
-	SourceDir string
-	BuildDir  string
-	DestDir   string
+	RootDir      string
+	SourceDir    string
+	SourceDirRel string
+	BuildDir     string
+	DestDir      string
 
-	BinName string
-	GoPath  string
+	GoPath string
 
 	CGoLDFLAGS string
 	CGoCFLAGS  string
@@ -63,6 +63,7 @@ func newContext(rootDir, sourceDir, buildDir, destDir string) (ctx *Context, err
 
 	// Source and build dir are relative to the root dir.
 	// Construct the absolute paths now.
+	sourceDirRel := sourceDir
 	sourceDir, err = filepath.Abs(filepath.Join(rootDir, sourceDir))
 	if err != nil {
 		return
@@ -103,14 +104,14 @@ func newContext(rootDir, sourceDir, buildDir, destDir string) (ctx *Context, err
 	}
 
 	ctx = &Context{
-		RootDir:    rootDir,
-		SourceDir:  sourceDir,
-		BuildDir:   buildDir,
-		DestDir:    destDir,
-		BinName:    binName,
-		GoPath:     goPath,
-		CGoLDFLAGS: cgoLDFLAGS,
-		CGoCFLAGS:  cgoCFLAGS,
+		RootDir:      rootDir,
+		SourceDir:    sourceDir,
+		SourceDirRel: sourceDirRel,
+		BuildDir:     buildDir,
+		DestDir:      destDir,
+		GoPath:       goPath,
+		CGoLDFLAGS:   cgoLDFLAGS,
+		CGoCFLAGS:    cgoCFLAGS,
 	}
 
 	err = ctx.createDirsIfNotExists()

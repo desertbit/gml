@@ -90,7 +90,7 @@ func parseDirRecursive(ctx *Context) (gt *genTargets, err error) {
 		if cl.IsClosing() {
 			return
 		}
-
+		fmt.Printf("path: %s, dir: %s, goRootImport: %s\n", path, filepath.Join(ctx.SourceDir, strings.TrimPrefix(path, goRootImport)), goRootImport)
 		gPkg, importPaths, err := parseDir(filepath.Join(ctx.SourceDir, strings.TrimPrefix(path, goRootImport)))
 		if err != nil {
 			errChan <- err
