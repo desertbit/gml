@@ -61,7 +61,7 @@ ENV PATH="$PATH:/usr/local/go/bin" \
 RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    export VERSION="v0.0.36" && \
+    export VERSION="v0.0.37" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
     go install "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
