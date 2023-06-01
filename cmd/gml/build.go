@@ -43,8 +43,9 @@ func init() {
 			f.BoolL("debug", false, "build a debug binary (disables strip)")
 			f.BoolL("race", false, "enable data race detection")
 			f.StringL("buildvcs", "auto", "value of go build -buildvcs flag")
-			f.String("s", "source-dir", "./", "source directorty")
-			f.String("b", "build-dir", "./build", "build directorty")
+			f.String("r", "root-dir", "./", "root directory containing the go.mod file")
+			f.String("s", "source-dir", "./", "source directory, relative to root-directory")
+			f.String("b", "build-dir", "build", "build directory, relative to root-directory")
 			f.String("d", "dest-dir", "./", "destination directorty")
 			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
@@ -64,9 +65,10 @@ func init() {
 			f.BoolL("debug", false, "build a debug binary (disables strip)")
 			f.BoolL("race", false, "enable data race detection")
 			f.StringL("buildvcs", "auto", "value of go build -buildvcs flag")
-			f.String("s", "source-dir", "./", "source directorty")
-			f.String("b", "build-dir", "./build", "build directorty")
-			f.String("d", "dest-dir", "./", "destination directorty")
+			f.String("r", "root-dir", "./", "root directory containing the go.mod file")
+			f.String("s", "source-dir", "./", "source directory, relative to root-directory")
+			f.String("b", "build-dir", "build", "build directory, relative to root-directory")
+			f.String("d", "dest-dir", "./", "destination directory")
 			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
 			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
@@ -83,10 +85,10 @@ func init() {
 
 func runBuild(c *grumble.Context) error {
 	return build.Build(
+		c.Flags.String("root-dir"),
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
-		c.Flags.String("go-mod-file-path"),
 		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),
@@ -100,10 +102,10 @@ func runBuild(c *grumble.Context) error {
 func runBuildDocker(c *grumble.Context) error {
 	return docker.Build(
 		c.Args.String("container"),
+		c.Flags.String("root-dir"),
 		c.Flags.String("source-dir"),
 		c.Flags.String("build-dir"),
 		c.Flags.String("dest-dir"),
-		c.Flags.String("go-mod-file-path"),
 		c.Flags.String("qt-modules"),
 		c.Flags.Bool("clean"),
 		c.Flags.Bool("no-strip"),

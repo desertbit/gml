@@ -60,7 +60,7 @@ func Containers() []string {
 
 func Build(
 	container string,
-	sourceDir, buildDir, destDir, goRootImport, qtModules string,
+	rootDir, sourceDir, buildDir, destDir, qtModules string,
 	clean, noStrip, debugBuild, race, customContainer bool,
 	tags, dockerArgs, buildvcs string,
 ) (err error) {
@@ -80,7 +80,7 @@ func Build(
 	}
 
 	ctx, err := newContext(
-		sourceDir,
+		rootDir, sourceDir,
 		filepath.Join(buildDir, arch),
 		filepath.Join(destDir, arch),
 	)
@@ -111,6 +111,7 @@ func Build(
 		"-e", ctx.CGoLDFLAGS,
 		"-e", ctx.CGoCFLAGS,
 		"-v", ctx.GoPath + ":/work/go",
+		"-v", ctx.RootDir + ":/work",
 		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
@@ -132,10 +133,10 @@ func Build(
 	}
 
 	args = append(args, "build",
-		"--source-dir", "/work/"+ctx.BinName,
-		"--build-dir", "/work/build/gml-build",
+		"--root-dir", "/work",
+		"--source-dir", ctx.BinName,
+		"--build-dir", "build/gml-build",
 		"--dest-dir", "/work/bin",
-		"--go-root-import", goRootImport,
 		"--qt-modules", qtModules,
 		"--buildvcs", buildvcs)
 

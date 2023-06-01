@@ -51,16 +51,14 @@ const (
 	cppBasePrefix = "GMLGen"
 )
 
-func parseDirRecursive(dir, goModFilePath string) (gt *genTargets, err error) {
+func parseDirRecursive(ctx *Context) (gt *genTargets, err error) {
 	// Our parsed results.
 	gt = &genTargets{}
 
-	// If the go mod file path is not given, try to find it in the directory.
-	if goModFilePath == "" {
-		goModFilePath, err = utils.FindModPath(dir)
-		if err != nil {
-			return
-		}
+	// Find go mod file in the root directory.
+	goModFilePath, err := utils.FindModPath(ctx.RootDir)
+	if err != nil {
+		return
 	}
 
 	// Parse the go.mod file to obtain the root import path.
@@ -68,6 +66,10 @@ func parseDirRecursive(dir, goModFilePath string) (gt *genTargets, err error) {
 	if err != nil {
 		return
 	}
+
+	// Retrieve the difference between root and source dir.
+	// This must be appended to the go root import as well.
+	goRootImport = filepath.Join(goRootImport, strings.TrimPrefix(ctx.SourceDir, ctx.RootDir))
 
 	var (
 		wg          sync.WaitGroup
@@ -89,7 +91,7 @@ func parseDirRecursive(dir, goModFilePath string) (gt *genTargets, err error) {
 			return
 		}
 
-		gPkg, importPaths, err := parseDir(filepath.Join(dir, strings.TrimPrefix(path, goRootImport)))
+		gPkg, importPaths, err := parseDir(filepath.Join(ctx.SourceDir, strings.TrimPrefix(path, goRootImport)))
 		if err != nil {
 			errChan <- err
 			return

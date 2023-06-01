@@ -48,11 +48,10 @@ const (
 )
 
 type Context struct {
+	RootDir   string
 	SourceDir string
 	BuildDir  string
 	DestDir   string
-
-	GoModFilePath string
 
 	QTModules string
 
@@ -75,13 +74,9 @@ type Context struct {
 	DebugBuild bool
 }
 
-func newContext(sourceDir, buildDir, destDir, goModFilePath, qtModules string, clean bool, debugBuild bool) (ctx *Context, err error) {
+func newContext(rootDir, sourceDir, buildDir, destDir, qtModules string, clean bool, debugBuild bool) (ctx *Context, err error) {
 	// Get absolute paths.
-	sourceDir, err = filepath.Abs(sourceDir)
-	if err != nil {
-		return
-	}
-	buildDir, err = filepath.Abs(buildDir)
+	rootDir, err = filepath.Abs(rootDir)
 	if err != nil {
 		return
 	}
@@ -90,13 +85,24 @@ func newContext(sourceDir, buildDir, destDir, goModFilePath, qtModules string, c
 		return
 	}
 
+	// Source and build dir are relative to the root dir.
+	// Construct the absolute paths now.
+	sourceDir, err = filepath.Abs(filepath.Join(rootDir, sourceDir))
+	if err != nil {
+		return
+	}
+	buildDir, err = filepath.Abs(filepath.Join(rootDir, buildDir))
+	if err != nil {
+		return
+	}
+
 	cGenDir := filepath.Join(buildDir, cGenDirName)
 
 	ctx = &Context{
+		RootDir:        rootDir,
 		SourceDir:      sourceDir,
 		BuildDir:       buildDir,
 		DestDir:        destDir,
-		GoModFilePath:  goModFilePath,
 		QTModules:      qtModules,
 		QMLDir:         filepath.Join(sourceDir, qmlDir),
 		QMLResDir:      filepath.Join(sourceDir, qmlResDir),
@@ -111,7 +117,7 @@ func newContext(sourceDir, buildDir, destDir, goModFilePath, qtModules string, c
 	}
 
 	// Obtain the full path to the C bindings.
-	bindingPath, err := utils.FindBindingPath(sourceDir, goModFilePath)
+	bindingPath, err := utils.FindBindingPath(sourceDir)
 	if err != nil {
 		return
 	}
@@ -236,7 +242,7 @@ func (c *Context) checkForRequiredDirs() (err error) {
 		if err != nil {
 			return err
 		} else if !e {
-			return fmt.Errorf("required directory does not exists: '%s'", d)
+			return fmt.Errorf("required directory does not exist: '%s'", d)
 		}
 	}
 	return

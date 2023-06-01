@@ -40,7 +40,7 @@ const (
 	PostHookName = "GML_BUILD_POST_HOOKS"
 )
 
-func Build(sourceDir, buildDir, destDir, goRootImport, qtModules string, clean, noStrip, debugBuild, race bool, tags, buildvcs string) (err error) {
+func Build(rootDir, sourceDir, buildDir, destDir, qtModules string, clean, noStrip, debugBuild, race bool, tags, buildvcs string) (err error) {
 	// Force no strip if this is a debug build.
 	if debugBuild {
 		noStrip = true
@@ -49,7 +49,7 @@ func Build(sourceDir, buildDir, destDir, goRootImport, qtModules string, clean, 
 	// Convert the comma separated qt modules list to a whitespace separated one.
 	qtModules = strings.Join(strings.Split(qtModules, ","), " ")
 
-	ctx, err := newContext(sourceDir, buildDir, destDir, goRootImport, qtModules, clean, debugBuild)
+	ctx, err := newContext(rootDir, sourceDir, buildDir, destDir, qtModules, clean, debugBuild)
 	if err != nil {
 		return
 	}
@@ -101,10 +101,15 @@ func Build(sourceDir, buildDir, destDir, goRootImport, qtModules string, clean, 
 func buildCLib(ctx *Context) (err error) {
 	err = utils.RunCommand(ctx.Env(), ctx.BuildDir, "qmake")
 	if err != nil {
-		return
+		return fmt.Errorf("qmake failed: %v", err)
 	}
 
-	return utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
+	err = utils.RunCommand(ctx.Env(), ctx.BuildDir, "make")
+	if err != nil {
+		return fmt.Errorf("make failed: %v", err)
+	}
+
+	return
 }
 
 func buildGo(ctx *Context, tags string, clean, noStrip, race bool, buildvcs string) (err error) {

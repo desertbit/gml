@@ -59,17 +59,15 @@ func FindModPath(dir string) (path string, err error) {
 	return "", errors.New("go.mod not found")
 }
 
-func FindBindingPath(projectRootDir, goModFilePath string) (path string, err error) {
-	if goModFilePath == "" {
-		projectRootDir, err = filepath.Abs(projectRootDir)
-		if err != nil {
-			return
-		}
+func FindBindingPath(projectRootDir string) (path string, err error) {
+	projectRootDir, err = filepath.Abs(projectRootDir)
+	if err != nil {
+		return
+	}
 
-		goModFilePath, err = FindModPath(projectRootDir)
-		if err != nil {
-			return
-		}
+	goModFilePath, err := FindModPath(projectRootDir)
+	if err != nil {
+		return
 	}
 
 	// Obtain the import path including the version from the go.mod file.

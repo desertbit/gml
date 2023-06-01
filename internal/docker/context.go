@@ -38,6 +38,7 @@ import (
 )
 
 type Context struct {
+	RootDir   string
 	SourceDir string
 	BuildDir  string
 	DestDir   string
@@ -49,17 +50,24 @@ type Context struct {
 	CGoCFLAGS  string
 }
 
-func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
+func newContext(rootDir, sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	// Get absolute paths.
-	sourceDir, err = filepath.Abs(sourceDir)
-	if err != nil {
-		return
-	}
-	buildDir, err = filepath.Abs(buildDir)
+	rootDir, err = filepath.Abs(rootDir)
 	if err != nil {
 		return
 	}
 	destDir, err = filepath.Abs(destDir)
+	if err != nil {
+		return
+	}
+
+	// Source and build dir are relative to the root dir.
+	// Construct the absolute paths now.
+	sourceDir, err = filepath.Abs(filepath.Join(rootDir, sourceDir))
+	if err != nil {
+		return
+	}
+	buildDir, err = filepath.Abs(filepath.Join(rootDir, buildDir))
 	if err != nil {
 		return
 	}
@@ -95,6 +103,7 @@ func newContext(sourceDir, buildDir, destDir string) (ctx *Context, err error) {
 	}
 
 	ctx = &Context{
+		RootDir:    rootDir,
 		SourceDir:  sourceDir,
 		BuildDir:   buildDir,
 		DestDir:    destDir,
