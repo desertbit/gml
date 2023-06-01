@@ -47,7 +47,6 @@ func init() {
 			f.String("s", "source-dir", "./", "source directory, relative to root-directory")
 			f.String("b", "build-dir", "build", "build directory, relative to root-directory")
 			f.String("d", "dest-dir", "./", "destination directorty")
-			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
 			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
 		},
@@ -69,7 +68,6 @@ func init() {
 			f.String("s", "source-dir", "./", "source directory, relative to root-directory")
 			f.String("b", "build-dir", "build", "build directory, relative to root-directory")
 			f.String("d", "dest-dir", "./", "destination directory")
-			f.StringL("go-mod-file-path", "", "The path to the go.mod file. Defaults to <source-dir>/go.mod")
 			f.String("t", "tags", "", "go build tags")
 			f.String("m", "qt-modules", "", "comma separated list of qt modules added to the project")
 

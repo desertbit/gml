@@ -112,7 +112,7 @@ func Build(
 		"-e", ctx.CGoCFLAGS,
 		"-v", ctx.GoPath + ":/work/go",
 		"-v", ctx.RootDir + ":/work",
-		"-v", ctx.SourceDir + ":/work/" + ctx.BinName,
+		"-v", ctx.SourceDir + ":/work/src",
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
 	}
@@ -134,7 +134,7 @@ func Build(
 
 	args = append(args, "build",
 		"--root-dir", "/work",
-		"--source-dir", ctx.BinName,
+		"--source-dir", "src",
 		"--build-dir", "build/gml-build",
 		"--dest-dir", "/work/bin",
 		"--qt-modules", qtModules,
