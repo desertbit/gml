@@ -106,15 +106,18 @@ func Build(
 		"-e", "UID=" + usr.Uid,
 		"-e", "GID=" + usr.Gid,
 		"-e", "GOBIN=/work/bin",
-		"-e", "GOPATH=/work/go",
+		"-e", "GOPATH=/work/gopath",
 		"-e", "GOCACHE=/work/build/go-cache",
 		"-e", ctx.CGoLDFLAGS,
 		"-e", ctx.CGoCFLAGS,
-		"-v", ctx.GoPath + ":/work/go",
+		"-v", ctx.GoPath + ":/work/gopath",
 		"-v", ctx.RootDir + ":/work",
-		"-v", ctx.SourceDir + ":" + filepath.Join("/work", ctx.SourceDirRel),
 		"-v", ctx.BuildDir + ":/work/build",
 		"-v", ctx.DestDir + ":/work/bin",
+	}
+
+	if ctx.SourceDir != ctx.RootDir {
+		args = append(args, "-v", ctx.SourceDir+":"+filepath.Join("/work", ctx.SourceDirRel))
 	}
 
 	// Add the custom docker arguments.
@@ -158,7 +161,7 @@ func Build(
 	if len(tags) > 0 {
 		args = append(args, "--tags", tags)
 	}
-
+	fmt.Printf("args: %s\n", strings.Join(args, " "))
 	c := exec.Command("docker", args...)
 	c.Dir = ctx.BuildDir
 	c.Stderr = os.Stderr
