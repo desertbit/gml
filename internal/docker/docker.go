@@ -161,7 +161,7 @@ func Build(
 	if len(tags) > 0 {
 		args = append(args, "--tags", tags)
 	}
-	fmt.Printf("args: %s\n", strings.Join(args, " "))
+
 	c := exec.Command("docker", args...)
 	c.Dir = ctx.BuildDir
 	c.Stderr = os.Stderr
