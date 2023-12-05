@@ -9,8 +9,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y clean
 
 # Install the Go compiler.
-RUN export GO_VERSION="1.20.3" && \
-    export GO_CHECKSUM="979694c2c25c735755bf26f4f45e19e64e4811d661dd07b8c010f7a8e18adfca" && \
+RUN export GO_VERSION="1.21.4" && \
+    export GO_CHECKSUM="73cac0215254d0c7d1241fa40837851f3b9a8a742d0b54714cbdfb3feaf8f0af" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
