@@ -1,0 +1,59 @@
+# Copyright (c) 2024 skaldesh
+# 
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+version: 2
+project: nline
+
+env:
+    BINDIR:   ${ROOT}/bin
+    BUILDDIR: ${ROOT}/build
+
+import: 
+    - scripts/grml.sh
+
+commands:
+    clean:
+        help: clean the build files.
+        exec: |
+            rm -rf ${BUILDDIR}
+    build:
+        help: build the Qt QML application.
+        deps:
+            - build.golib
+        exec: |
+            cmake \
+                -G Ninja \
+                -B ${BUILDDIR} \
+                -S ${ROOT} \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=${BINDIR}
+
+            ninja \
+                -C ${BUILDDIR}
+
+            # TODO: The installation does not yet work correctly. The "nVision" QML module is not installed in the target directory.
+            #ninja \
+            #    -C ${BUILDDIR} \
+            #    install
+        commands:
+            golib:
+                help: build the static go library.
+                exec: |
+                    go build \
+                        -C go \
+                        -o ${BUILDDIR}/go/lib.a \
+                        -buildmode=c-archive \
+                        .
+            run:
+                help: build & run the Qt QML application.
+                deps:
+                    - build
+                    - run
+
+    run:
+        help: run the Qt QML application.
+        exec: |
+            # TODO: Would like to run a static binary in the bin/ folder instead.
+            ${BUILDDIR}/nVision-app
