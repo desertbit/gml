@@ -43,7 +43,7 @@ commands:
                 exec: |
                     go build \
                         -C go \
-                        -o ${BUILDDIR}/go/lib.a \
+                        -o ${BUILDDIR}/lib/go/lib.a \
                         -buildmode=c-archive \
                         .
             run:

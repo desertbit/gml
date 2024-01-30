@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "build/go/lib.h"
+#include <go/lib.h>
 
 int main(int argc, char *argv[]) {
     // Test call to our Go library.

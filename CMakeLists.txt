@@ -44,11 +44,15 @@ qt_add_qml_module(${APP_NAME}
         res/app-icon.png
 )
 
+target_include_directories(${APP_NAME} PRIVATE
+    ${CMAKE_BINARY_DIR}/lib
+)
+
 # Tell CMake which libraries our executable will use.
 target_link_libraries(${APP_NAME} PRIVATE 
     Qt6::Gui 
     Qt6::Quick
-    ${CMAKE_BINARY_DIR}/go/lib.a
+    ${CMAKE_BINARY_DIR}/lib/go/lib.a
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
