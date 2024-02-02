@@ -1,5 +1,3 @@
-#include <iostream>
-
 // Qt imports.
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -19,11 +17,11 @@ Q_IMPORT_QML_PLUGIN(ExternalPlugin)
 void printQtResources(bool ignoreQtProject=false) {
     QDirIterator it(":", QDirIterator::Subdirectories);
     while (it.hasNext()) {
-        QString next = it.next();
-        if (ignoreQtProject && next.startsWith(":/qt-project.org")) {
+        QFileInfo next = it.nextFileInfo();
+        if (next.isDir() || (ignoreQtProject && next.filePath().startsWith(":/qt-project.org"))) {
             continue;
         }
-        qDebug() << next;
+        qDebug() << next.filePath();
     }
 }
 
