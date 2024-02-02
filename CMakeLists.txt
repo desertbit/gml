@@ -4,18 +4,31 @@ cmake_minimum_required(VERSION 3.21.1)
 # Define the projects and its version.
 project(nVision VERSION 0.6.4 LANGUAGES CXX)
 
+# Configuration options.
+add_compile_definitions("DEBUG=$<CONFIG:Debug>")
+
 # Define custom vars.
 set(QT_MIN_VERSION 6.5)
-set(APP_NAME ${CMAKE_PROJECT_NAME}-app)
+set(APP_TARGET ${CMAKE_PROJECT_NAME}-app)
+set(ORGANIZATION_URL nline.ai)
 
 # Set C++20 as minimum that must be supported by the compiler.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Generate compile_commands.json for clangd in the build directory.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Set the qml directory as qml output dir.
+# This makes it possible to group the qml modules under a common prefix.
+# Otherwise, the modules would have to be all in the root directory.
+set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
+
 # Define which components to load.
 find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS 
     Gui
     Quick
+    LinguistTools
 )
 
 # Sets project-wide defaults for a typical Qt application.
@@ -26,40 +39,72 @@ qt_standard_project_setup(REQUIRES ${QT_MIN_VERSION})
 # It is a wrapper around the built-in add_executable() command, and provides additional logic 
 # to automatically handle things like linking of Qt plugins in static Qt builds, 
 # platform-specific customization of library names, and so on.
-qt_add_executable(${APP_NAME}
+qt_add_executable(${APP_TARGET}
     main.cpp
 )
 
-# qt_add_qml_module passes the target of the executable, a URI, module version, and a list of 
-# QML files to ensure that ${APP_NAME} becomes a QML module. 
-# This places the QML files into qrc:/${RESOURCE_PREFIX}/${URI} in the resource file system. 
-# Moreover, qt_add_qml_module ensures that qmlcachegen runs. 
-# Additionally, it creates a ${APP_NAME}_qmllint target, which runs qmllint on the files in QML_FILES.
-qt_add_qml_module(${APP_NAME}
+# The main QML module which gets added as an executable.
+file(GLOB QML_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qml)
+qt_add_qml_module(${APP_TARGET}
     URI ${CMAKE_PROJECT_NAME}
-    RESOURCE_PREFIX /
-    QML_FILES
-        Main.qml
-    RESOURCES
-        res/app-icon.png
+    QML_FILES ${QML_SOURCES}
 )
 
-target_include_directories(${APP_NAME} PRIVATE
-    ${CMAKE_BINARY_DIR}/lib
+# Add source directories.
+add_subdirectory(cpp/backend)
+add_subdirectory(qml/External)
+
+# Add resources.
+file(GLOB RESOURCES_IMAGES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/images/*)
+qt_add_resources(${APP_TARGET} resourcesimages
+    PREFIX /images
+    BASE resources/images
+    FILES ${RESOURCES_IMAGES}
 )
+
+# Add translations.
+# We generate the .ts files manually via lupdate using a grml command,
+# since qt_add_translations can not merge all .ts files of all submodules into
+# one file, requiring a lot of manual labour to keep everything in sync.
+# Instead, we use lupdate to recursively parse all available modules and create
+# one .ts file out of it.
+# In order to convert this to a .qm and bundle it with our application,
+# we use the standard cmake function again.
+file(GLOB TS_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/translations/*.ts)
+set_source_files_properties(${TS_FILES} PROPERTIES 
+    OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translations
+)
+#qt_add_translations(${APP_TARGET}
+#    TS_FILES ${TS_FILES}
+#    RESOURCE_PREFIX /translations
+#)
+qt_add_lrelease(${APP_TARGET}
+    TS_FILES ${TS_FILES}
+    QM_FILES_OUTPUT_VARIABLE qm_files)
+qt_add_resources(${APP_TARGET} translations
+    PREFIX /translations
+    BASE build/translations
+    FILES ${qm_files}
+)
+
+# Include our source directory for convenient header import.
+# This allows to use e.g. "#include <go/go.h>".
+target_include_directories(${APP_TARGET} PRIVATE ${CMAKE_BINARY_DIR})
 
 # Tell CMake which libraries our executable will use.
-target_link_libraries(${APP_NAME} PRIVATE 
-    Qt6::Gui 
+target_link_libraries(${APP_TARGET} PRIVATE 
+    Qt6::Gui
     Qt6::Quick
-    ${CMAKE_BINARY_DIR}/lib/go/lib.a
+    ${CMAKE_BINARY_DIR}/go/go.a
+    backendplugin
+    externalplugin
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-set_target_properties(${APP_NAME} PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.apptest-qml
+set_target_properties(${APP_TARGET} PROPERTIES
+    #MACOSX_BUNDLE_GUI_IDENTIFIER company.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     # Create an application bundle on macOS.
@@ -70,14 +115,15 @@ set_target_properties(${APP_NAME} PROPERTIES
 
 # Install the application.
 include(GNUInstallDirs)
-install(TARGETS ${APP_NAME}
+install(TARGETS ${APP_TARGET}
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+# Generate an install script.
 qt_generate_deploy_app_script(
-    TARGET ${APP_NAME}
+    TARGET ${APP_TARGET}
     OUTPUT_SCRIPT deploy_script
     NO_UNSUPPORTED_PLATFORM_ERROR
 )

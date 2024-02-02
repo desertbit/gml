@@ -4,6 +4,7 @@
 # ignore project files of IDEs
 .idea/
 .vscode/
+.cache/
 
 bin/
 build/

@@ -1,7 +1,13 @@
-import QtQuick 2.16
-import QtQuick.Controls 2.16
-import QtQuick.Controls.Material 2.16
-import QtQuick.Layouts 1.16
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+
+// CPP
+import Backend as B
+
+// QML
+import External as Ex
 
 ApplicationWindow {
     id: root
@@ -11,11 +17,37 @@ ApplicationWindow {
     visible: true
 
     Text {
+        id: text
+
         anchors.centerIn: parent
-        text: "Hello World"
+        text: "nVision"
+    }
+
+    Ex.Button {
+        anchors {
+            top: text.bottom
+            topMargin: 8
+        }
+        
+        onClicked: {
+            if (!B.Backend.switchLocale(locale.text)) {
+                console.log("FAIL")
+            } else {
+                console.log("SUCCESS")
+            }
+        }
     }
 
     Image {
-        source: "/nVision/res/app-icon.png"
+        source: "qrc:/images/app-icon.png"
+    }
+
+    TextInput {
+        id: locale
+
+        anchors {
+            bottom: parent.bottom
+        }
+        text: "de"
     }
 }

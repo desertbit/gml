@@ -4,30 +4,56 @@
 # https://opensource.org/licenses/MIT
 
 version: 2
-project: nline
+project: gml
 
 env:
     BINDIR:   ${ROOT}/bin
     BUILDDIR: ${ROOT}/build
+    TRDIR:    ${ROOT}/resources/translations
 
 import: 
-    - scripts/grml.sh
+    - grml.sh
+
+options:
+    debug: false
 
 commands:
     clean:
         help: clean the build files.
         exec: |
             rm -rf ${BUILDDIR}
+
+    translations:
+        help: targets regarding translation files.
+        commands:
+            update:
+                help: update the translation files by parsing the source.
+                exec: |
+                    # Generate translations.
+                    lupdate \
+                        ./Main.qml ./qml ./cpp \
+                        -extensions qml,js,cpp,hpp \
+                        -source-language en_US \
+                        -ts \
+                        "${TRDIR}/app_en.ts" \
+                        "${TRDIR}/app_de.ts"
+            release:
+                help: release the current files by converting them to a binary representation.
+                exec: |
+                    lrelease \
+                        "${NVISION_RESDIR}/languages/app_en.ts" \
+                        "${NVISION_RESDIR}/languages/app_de.ts"
+
     build:
         help: build the Qt QML application.
         deps:
-            - build.golib
+            - build.gobridge
         exec: |
             cmake \
                 -G Ninja \
                 -B ${BUILDDIR} \
                 -S ${ROOT} \
-                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_BUILD_TYPE=$(option ${debug} "Debug" "Release") \
                 -DCMAKE_INSTALL_PREFIX=${BINDIR}
 
             ninja \
@@ -38,12 +64,12 @@ commands:
             #    -C ${BUILDDIR} \
             #    install
         commands:
-            golib:
-                help: build the static go library.
+            gobridge:
+                help: build the static go bridge.
                 exec: |
                     go build \
-                        -C go \
-                        -o ${BUILDDIR}/lib/go/lib.a \
+                        -C go/ \
+                        -o ${BUILDDIR}/go/go.a \
                         -buildmode=c-archive \
                         .
             run:

@@ -1,0 +1,7 @@
+# Copyright (c) 2024 Roland Singer, Sebastian Borchers
+# 
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+CompileFlags:
+  Add: [-std=c++20]

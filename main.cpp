@@ -1,17 +1,51 @@
+#include <iostream>
+
+// Qt imports.
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QStringLiteral>
+#include <QDirIterator>
 
-#include <go/lib.h>
+// Add qml module plugins.
+#include <QtQml/QQmlExtensionPlugin>
+Q_IMPORT_QML_PLUGIN(BackendPlugin)
+Q_IMPORT_QML_PLUGIN(ExternalPlugin)
+
+// Import libs.
+#include <go/go.h>
+
+// A debug function to print all files contained within the Qt resource system.
+// Sometimes, it is just not clear where certain files are added, so this can help.
+void printQtResources(bool ignoreQtProject=false) {
+    QDirIterator it(":", QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        QString next = it.next();
+        if (ignoreQtProject && next.startsWith(":/qt-project.org")) {
+            continue;
+        }
+        qDebug() << next;
+    }
+}
 
 int main(int argc, char *argv[]) {
-    // Test call to our Go library.
-    Test();
+#if (DEBUG)
+    std::cout << "DEBUG MODE" << std::endl;
+#endif
+
+    // TODO: Debug
+    printQtResources(true);
 
     // Include the virtual keyboard plugin.
-    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+    //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 
     // Create the application from the args.
     QGuiApplication app(argc, argv);
+
+    // Set meta data.
+    app.setApplicationName(QStringLiteral("nVision"));
+    app.setApplicationVersion(QStringLiteral("v0.6.4"));
+    app.setOrganizationName(QStringLiteral("nLine GmbH"));
+    app.setOrganizationDomain(QStringLiteral("nline.ai"));
 
     // Create the engine.
     QQmlApplicationEngine engine;
@@ -26,8 +60,16 @@ int main(int argc, char *argv[]) {
         Qt::QueuedConnection
     );
 
-    // Load our main qml file.
+    // Add the custom paths to the imports.
+    engine.addImportPath(QStringLiteral(":/nVision/cpp"));
+    engine.addImportPath(QStringLiteral(":/nVision/qml"));
+
+    // Load the main qml file.
+#if (DEBUG)
+    engine.load("./Main.qml");
+#else
     engine.loadFromModule("nVision", "Main");
+#endif
 
     // Run the app.
     return app.exec();
