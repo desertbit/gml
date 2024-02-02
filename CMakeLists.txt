@@ -66,25 +66,10 @@ qt_add_resources(${APP_TARGET} resourcesimages
 # We generate the .ts files manually via lupdate using a grml command,
 # since qt_add_translations can not merge all .ts files of all submodules into
 # one file, requiring a lot of manual labour to keep everything in sync.
-# Instead, we use lupdate to recursively parse all available modules and create
-# one .ts file out of it.
-# In order to convert this to a .qm and bundle it with our application,
-# we use the standard cmake function again.
 file(GLOB TS_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/translations/*.ts)
-set_source_files_properties(${TS_FILES} PROPERTIES 
-    OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translations
-)
-#qt_add_translations(${APP_TARGET}
-#    TS_FILES ${TS_FILES}
-#    RESOURCE_PREFIX /translations
-#)
-qt_add_lrelease(${APP_TARGET}
+qt_add_translations(${APP_TARGET}
     TS_FILES ${TS_FILES}
-    QM_FILES_OUTPUT_VARIABLE qm_files)
-qt_add_resources(${APP_TARGET} translations
-    PREFIX /translations
-    BASE build/translations
-    FILES ${qm_files}
+    RESOURCE_PREFIX /translations
 )
 
 # Include our source directory for convenient header import.
