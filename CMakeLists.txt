@@ -27,6 +27,7 @@ set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
 # Define which components to load.
 find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS 
     Gui
+    Qml
     Quick
     LinguistTools
 )
@@ -52,6 +53,7 @@ qt_add_qml_module(${APP_TARGET}
 
 # Add source directories.
 add_subdirectory(cpp/backend)
+add_subdirectory(cpp/imgprov)
 add_subdirectory(qml/External)
 
 # Add resources.
@@ -79,10 +81,12 @@ target_include_directories(${APP_TARGET} PRIVATE ${CMAKE_BINARY_DIR})
 # Tell CMake which libraries our executable will use.
 target_link_libraries(${APP_TARGET} PRIVATE 
     Qt6::Gui
+    Qt6::Qml
     Qt6::Quick
     ${CMAKE_BINARY_DIR}/go/go.a
     backendplugin
     externalplugin
+    imgprovplugin
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -1,3 +1,4 @@
+# Define the target name.
 set(MODULE_TARGET external)
 
 # Define a new static library target.

@@ -18,20 +18,21 @@ bool Backend::switchLocale(const QString& locale) {
     // Load the tr file for this locale.
     bool success = m_translator.load(QStringLiteral(":/translations/app_") + locale);
     if (!success) {
+        qCritical("Backend::switchLocale: failed to load translation");
         return false;
     }
 
     // Retrieve the context.
     QQmlContext* ctx = QQmlEngine::contextForObject(this);
     if (ctx == nullptr) {
-        qDebug("Backend::switchLocale: failed to get context");
+        qCritical("Backend::switchLocale: failed to get context");
         return false;
     }
 
     // Retrieve the application engine.
     QQmlEngine* engine = ctx->engine();
     if (engine == nullptr) {
-        qDebug("Backend::switchLocale: failed to get engine");
+        qCritical("Backend::switchLocale: failed to get engine");
         return false;
     }
 

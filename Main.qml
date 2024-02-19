@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import ImgProv
+
 // CPP
 import Backend as B
 
@@ -38,8 +40,14 @@ ApplicationWindow {
         }
     }
 
-    Image {
-        source: "qrc:/images/app-icon.png"
+    Row {
+        Image {
+            source: "qrc:/images/app-icon.png"
+        }
+
+        Image {
+            source: "image://imgprov/test.png"
+        }
     }
 
     TextInput {

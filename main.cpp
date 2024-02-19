@@ -8,6 +8,7 @@
 #include <QtQml/QQmlExtensionPlugin>
 Q_IMPORT_QML_PLUGIN(BackendPlugin)
 Q_IMPORT_QML_PLUGIN(ExternalPlugin)
+Q_IMPORT_QML_PLUGIN(ImgProvPlugin)
 
 // Import libs.
 #include <go/go.h>
