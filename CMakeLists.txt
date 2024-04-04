@@ -42,6 +42,8 @@ qt_standard_project_setup(REQUIRES ${QT_MIN_VERSION})
 # platform-specific customization of library names, and so on.
 qt_add_executable(${APP_TARGET}
     main.cpp
+    imgprov.hpp
+    imgprov.cpp
 )
 
 # The main QML module which gets added as an executable.
@@ -53,7 +55,6 @@ qt_add_qml_module(${APP_TARGET}
 
 # Add source directories.
 add_subdirectory(cpp/backend)
-add_subdirectory(cpp/imgprov)
 add_subdirectory(qml/External)
 
 # Add resources.
@@ -86,7 +87,6 @@ target_link_libraries(${APP_TARGET} PRIVATE
     ${CMAKE_BINARY_DIR}/go/go.a
     backendplugin
     externalplugin
-    imgprovplugin
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

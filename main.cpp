@@ -1,3 +1,6 @@
+// Std imports.
+#include <iostream>
+
 // Qt imports.
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -8,10 +11,12 @@
 #include <QtQml/QQmlExtensionPlugin>
 Q_IMPORT_QML_PLUGIN(BackendPlugin)
 Q_IMPORT_QML_PLUGIN(ExternalPlugin)
-Q_IMPORT_QML_PLUGIN(ImgProvPlugin)
 
 // Import libs.
 #include <go/go.h>
+
+// Import locals.
+#include <imgprov.hpp>
 
 // A debug function to print all files contained within the Qt resource system.
 // Sometimes, it is just not clear where certain files are added, so this can help.
@@ -48,6 +53,9 @@ int main(int argc, char *argv[]) {
 
     // Create the engine.
     QQmlApplicationEngine engine;
+
+    // Add the image provider.
+    engine.addImageProvider("imgprov", new ImgProv);
 
     // Connect to the object creaton failed signal.
     // Quit, if such an error occurs.

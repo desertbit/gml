@@ -3,6 +3,8 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+#include <go/go.h>
+
 #include "imgprov.hpp"
 
 //###############//
@@ -39,6 +41,7 @@ QQuickTextureFactory* AsyncImageResponse::textureFactory() const {
 void AsyncImageResponseRunnable::run() {
     QImage image(50, 50, QImage::Format_RGB32);
     
+    Test();
     if (m_id == QLatin1String("slow")) {
         image.fill(Qt::red);
     } else {
