@@ -1,6 +1,10 @@
 # 3.21.1 is the minimum required version for static Qt builds.
 cmake_minimum_required(VERSION 3.21.1)
 
+# Include debugging helpers.
+# -> cmake_print_variables(MY_VARIABLE)
+include(CMakePrintHelpers)
+
 # Define the projects and its version.
 project(nVision VERSION 0.6.4 LANGUAGES CXX)
 
@@ -47,15 +51,40 @@ qt_add_executable(${APP_TARGET}
 )
 
 # The main QML module which gets added as an executable.
-file(GLOB QML_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.qml)
 qt_add_qml_module(${APP_TARGET}
     URI ${CMAKE_PROJECT_NAME}
-    QML_FILES ${QML_SOURCES}
+    QML_FILES qml/Main.qml qml/main.js
 )
 
-# Add source directories.
+# Add source directories containing cpp libraries.
 add_subdirectory(cpp/backend)
-add_subdirectory(qml/External)
+
+# Add QML modules.
+# Later we need to link against the static plugins of each module.
+# The name of a plugin is "<qml-module-uri>plugin" (e.g. qml/View/Component/Text -> ViewComponentTextplugin).
+file(GLOB QML_MODULES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} LIST_DIRECTORIES true 
+    "qml/Action/*"
+    "qml/Dispatcher"
+    "qml/Lib"
+    "qml/Middleware"
+    "qml/Store"
+    "qml/Store/Model"
+    "qml/Theme"
+    "qml/View/Component/*"
+    "qml/View/Page/*"
+)
+set(QML_MODULES_PLUGINS "")
+foreach(item ${QML_MODULES})
+	if(IS_DIRECTORY ${item})
+		add_subdirectory(${item})
+
+        # Add its plugin.
+        string(REPLACE "qml" "" item_plugin ${item})
+        string(REPLACE "/" "" item_plugin ${item_plugin})
+        string(APPEND item_plugin "plugin")
+        list(APPEND QML_MODULES_PLUGINS ${item_plugin})
+	endif()
+endforeach()
 
 # Add resources.
 file(GLOB RESOURCES_IMAGES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/images/*)
@@ -86,7 +115,7 @@ target_link_libraries(${APP_TARGET} PRIVATE
     Qt6::Quick
     ${CMAKE_BINARY_DIR}/go/go.a
     backendplugin
-    externalplugin
+    ${QML_MODULES_PLUGINS}
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

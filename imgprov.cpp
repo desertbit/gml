@@ -47,8 +47,9 @@ void AsyncImageResponseRunnable::run() {
     } else {
         image.fill(Qt::blue);
     }
-    if (m_requestedSize.isValid())
+    if (m_requestedSize.isValid()) {
         image = image.scaled(m_requestedSize);
+    }
 
     emit done(image);
 }

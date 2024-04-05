@@ -10,7 +10,6 @@
 // Add qml module plugins.
 #include <QtQml/QQmlExtensionPlugin>
 Q_IMPORT_QML_PLUGIN(BackendPlugin)
-Q_IMPORT_QML_PLUGIN(ExternalPlugin)
 
 // Import libs.
 #include <go/go.h>
@@ -34,13 +33,10 @@ void printQtResources(bool ignoreQtProject=false) {
 int main(int argc, char *argv[]) {
 #if (DEBUG)
     std::cout << "DEBUG MODE" << std::endl;
-#endif
-
-    // TODO: Debug
     printQtResources(true);
-
+#endif
     // Include the virtual keyboard plugin.
-    //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 
     // Create the application from the args.
     QGuiApplication app(argc, argv);
