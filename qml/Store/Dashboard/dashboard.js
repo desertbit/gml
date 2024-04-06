@@ -21,7 +21,7 @@ function view(state, data) {
 function subscribeStats(state, data) {
     // Abort the current stream first.
     if (state.nline.stats.callID > 0) {
-        A.AInt.emitCancel(state.nline.stats.callID)
+        A.AInternal.emitCancel(state.nline.stats.callID)
     }
 
     state.nline.stats.callID = data.callID

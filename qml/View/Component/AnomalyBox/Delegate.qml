@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
-
+import Action as A
 import Lib as L
 import Store as S
 import Theme

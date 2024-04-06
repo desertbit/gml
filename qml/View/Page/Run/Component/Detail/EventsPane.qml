@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventDetail as AEventDetail
-import Action.EventOverview as AEventOverview
-
+import Action as A
 import Lib as L
 import Store
 import Store.Model as SM
@@ -36,7 +34,7 @@ VCC.IconPane {
         VCB.Button {
             text: qsTr("View all")
 
-            onClicked: AEventOverview.viewFromRunDetail(root.model.productID, root.model.id, L.Con.EventOverviewState.List)
+            onClicked: A.AEventOverview.viewFromRunDetail(root.model.productID, root.model.id, L.Con.EventOverviewState.List)
         }
     ]
 
@@ -59,7 +57,7 @@ VCC.IconPane {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
 
-            onTapped: id => AEventDetail.viewFromRunDetail(id, root.model.id, root.model.productID)
+            onTapped: id => A.AEventDetail.viewFromRunDetail(id, root.model.id, root.model.productID)
         }
     }
 

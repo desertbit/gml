@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Settings as ASettings
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -34,7 +33,7 @@ VCC.IconPane {
         highlighted: true
         enabled: root.hasUnsavedChanges && (mode === L.Con.NetworkMode.DHCP || addr.text !== "")
 
-        onClicked: ASettings.updateNetwork(mode.currentValue, addr.text, subnetPrefixLength.value, gateway.text, dns.text)
+        onClicked: A.ASettings.updateNetwork(mode.currentValue, addr.text, subnetPrefixLength.value, gateway.text, dns.text)
     }
 
     ColumnLayout {

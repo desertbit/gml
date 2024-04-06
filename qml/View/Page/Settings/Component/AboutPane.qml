@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
 
 import Store
 import Theme
@@ -47,7 +46,7 @@ VCC.IconPane {
                 margin: 10
                 longPressThreshold: 5
 
-                onLongPressed: AApp.showAdvancedOptions()
+                onLongPressed: A.AApp.showAdvancedOptions()
             }
 
             GridLabel { text: "nVision:" }

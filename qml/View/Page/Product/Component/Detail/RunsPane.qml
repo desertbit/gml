@@ -3,10 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventOverview as AEventOverview
-import Action.RunDetail as ARunDetail
-import Action.RunOverview as ARunOverview
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -37,7 +34,7 @@ VCC.IconPane {
             verticalPadding: 0
             horizontalPadding: Theme.spacingS
 
-            onClicked: ARunOverview.viewFromProductDetail(Store.state.productDetail.mid)
+            onClicked: A.ARunOverview.viewFromProductDetail(Store.state.productDetail.mid)
         }
     ]
 
@@ -63,8 +60,8 @@ VCC.IconPane {
             Layout.preferredHeight: _.listDelegateHeight
             Layout.alignment: Qt.AlignTop
 
-            onShowEvents: (productID, runID) => AEventOverview.viewFromProductDetail(productID, runID)
-            onTapped: id => ARunDetail.viewFromProductDetail(id)
+            onShowEvents: (productID, runID) => A.AEventOverview.viewFromProductDetail(productID, runID)
+            onTapped: id => A.ARunDetail.viewFromProductDetail(id)
         }
     }
 

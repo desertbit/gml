@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.SetupCameraMeasCalib as ASetupCameraMeasCalib
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -116,7 +115,7 @@ VCC.Page {
                     syncTo: Store.state.setupCameraMeasCalib.streamType
 
                     // Update state.
-                    onActivated: ASetupCameraMeasCalib.setStreamType(currentValue)
+                    onActivated: A.ASetupCameraMeasCalib.setStreamType(currentValue)
                 }
             }
 

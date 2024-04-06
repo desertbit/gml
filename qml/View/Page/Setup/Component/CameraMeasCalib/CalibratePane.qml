@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.SetupCameraMeasCalib as ASetupCameraMeasCalib
 
 import Store
 import Theme
@@ -32,7 +31,7 @@ VCC.IconPane {
             text: qsTr("Reset")
             enabled: _.camera.isMeasurementCalibrated
 
-            onClicked: ASetupCameraMeasCalib.reset(Store.state.setupCameraMeasCalib.cameraID)
+            onClicked: A.ASetupCameraMeasCalib.reset(Store.state.setupCameraMeasCalib.cameraID)
         }
 
         VCB.Button {
@@ -40,7 +39,7 @@ VCC.IconPane {
             highlighted: true
             enabled: _.camera.measCalibImagesCount > 0
 
-            onClicked: ASetupCameraMeasCalib.calibrate(Store.state.setupCameraMeasCalib.cameraID)
+            onClicked: A.ASetupCameraMeasCalib.calibrate(Store.state.setupCameraMeasCalib.cameraID)
         }
     }
 }

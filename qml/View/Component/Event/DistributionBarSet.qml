@@ -1,6 +1,6 @@
 import QtQuick
 import QtCharts
-
+import Action as A
 import Lib as L
 import Theme
 

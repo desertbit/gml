@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.RunCreate as ARunCreate
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -69,7 +68,7 @@ VCC.TickIconPane {
                 highlighted: name.text === ""
                 text: qsTr("Generate")
 
-                onClicked: ARunCreate.generateUniqueRunName().then((data) => name.text = data.name)
+                onClicked: A.ARunCreate.generateUniqueRunName().then((data) => name.text = data.name)
             }
         }
     }

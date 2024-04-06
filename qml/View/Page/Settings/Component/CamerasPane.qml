@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.CameraDetail as ACameraDetail
-import Action.Settings as ASettings
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -44,7 +42,7 @@ VCC.IconPane {
 
             Layout.alignment: Qt.AlignRight
 
-            onToggled: ASettings.setAutofocusBeforeStartRun(checked)
+            onToggled: A.ASettings.setAutofocusBeforeStartRun(checked)
         }
     }
 
@@ -69,7 +67,7 @@ VCC.IconPane {
                 _elem(L.Con.Flip.Both)
             ]
 
-            onActivated: ASettings.setCamerasFlipState(currentValue)
+            onActivated: A.ASettings.setCamerasFlipState(currentValue)
         }
     }
 
@@ -78,6 +76,6 @@ VCC.IconPane {
 
         Layout.alignment: Qt.AlignHCenter
 
-        onCameraClicked: deviceID => ACameraDetail.view(deviceID, L.Con.StreamType.Raw)
+        onCameraClicked: deviceID => A.ACameraDetail.view(deviceID, L.Con.StreamType.Raw)
     }
 }

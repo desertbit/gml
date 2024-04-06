@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Int as AInt
-
+import Action as A
 import Lib as L
 import Theme
 
@@ -44,6 +43,6 @@ RowLayout {
         flat: true
         padding: Theme.spacingXXS
 
-        onClicked: AInt.emitCancel(modelData.callID)
+        onClicked: A.AInternal.emitCancel(modelData.callID)
     }
 }

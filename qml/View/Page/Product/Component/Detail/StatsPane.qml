@@ -4,8 +4,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtCharts
 
-import Action.ProductDetail as AProductDetail
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -43,7 +42,7 @@ VCC.IconPane {
             ]
             currentIndex: 2
 
-            onActivated: AProductDetail.loadRecentRunsNumEvents(Store.state.productDetail.id, limit.currentValue)
+            onActivated: A.AProductDetail.loadRecentRunsNumEvents(Store.state.productDetail.id, limit.currentValue)
         }
     ]
 

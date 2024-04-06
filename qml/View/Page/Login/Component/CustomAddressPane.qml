@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.LoginConnect as ALoginConnect
 
 import Theme
 
@@ -49,7 +48,7 @@ VCC.IconPane {
         Layout.leftMargin: Theme.spacingM
 
         Keys.enabled: false
-        Keys.onReturnPressed: ALoginConnect.view(text)
+        Keys.onReturnPressed: A.ALoginConnect.view(text)
     }
 
     Button {
@@ -68,7 +67,7 @@ VCC.IconPane {
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: Theme.spacingM
 
-        onClicked: ALoginConnect.view(input.text)
+        onClicked: A.ALoginConnect.view(input.text)
     }
 
     Item { Layout.fillHeight: true } // Filler

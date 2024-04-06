@@ -3,11 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AppToast as AAppToast
-import Action.ProductDetail as AProductDetail
-import Action.Run as ARun
-import Action.RunExport as ARunExport
-
+import Action as A
 import Lib as L
 import Store
 import Store.Model as SM
@@ -125,7 +121,7 @@ VCC.Page {
 
             Layout.fillWidth: true
 
-            onClicked: ARunExport.view([root.model.id])
+            onClicked: A.A.ARunExport.view([root.model.id])
         }
 
         VCB.ActionButton {
@@ -139,11 +135,11 @@ VCC.Page {
 
             onClicked: {
                 if (Store.state.nline.state !== L.State.Ready) {
-                    AAppToast.showInfo(qsTr("The nLine device must be in the 'Ready' state in order to start the reclassification"))
+                    A.AAppToast.showInfo(qsTr("The nLine device must be in the 'Ready' state in order to start the reclassification"))
                     return
                 }
 
-                ARun.startReclassify(root.model.id)
+                A.ARun.startReclassify(root.model.id)
             }
         }
 
@@ -158,7 +154,7 @@ VCC.Page {
 
             Layout.fillWidth: true
 
-            onClicked: AProductDetail.view(root.model.productID)
+            onClicked: A.AProductDetail.view(root.model.productID)
         }
 
         Item { Layout.fillHeight: true } // Filler
@@ -170,7 +166,7 @@ VCC.Page {
 
             Layout.fillWidth: true
 
-            onClicked: ARun.remove([root.model.id])
+            onClicked: A.ARun.remove([root.model.id])
         }
     }
 }

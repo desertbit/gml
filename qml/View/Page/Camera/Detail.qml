@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Camera as ACamera
-import Action.CameraDetail as ACameraDetail
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -24,7 +22,7 @@ VCC.Page {
         State {
             name: "paused"
             when: camera.modelData.paused
-            PropertyChanges { target: pauseResume; fontIcon.name: "play"; onClicked: ACamera.resumeStream(Store.state.cameraDetail.deviceID) }
+            PropertyChanges { target: pauseResume; fontIcon.name: "play"; onClicked: A.ACamera.resumeStream(Store.state.cameraDetail.deviceID) }
         }
     ]
 
@@ -50,7 +48,7 @@ VCC.Page {
             syncTo: Store.state.cameraDetail.streamType
 
             // Update state.
-            onActivated: ACameraDetail.setStreamType(currentValue)
+            onActivated: A.A.ACameraDetail.setStreamType(currentValue)
         }
 
         Item { Layout.fillHeight: true }
@@ -68,7 +66,7 @@ VCC.Page {
                     name: "pause"
                 }
 
-                onClicked: ACamera.pauseStream(Store.state.cameraDetail.deviceID)
+                onClicked: A.ACamera.pauseStream(Store.state.cameraDetail.deviceID)
             }
         }
     }

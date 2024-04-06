@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Dev as ADev
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -18,8 +17,8 @@ VCD.TrDialog {
     closePolicy: Popup.CloseOnEscape
     header.visible: false // No title shown.
 
-    onAboutToShow: ADev.subscribeKunbusState()
-    onAboutToHide: ADev.unsubscribeKunbusState(Store.state.dev.kunbus.callID)
+    onAboutToShow: A.ADev.subscribeKunbusState()
+    onAboutToHide: A.ADev.unsubscribeKunbusState(Store.state.dev.kunbus.callID)
 
     component Group: ColumnLayout {
         default property alias children: groupContent.children

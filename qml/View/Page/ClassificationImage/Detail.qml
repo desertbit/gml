@@ -3,10 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AnomalyClass as AAnomalyClass
-import Action.ClassificationImage as AClassificationImage
-import Action.ClassificationImageDetail as AClassificationImageDetail
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -128,7 +125,7 @@ VCC.Page {
             VCB.Button {
                 text: qsTr("Anomaly classes")
 
-                onClicked: AAnomalyClass.view()
+                onClicked: A.AAnomalyClass.view()
             }
 
             // Zoom options.
@@ -182,7 +179,7 @@ VCC.Page {
                         name: "arrow-left"
                     }
 
-                    onClicked: AClassificationImageDetail.viewPrev()
+                    onClicked: A.A.AClassificationImageDetail.viewPrev()
                 }
 
                 VCB.RoundIconButton {
@@ -193,7 +190,7 @@ VCC.Page {
                         name: "arrow-right"
                     }
 
-                    onClicked: AClassificationImageDetail.viewNext()
+                    onClicked: A.A.AClassificationImageDetail.viewNext()
                 }
             }
 
@@ -204,7 +201,7 @@ VCC.Page {
                 }
                 flat: true
 
-                onClicked: AClassificationImage.remove(Store.state.classificationImageDetail.productID, [Store.state.classificationImageDetail.id])
+                onClicked: A.AClassificationImage.remove(Store.state.classificationImageDetail.productID, [Store.state.classificationImageDetail.id])
             }
         }
     }

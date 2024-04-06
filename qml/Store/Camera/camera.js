@@ -41,7 +41,7 @@ function calibrateFocus(state, data) {
 
     // Abort the current stream first.
     if (cam.calibratingFocus) {
-        A.AInt.emitCancel(cam.calibrateFocusCallID)
+        A.AInternal.emitCancel(cam.calibrateFocusCallID)
     }
 
     cam.calibratingFocus = true
@@ -69,7 +69,7 @@ function autofocus(state, data) {
 
     // Abort the current stream first.
     if (cam.autofocusing) {
-        A.AInt.emitCancel(cam.autofocusCallID)
+        A.AInternal.emitCancel(cam.autofocusCallID)
     }
 
     cam.autofocusing = true
@@ -97,7 +97,7 @@ function autofocusAll(state, data) {
     state.cameras.forEach(c => {
         // Abort the current stream first.
         if (c.autofocusing) {
-            A.AInt.emitCancel(c.autofocusCallID)
+            A.AInternal.emitCancel(c.autofocusCallID)
         }
 
         c.autofocusing = true

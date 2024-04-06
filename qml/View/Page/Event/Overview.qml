@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventDetail as AEventDetail
-import Action.EventOverview as AEventOverview
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -31,7 +29,7 @@ VCC.Page {
            (Store.state.eventOverview.skippedRunDetail ? `${Store.state.eventOverview.skippedRunName} - ` : "") +
            qsTr("Events")
 
-    Component.onCompleted: AEventOverview.setListLimit(list.numItems)
+    Component.onCompleted: A.AEventOverview.setListLimit(list.numItems)
 
     VCL.HeaderBar {
         id: header
@@ -187,8 +185,8 @@ VCC.Page {
                 remainingElements: Store.state.eventOverview.list.filteredCount
                 hideControls: viewSelect.currentIndex !== 0
 
-                onPrev: AEventOverview.loadListPrevPage()
-                onNext: AEventOverview.loadListNextPage()
+                onPrev: A.AEventOverview.loadListPrevPage()
+                onNext: A.AEventOverview.loadListNextPage()
             }
         }
     }
@@ -208,7 +206,7 @@ VCC.Page {
         List {
             id: list
 
-            onEventTapped: id => AEventDetail.viewFromOverview(
+            onEventTapped: id => A.AEventDetail.viewFromOverview(
                 id,
                 Store.state.eventOverview.runID,
                 Store.state.eventOverview.productID,

@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.ProductDetail as AProductDetail
 
 import Store
 import Theme
@@ -90,7 +89,7 @@ VCC.Pane {
                 Layout.maximumHeight: _.maxCellHeight
                 Layout.alignment: Qt.AlignTop
 
-                onInfo: id => AProductDetail.view(id)
+                onInfo: id => A.AProductDetail.view(id)
                 onTapped: id => root.selected(id)
             }
         }

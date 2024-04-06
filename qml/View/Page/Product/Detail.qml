@@ -3,14 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.CameraFocus as ACameraFocus
-import Action.ClassificationImageOverview as AClassificationImageOverview
-import Action.Product as AProduct
-import Action.ProductDetail as AProductDetail
-import Action.ProductRetrain as AProductRetrain
-import Action.ProductTrainImages as AProductTrainImages
-import Action.RunCreate as ARunCreate
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -108,7 +101,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: AProductDetail.edit()
+            onClicked: A.A.AProductDetail.edit()
         }
 
         VCB.ActionButton {
@@ -119,7 +112,7 @@ VCC.Page {
             fontColor: updateAvailable ? Theme.colorOnAccent : Theme.colorForeground
             backgroundColor: updateAvailable ? Theme.colorAccent : Theme.colorBackground
 
-            onClicked: AProductRetrain.view(Store.state.productDetail.id)
+            onClicked: A.A.AProductRetrain.view(Store.state.productDetail.id)
         }
 
         VCB.ActionButton {
@@ -129,7 +122,7 @@ VCC.Page {
             backgroundColor: Theme.colorAccent
             enabled: Store.state.productDetail.hasRunWithDirtyClassification
 
-            onClicked: AProductDetail.startReclassifyAllRuns(Store.state.productDetail.id)
+            onClicked: A.A.AProductDetail.startReclassifyAllRuns(Store.state.productDetail.id)
         }
 
         VCB.ActionButton {
@@ -138,7 +131,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: ARunCreate.viewFromProductDetail(Store.state.productDetail.id)
+            onClicked: A.ARunCreate.viewFromProductDetail(Store.state.productDetail.id)
         }
 
         VCB.ActionButton {
@@ -148,7 +141,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: AProductTrainImages.view(Store.state.productDetail.id)
+            onClicked: A.A.AProductTrainImages.view(Store.state.productDetail.id)
         }
 
         VCB.ActionButton {
@@ -158,7 +151,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: AClassificationImageOverview.view(Store.state.productDetail.id)
+            onClicked: A.AClassificationImageOverview.view(Store.state.productDetail.id)
         }
 
         VCB.ActionButton {
@@ -168,7 +161,7 @@ VCC.Page {
             backgroundColor: Theme.colorBackground
             visible: Store.state.nline.hasMotorizedFocus
 
-            onClicked: ACameraFocus.viewFromProductDetail(Store.state.productDetail.id)
+            onClicked: A.ACameraFocus.viewFromProductDetail(Store.state.productDetail.id)
         }
 
         Item { Layout.fillHeight: true } // Filler
@@ -178,7 +171,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: AProduct.remove(Store.state.productDetail.id)
+            onClicked: A.AProduct.remove(Store.state.productDetail.id)
         }
     }
 }

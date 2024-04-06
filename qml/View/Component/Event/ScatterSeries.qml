@@ -1,5 +1,5 @@
 import QtCharts as QC
-
+import Action as A
 import Lib as L
 
 QC.ScatterSeries {

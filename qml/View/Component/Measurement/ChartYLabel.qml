@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtCharts
-
+import Action as A
 import Lib as L
 
 // A label floating at the label position of the y axis, showing the

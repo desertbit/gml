@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.SetupCameraMeasCalibGallery as ASetupCameraMeasCalibGallery
 
 import Store
 import Theme
@@ -151,7 +150,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: ASetupCameraMeasCalibGallery.remove(
+            onClicked: A.ASetupCameraMeasCalibGallery.remove(
                 Store.state.setupCameraMeasCalibGallery.cameraID, 
                 root.selector.selectedIDs()
             ).then(() => {

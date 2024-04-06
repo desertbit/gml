@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.SetupCameraMeasCalibGallery as ASetupCameraMeasCalibGallery
 
 import Store
 import Theme
@@ -39,7 +38,7 @@ VCC.IconPane {
         VCB.Button {
             text: qsTr("View")
 
-            onClicked: ASetupCameraMeasCalibGallery.view(Store.state.setupCameraMeasCalib.cameraID)
+            onClicked: A.ASetupCameraMeasCalibGallery.view(Store.state.setupCameraMeasCalib.cameraID)
         }
     }
 }

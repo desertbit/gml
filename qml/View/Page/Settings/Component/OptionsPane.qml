@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
 
 import Store
 import Theme
@@ -23,7 +22,7 @@ VCC.IconPane {
         id: _
 
         function update() {
-            AApp.setOptions(debugMode.checked)
+            A.AApp.setOptions(debugMode.checked)
         }
     }
 

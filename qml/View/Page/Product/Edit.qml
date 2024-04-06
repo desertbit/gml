@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.ProductDetail as AProductDetail
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -91,7 +90,7 @@ VCC.Page {
 
             // Copy the product as we do not want to send our local pointer through the dispatcher.
             // The data might be modified in any way by e.g. middleware.
-            onClicked: AProductDetail.update(L.Obj.copy(_.product, {}))
+            onClicked: A.AProductDetail.update(L.Obj.copy(_.product, {}))
         }
 
         RowLayout {

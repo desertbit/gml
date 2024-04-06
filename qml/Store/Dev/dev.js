@@ -15,7 +15,7 @@
 function subscribeKunbusState(state, data) {
     // Abort the current stream first.
     if (state.dev.kunbus.callID > 0) {
-        A.AInt.emitCancel(state.dev.kunbus.callID)
+        A.AInternal.emitCancel(state.dev.kunbus.callID)
     }
 
     state.dev.kunbus.callID = data.callID

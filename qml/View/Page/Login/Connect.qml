@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.Navigation as ANavigation
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -58,7 +57,7 @@ VCC.Page {
         // The user can then go back to the Discovery page.
         visible: !Store.state.app.opts.withAutoLogin
 
-        onClicked: ANavigation.popPage()
+        onClicked: A.ANavigation.popPage()
     }
 
     ColumnLayout {

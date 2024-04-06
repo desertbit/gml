@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Camera as ACamera
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -34,7 +33,7 @@ VCC.Pane {
             PropertyChanges {
                 target: autofocus
                 text: qsTr("Cancel")
-                onClicked: ACamera.cancelAutofocus(root.camera.autofocusCallID)
+                onClicked: A.ACamera.cancelAutofocus(root.camera.autofocusCallID)
                 highlighted: false
                 enabled: true
             }
@@ -64,7 +63,7 @@ VCC.Pane {
             highlighted: true
             state: "medium"
 
-            onClicked: ACamera.autofocus(root.camera.deviceID)
+            onClicked: A.ACamera.autofocus(root.camera.deviceID)
         }
 
         VCB.RoundIconButton {
@@ -77,7 +76,7 @@ VCC.Pane {
             }
             enabled: root.camera.focus.stepPos > 0
 
-            onClicked: ACamera.setFocusStepPos(root.camera.deviceID, Math.max(root.camera.focus.stepPos - focusShift.step, 0))
+            onClicked: A.ACamera.setFocusStepPos(root.camera.deviceID, Math.max(root.camera.focus.stepPos - focusShift.step, 0))
         }
 
         Column {
@@ -110,7 +109,7 @@ VCC.Pane {
             }
             enabled: root.camera.focus.stepPos < root.camera.focus.maxSteps
 
-            onClicked: ACamera.setFocusStepPos(root.camera.deviceID, Math.min(root.camera.focus.stepPos + focusShift.step, root.camera.focus.maxSteps))
+            onClicked: A.ACamera.setFocusStepPos(root.camera.deviceID, Math.min(root.camera.focus.stepPos + focusShift.step, root.camera.focus.maxSteps))
         }
 
         VCB.Button {
@@ -118,7 +117,7 @@ VCC.Pane {
 
             text: qsTr("Calibrate focus")
 
-            onClicked: ACamera.calibrateFocus(root.camera.deviceID)
+            onClicked: A.ACamera.calibrateFocus(root.camera.deviceID)
         }
     }
 }

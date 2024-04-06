@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.CameraFocus as ACameraFocus
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -72,7 +71,7 @@ VCC.Page {
                         Layout.fillHeight: true
                         Layout.maximumWidth: 260
 
-                        onClicked: ACameraFocus.selectCamera(modelData.deviceID)
+                        onClicked: A.ACameraFocus.selectCamera(modelData.deviceID)
 
                         Rectangle {
                             anchors {
@@ -105,7 +104,7 @@ VCC.Page {
 
                 Layout.alignment: Qt.AlignBottom
 
-                onClicked: ACameraFocus.saveToProduct(Store.state.cameraFocus.productID)
+                onClicked: A.ACameraFocus.saveToProduct(Store.state.cameraFocus.productID)
             }
         }
     }

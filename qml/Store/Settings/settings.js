@@ -75,7 +75,7 @@ function loadOk(state, data) {
 function subscribeNetworkInterfaces(state, data) {
     // Abort the current stream first.
     if (state.settings.networkInterfacesCallID > 0) {
-        A.AInt.emitCancel(state.settings.networkInterfacesCallID)
+        A.AInternal.emitCancel(state.settings.networkInterfacesCallID)
     }
 
     state.settings.networkInterfacesCallID = data.callID

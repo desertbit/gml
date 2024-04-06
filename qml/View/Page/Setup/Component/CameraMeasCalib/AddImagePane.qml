@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.SetupCameraMeasCalib as ASetupCameraMeasCalib
 
 import Store
 import Theme
@@ -79,7 +78,7 @@ VCC.IconPane {
 
         Layout.alignment: Qt.AlignHCenter
 
-        onClicked: ASetupCameraMeasCalib.previewCapture(Store.state.setupCameraMeasCalib.cameraID, parseFloat(diameter.text), autofocus.checked)
+        onClicked: A.ASetupCameraMeasCalib.previewCapture(Store.state.setupCameraMeasCalib.cameraID, parseFloat(diameter.text), autofocus.checked)
     }
 
     Row {
@@ -92,7 +91,7 @@ VCC.IconPane {
             text: qsTr("Discard")
             state: "medium"
 
-            onClicked: ASetupCameraMeasCalib.discardCapture()
+            onClicked: A.ASetupCameraMeasCalib.discardCapture()
         }
 
         VCB.Button {
@@ -100,7 +99,7 @@ VCC.IconPane {
             highlighted: true
             state: "medium"
 
-            onClicked: ASetupCameraMeasCalib.addCapture(
+            onClicked: A.ASetupCameraMeasCalib.addCapture(
                 Store.state.setupCameraMeasCalib.cameraID,
                 Store.state.setupCameraMeasCalib.preview.diameter,
                 Store.state.setupCameraMeasCalib.preview.stepPos,

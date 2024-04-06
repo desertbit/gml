@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.LoginConnect as ALoginConnect
 
 import Theme
 
@@ -78,7 +77,7 @@ ListView {
         height: 40
         highlighted: ListView.isCurrentItem
 
-        onClicked: ALoginConnect.view(modelData.addr)
+        onClicked: A.ALoginConnect.view(modelData.addr)
 
         Keys.enabled: true
         Keys.onReturnPressed: clicked()

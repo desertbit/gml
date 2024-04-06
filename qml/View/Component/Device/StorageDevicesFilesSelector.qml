@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Global as AGlobal
 
 import Store
 import Theme
@@ -29,6 +28,6 @@ Row {
         fontIcon.size: Theme.iconSizeS
         flat: true
 
-        onTriggered: AGlobal.loadStorageDevicesFiles()
+        onTriggered: A.AGlobal.loadStorageDevicesFiles()
     }
 }

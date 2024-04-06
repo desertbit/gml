@@ -63,7 +63,7 @@ add_subdirectory(cpp/backend)
 # Later we need to link against the static plugins of each module.
 # The name of a plugin is "<qml-module-uri>plugin" (e.g. qml/View/Component/Text -> ViewComponentTextplugin).
 file(GLOB QML_MODULES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} LIST_DIRECTORIES true 
-    "qml/Action/*"
+    "qml/Action"
     "qml/Dispatcher"
     "qml/Lib"
     "qml/Middleware"

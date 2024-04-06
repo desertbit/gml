@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Setup as ASetup
 
 import Store
 import Theme
@@ -88,7 +87,7 @@ VCC.Page {
             fontColor: Theme.colorForeground
             backgroundColor: Theme.colorBackground
 
-            onClicked: ASetup.viewFromSettings()
+            onClicked: A.ASetup.viewFromSettings()
         }
 
         Item { Layout.fillHeight: true } // Filler

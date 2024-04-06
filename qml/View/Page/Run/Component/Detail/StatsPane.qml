@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventOverview as AEventOverview
-
+import Action as A
 import Lib as L
 import Store.Model as SM
 import Theme
@@ -47,7 +46,7 @@ VCC.IconPane {
         VCB.Button {
             text: qsTr("View Details")
 
-            onClicked: AEventOverview.viewFromRunDetail(root.model.productID, root.model.id, viewSelection.currentValue)
+            onClicked: A.AEventOverview.viewFromRunDetail(root.model.productID, root.model.id, viewSelection.currentValue)
         }
     ]
 

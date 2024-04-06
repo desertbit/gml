@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Global as AGlobal
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -59,6 +58,6 @@ Rectangle {
     }
 
     VCH.Tap {
-        onTapped: AGlobal.downloadNVisionAndRestart()
+        onTapped: A.AGlobal.downloadNVisionAndRestart()
     }
 }

@@ -3,10 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.CameraDetail as ACameraDetail
-import Action.CameraFocus as ACameraFocus
-import Action.ProductCreate as AProductCreate
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -48,7 +45,7 @@ VCC.Page {
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
 
-        onAccepted: AProductCreate.start(
+        onAccepted: A.AProductCreate.start(
             name.text,
             description.text,
             _.sensitivityPreset,
@@ -84,7 +81,7 @@ VCC.Page {
 
         // Camera column.
         VCCam.Cameras {
-            onCameraClicked: deviceID => ACameraDetail.view(deviceID)
+            onCameraClicked: deviceID => A.ACameraDetail.view(deviceID)
         }
 
         // Product info.
@@ -204,7 +201,7 @@ VCC.Page {
 
                     Layout.alignment: Qt.AlignRight
 
-                    onClicked: ACameraFocus.view()
+                    onClicked: A.ACameraFocus.view()
                 }
             }
 

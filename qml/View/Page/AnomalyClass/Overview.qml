@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AnomalyClass as AAnomalyClass
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -94,7 +93,7 @@ VCC.PageSelectionLayout {
             Layout.fillWidth: true
             Layout.minimumWidth: 150
 
-            onClicked: AAnomalyClass.remove(root.selector.selectedIDs()).then(root.selector.deselectAll)
+            onClicked: A.AAnomalyClass.remove(root.selector.selectedIDs()).then(root.selector.deselectAll)
         }
     ]
 }

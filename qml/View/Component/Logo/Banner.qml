@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import QtGraphicalEffects
+import Qt5Compat.GraphicalEffects
 
 import Theme
 

@@ -3,9 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Product as AProduct
-import Action.ProductDetail as AProductDetail
-import Action.RunOverview as ARunOverview
 
 import Store
 import Theme
@@ -69,9 +66,9 @@ VCC.Page {
                 Layout.maximumHeight: _.listDelegateHeight
                 Layout.alignment: Qt.AlignTop
 
-                onDeleted: id => AProduct.remove(id)
-                onSelectedRuns: id => ARunOverview.viewFromProductOverview(id)
-                onTapped: id => AProductDetail.view(id)
+                onDeleted: id => A.AProduct.remove(id)
+                onSelectedRuns: id => A.ARunOverview.viewFromProductOverview(id)
+                onTapped: id => A.A.AProductDetail.view(id)
             }
         }
 

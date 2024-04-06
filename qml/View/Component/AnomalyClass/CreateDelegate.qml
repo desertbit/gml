@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AnomalyClass as AAnomalyClass
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -34,7 +33,7 @@ Rectangle {
             PropertyChanges { target: createIcon; visible: false }
             PropertyChanges { target: placeholder; visible: false }
             // Special case -1 for CreateDelegate.
-            StateChangeScript { script: AAnomalyClass.selectRandomColorForClass(-1) }
+            StateChangeScript { script: A.AAnomalyClass.selectRandomColorForClass(-1) }
         }
     ]
 
@@ -47,7 +46,7 @@ Rectangle {
         function reset() {
             root.state = ""
             name.text = ""
-            AAnomalyClass.deselectColorForClass(-1)
+            A.AAnomalyClass.deselectColorForClass(-1)
         }
     }
 
@@ -97,7 +96,7 @@ Rectangle {
                 Material.background: Qt.lighter(_.backgroundColor, 1.15)
 
                 // Special case -1 for CreateDelegate.
-                onClicked: AAnomalyClass.selectColorForClass(-1)
+                onClicked: A.AAnomalyClass.selectColorForClass(-1)
             }
         }
 
@@ -159,7 +158,7 @@ Rectangle {
                 Material.background: Theme.success
 
                 onClicked: {
-                    AAnomalyClass.add(name.text, L.Color.qmlColorToJsRGB(_.backgroundColor))
+                    A.AAnomalyClass.add(name.text, L.Color.qmlColorToJsRGB(_.backgroundColor))
                     _.reset()
                 }
             }

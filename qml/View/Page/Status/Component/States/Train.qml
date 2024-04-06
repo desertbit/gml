@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.ProductCreate as AProductCreate
-import Action.ProductRetrain as AProductRetrain
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -30,9 +28,9 @@ Base {
 
             onClicked: {
                 if (Store.state.nline.stateTrain.retrain) {
-                    AProductRetrain.stop()
+                    A.AProductRetrain.stop()
                 } else {
-                    AProductCreate.stop()
+                    A.AProductCreate.stop()
                 }
             }
         }

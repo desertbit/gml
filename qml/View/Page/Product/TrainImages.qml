@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.ProductTrainImages as AProductTrainImages
 
 import Store
 import Theme
@@ -152,7 +151,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: AProductTrainImages.remove(Store.state.productTrainImages.productID, root.selector.selectedIDs()).then(() => {
+            onClicked: A.AProductTrainImages.remove(Store.state.productTrainImages.productID, root.selector.selectedIDs()).then(() => {
                 // Reset local state to first page.
                 pageCtrl.page = 1
                 root.selector.deselectAll()

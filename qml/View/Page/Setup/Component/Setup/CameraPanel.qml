@@ -3,10 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Camera as ACamera
-import Action.Setup as ASetup
-import Action.SetupCameraMeasCalib as ASetupCameraMeasCalib
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -34,7 +31,7 @@ VCC.Pane {
         State {
             name: "motorTestDrive"
             when: Store.state.setup.motorTestDrive.active && Store.state.setup.motorTestDrive.cameraID === root.deviceID
-            PropertyChanges { target: testDrive; text: qsTr("Cancel"); onClicked: ASetup.cancelCameraMotorTestDrive(Store.state.setup.motorTestDrive.callID) }
+            PropertyChanges { target: testDrive; text: qsTr("Cancel"); onClicked: A.ASetup.cancelCameraMotorTestDrive(Store.state.setup.motorTestDrive.callID) }
             PropertyChanges { target: assignMotor; enabled: false }
             PropertyChanges { target: calibrateFocus; enabled: false }
             PropertyChanges { target: calibrate; enabled: false }
@@ -42,7 +39,7 @@ VCC.Pane {
         State {
             name: "calibrateFocus"
             when: _.camera.calibratingFocus
-            PropertyChanges { target: calibrateFocus; text: qsTr("Cancel"); onClicked: ACamera.cancelCalibrateFocus(_.camera.calibrateFocusCallID) }
+            PropertyChanges { target: calibrateFocus; text: qsTr("Cancel"); onClicked: A.ACamera.cancelCalibrateFocus(_.camera.calibrateFocusCallID) }
             PropertyChanges { target: assignMotor; enabled: false }
             PropertyChanges { target: testDrive; enabled: false }
             PropertyChanges { target: calibrate; enabled: false }
@@ -96,7 +93,7 @@ VCC.Pane {
                         _elem(L.Con.CamPosition.Back),
                     ]
 
-                    onActivated: ASetup.cameraAssignPosition(root.deviceID, currentValue)
+                    onActivated: A.ASetup.cameraAssignPosition(root.deviceID, currentValue)
                     
                     Component.onCompleted: setCurrentValue(root.modelData.position)
                 }
@@ -137,7 +134,7 @@ VCC.Pane {
                         enabled: motorSelect.currentIndex !== -1 && motorSelect.currentValue !== root.modelData.motorID
                         highlighted: true
 
-                        onClicked: ASetup.cameraAssignMotor(root.deviceID, motorSelect.currentValue)
+                        onClicked: A.ASetup.cameraAssignMotor(root.deviceID, motorSelect.currentValue)
                     }
 
                     VCB.Button {
@@ -146,7 +143,7 @@ VCC.Pane {
                         text: qsTr("Calibrate Focus")
                         enabled: root.modelData.motorID !== "" && !assignMotor.enabled
 
-                        onClicked: ACamera.calibrateFocus(root.deviceID)
+                        onClicked: A.ACamera.calibrateFocus(root.deviceID)
                     }
 
                     VCB.Button {
@@ -155,7 +152,7 @@ VCC.Pane {
                         text: qsTr("Test drive")
                         enabled: root.modelData.motorID !== "" && !assignMotor.enabled
 
-                        onClicked: ASetup.cameraMotorTestDrive(root.deviceID)
+                        onClicked: A.ASetup.cameraMotorTestDrive(root.deviceID)
                     }
                 }
             }
@@ -198,7 +195,7 @@ VCC.Pane {
 
                     Layout.leftMargin: Theme.spacingS
 
-                    onClicked: ASetupCameraMeasCalib.view(root.deviceID)
+                    onClicked: A.A.ASetupCameraMeasCalib.view(root.deviceID)
                 }
             }
 

@@ -138,9 +138,9 @@ Base {
 
         //: A location on a disk drive.
         title: qsTr("Please choose a location to save the file to.")
-        folder: shortcuts.home
+        options: FileDialog.ReadOnly
 
-        onAccepted: cb(fileDialog.fileUrls)
+        onAccepted: cb(fileDialog.selectedFiles)
         onRejected: root.consumed()
     }
 
@@ -169,7 +169,7 @@ Base {
         standardButtons: callID > 0 ? Dialog.Cancel : 0
 
         // Abort the operation.
-        onRejected: A.AInt.emitCancel(callID)
+        onRejected: A.AInternal.emitCancel(callID)
         onClosed: callID = 0
     }
 

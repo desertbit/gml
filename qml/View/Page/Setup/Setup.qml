@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AppToast as AAppToast
-import Action.Setup as ASetup
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -33,7 +31,7 @@ VCC.Page {
         title: qsTr("Please choose a file containing the import data.")
         modal: true
 
-        onSelected: (storageDeviceFileName, storageDeviceID) => ASetup.importDataFromStorage(storageDeviceFileName, storageDeviceID)
+        onSelected: (storageDeviceFileName, storageDeviceID) => A.ASetup.importDataFromStorage(storageDeviceFileName, storageDeviceID)
     }
 
     // Unfortunately we currently can not move this dialog into the App middleware, since it triggers
@@ -47,11 +45,11 @@ VCC.Page {
 
         onSelected: storageDeviceID => {
             if (!storageDeviceSerialNum.acceptableInput) {
-                AAppToast.showError(qsTr("Invalid measuring head serial number."))
+                A.AAppToast.showError(qsTr("Invalid measuring head serial number."))
                 return
             }
 
-            ASetup.exportDataToStorage(storageDeviceID, storageDeviceSerialNum.text)
+            A.ASetup.exportDataToStorage(storageDeviceID, storageDeviceSerialNum.text)
         }
 
         VCF.LabeledColumnLayout {
@@ -106,7 +104,7 @@ VCC.Page {
                     if (Store.state.app.opts.withStorageDevices) {
                         storageDevicesFilesDialog.open()
                     } else {
-                        ASetup.importData()
+                        A.ASetup.importData()
                     }
                 }
             }
@@ -119,7 +117,7 @@ VCC.Page {
                     if (Store.state.app.opts.withStorageDevices) {
                         storageDeviceDialog.open()
                     } else {
-                        ASetup.exportData()
+                        A.ASetup.exportData()
                     }
                 }
             }

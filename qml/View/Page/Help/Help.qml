@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.HelpNVision as AHelpNVision
-import Action.HelpResource as AHelpResource
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -55,7 +53,7 @@ VCC.Page {
         spacing: Theme.spacingS
 
         ManualPane {
-            onSaveToStorage: dialog.show(storageDeviceID => AHelpResource.saveToStorage(L.Con.Resource.Manual, Store.state.locale, storageDeviceID))
+            onSaveToStorage: dialog.show(storageDeviceID => A.AHelpResource.saveToStorage(L.Con.Resource.Manual, Store.state.locale, storageDeviceID))
         }
 
         QuickStartPane {
@@ -64,7 +62,7 @@ VCC.Page {
         }
 
         NVisionPane {
-            onSaveToStorage: os => dialog.show(storageDeviceID => AHelpNVision.saveToStorage(os, storageDeviceID))
+            onSaveToStorage: os => dialog.show(storageDeviceID => A.AHelpNVision.saveToStorage(os, storageDeviceID))
         }
     }
 }

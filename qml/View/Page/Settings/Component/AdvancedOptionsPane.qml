@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
 
 import Store
 import Theme
@@ -22,14 +21,14 @@ VCC.IconPane {
     titleRightContent: VCB.Button {
         text: qsTr("Hide")
 
-        onClicked: AApp.hideAdvancedOptions()
+        onClicked: A.AApp.hideAdvancedOptions()
     }
 
     QtObject {
         id: _
 
         function update() {
-            AApp.setAdvancedOptions(fullscreenMode.checked, withVirtualKeyboard.checked, withStorageDevices.checked, devMode.checked)
+            A.AApp.setAdvancedOptions(fullscreenMode.checked, withVirtualKeyboard.checked, withStorageDevices.checked, devMode.checked)
         }
     }
 

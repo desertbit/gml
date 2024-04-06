@@ -16,7 +16,7 @@ function view(state, data) {
 function start(state, data) {
     // Abort the current stream first.
     if (state.loginConnect.callID > 0) {
-        A.AInt.emitCancel(state.loginConnect.callID)
+        A.AInternal.emitCancel(state.loginConnect.callID)
     }
     state.loginConnect.callID = data.callID
 }

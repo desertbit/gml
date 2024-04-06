@@ -64,7 +64,7 @@ Base {
             // Append the callID to the api data and emit the update signal.
             const data = ret !== undefined ? JSON.parse(ret) : {}
             data.callID = callID
-            A.AInt.emitUpdate(type, data)
+            A.AInternal.emitUpdate(type, data)
         })
 
         // Connect to the requestDone signal.
@@ -84,14 +84,14 @@ Base {
             // Emit a toast error for failed requests.
             if (data.api.failed) {
                 if (L.Con.isKnownErr(err)) {
-                    A.AAppToast.showError(L.Tr.err(err))
+                    A.AApp.Toast.showError(L.Tr.err(err))
                 } else {
-                    A.AAppToast.showError(`${type}: ${err}`)
+                    A.AApp.Toast.showError(`${type}: ${err}`)
                 }
             }
 
             // Emit the 'done' variant of this action.
-            A.AInt.emitDone(type, data)
+            A.AInternal.emitDone(type, data)
         })
     }
 

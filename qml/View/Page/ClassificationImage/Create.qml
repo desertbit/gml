@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AnomalyClass as AAnomalyClass
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -110,7 +109,7 @@ VCC.Page {
                 VCB.Button {
                     text: qsTr("Anomaly classes")
 
-                    onClicked: AAnomalyClass.view()
+                    onClicked: A.AAnomalyClass.view()
                 }
 
                 VCB.Button {

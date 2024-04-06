@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
-import Action.Navigation as ANavigation
-
+import Action as A
 import Lib as L
 import Middleware as Middleware
 import Store
@@ -38,9 +36,9 @@ ApplicationWindow {
         // Initialize middlewares.
         Middleware.Init.init(root, stack)
         // Request the runtime options.
-        AApp.loadRuntimeOptions()
+        A.AApp.loadRuntimeOptions()
         // Load the settings.
-        AApp.loadSettings()
+        A.AApp.loadSettings()
     }
 
     header: VCT.ToolBar {
@@ -58,10 +56,10 @@ ApplicationWindow {
                 text: stack.get(index + Store.state.app.breadcrumbsStartIndex).title
 
                 // Pop all pages above the selected.
-                onSelected: ANavigation.popPage(breadcrumbs.model - 1 - index)
+                onSelected: A.ANavigation.popPage(breadcrumbs.model - 1 - index)
             }
 
-            onBackPressed: ANavigation.popPage()
+            onBackPressed: A.ANavigation.popPage()
         }
     }
 

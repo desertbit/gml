@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Settings as ASettings
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -44,7 +43,7 @@ VCC.IconPane {
             highlighted: true
             enabled: root.hasUnsavedChanges
 
-            onClicked: ASettings.updateDefaultProductSettings(ctrl.preset, ctrl.sensitivity, ctrl.minDiameter)
+            onClicked: A.ASettings.updateDefaultProductSettings(ctrl.preset, ctrl.sensitivity, ctrl.minDiameter)
         }
     }
 

@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Product as AProduct
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -63,7 +62,7 @@ VCL.HeaderBar {
         /*VCB.RefreshButton {
             flat: true
 
-            onTriggered: AProduct.loadProducts()
+            onTriggered: A.AProduct.loadProducts()
         }*/
     }
 }

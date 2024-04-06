@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.State as AState
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -24,7 +23,7 @@ Base {
             highlighted: true
             state: "medium"
 
-            onClicked: AState.resetError()
+            onClicked: A.AState.resetError()
         }
     ]
 

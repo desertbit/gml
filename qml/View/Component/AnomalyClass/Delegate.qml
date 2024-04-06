@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AnomalyClass as AAnomalyClass
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -164,7 +163,7 @@ Item {
 
                 Material.background: Qt.lighter(_.backgroundColor, 1.15)
 
-                onClicked: AAnomalyClass.selectColorForClass(root.modelData.id)
+                onClicked: A.AAnomalyClass.selectColorForClass(root.modelData.id)
             }
         }
 
@@ -214,7 +213,7 @@ Item {
                 Material.background: Theme.success
 
                 onClicked: {
-                    AAnomalyClass.edit(root.modelData.id, edit.text, L.Color.qmlColorToJsRGB(_.backgroundColor))
+                    A.AAnomalyClass.edit(root.modelData.id, edit.text, L.Color.qmlColorToJsRGB(_.backgroundColor))
                     root.state = ""
                 }
             }
@@ -229,7 +228,7 @@ Item {
                 Material.background: Theme.error
 
                 onClicked: {
-                    AAnomalyClass.deselectColorForClass(root.modelData.id)
+                    A.AAnomalyClass.deselectColorForClass(root.modelData.id)
                     root.state = ""
                 }
             }

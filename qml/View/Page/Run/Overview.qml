@@ -3,12 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventOverview as AEventOverview
-import Action.Run as ARun
-import Action.RunDetail as ARunDetail
-import Action.RunExport as ARunExport
-import Action.RunOverview as ARunOverview
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -26,7 +21,7 @@ VCC.PageSelectionLayout {
     title: (Store.state.runOverview.skippedProductDetail ? `${Store.state.runOverview.skippedProductName} - ` : "") + qsTr("Batches")
     nonAvailableMessage: Store.state.runOverview.page.empty() ? "- " + qsTr("No batch available") + " -" : ""
 
-    Component.onCompleted: ARunOverview.setLimit(_.numItems)
+    Component.onCompleted: A.A.ARunOverview.setLimit(_.numItems)
 
     QtObject {
         id: _
@@ -108,7 +103,7 @@ VCC.PageSelectionLayout {
 
                 onClicked: {
                     pageCtrl.page = 1
-                    ARunOverview.setFilter(name.text, after.ts, before.ts)
+                    A.A.ARunOverview.setFilter(name.text, after.ts, before.ts)
                 }
             }
 
@@ -122,7 +117,7 @@ VCC.PageSelectionLayout {
                     name.text = ""
                     after.ts = L.LDate.Invalid
                     before.ts = L.LDate.Invalid
-                    ARunOverview.setFilter("", "", "")
+                    A.A.ARunOverview.setFilter("", "", "")
                 }
             }
 
@@ -135,8 +130,8 @@ VCC.PageSelectionLayout {
                 totalElements: Store.state.runOverview.totalCount
                 remainingElements: Store.state.runOverview.filteredCount
 
-                onPrev: ARunOverview.loadPrevPage()
-                onNext: ARunOverview.loadNextPage()
+                onPrev: A.A.ARunOverview.loadPrevPage()
+                onNext: A.A.ARunOverview.loadNextPage()
             }
         }
     }
@@ -163,10 +158,10 @@ VCC.PageSelectionLayout {
                 Layout.maximumHeight: _.listDelegateHeight
                 Layout.alignment: Qt.AlignTop
 
-                onShowEvents: (productID, runID) => AEventOverview.viewFromRunOverview(productID, runID)
+                onShowEvents: (productID, runID) => A.AEventOverview.viewFromRunOverview(productID, runID)
                 onSelected: id => root.selector.select(id)
                 onDeselected: id => root.selector.deselect(id)
-                onTapped: id => ARunDetail.viewFromRunOverview(id)
+                onTapped: id => A.A.ARunDetail.viewFromRunOverview(id)
             }
         }
 
@@ -183,7 +178,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: ARunExport.view(root.selector.selectedIDs())
+            onClicked: A.A.ARunExport.view(root.selector.selectedIDs())
         },
 
         Item { Layout.fillHeight: true }, // Filler
@@ -195,7 +190,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: ARun.remove(root.selector.selectedIDs()).then(() => {
+            onClicked: A.ARun.remove(root.selector.selectedIDs()).then(() => {
                 // Reset local state to first page.
                 pageCtrl.page = 1
                 root.selector.deselectAll()

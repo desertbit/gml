@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtGraphicalEffects // For DropShadow
+import Qt5Compat.GraphicalEffects // For DropShadow
 
 import Theme
 import View.Component.Button as VCB

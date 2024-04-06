@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.PDFPreview as APDFPreview
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -29,7 +28,7 @@ VCC.IconPane {
             horizontalPadding: Theme.spacingL
             enabled: _.runSelected
 
-            onClicked: APDFPreview.viewReport(_.selectedRunID)
+            onClicked: A.APDFPreview.viewReport(_.selectedRunID)
         }
     ]
 

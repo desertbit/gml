@@ -5,8 +5,7 @@ import QtQuick.Layouts
 
 import Gml
 
-import Action.Camera as ACamera
-
+import Action as A
 import Lib as L
 import Theme
 
@@ -44,7 +43,7 @@ Rectangle {
         State {
             name: "paused"
             when: root.modelData.paused
-            PropertyChanges { target: pause; fontIcon.name: "play"; onClicked: ACamera.resumeStream(root.modelData.deviceID) }
+            PropertyChanges { target: pause; fontIcon.name: "play"; onClicked: A.ACamera.resumeStream(root.modelData.deviceID) }
         },
         State {
             name: "autofocus"
@@ -119,7 +118,7 @@ Rectangle {
             }
             visible: false
 
-            onClicked: ACamera.pauseStream(root.modelData.deviceID)
+            onClicked: A.ACamera.pauseStream(root.modelData.deviceID)
         }
 
         // Overlay tag to show busy operation.

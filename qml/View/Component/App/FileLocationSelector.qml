@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
 
 import Store
 import Theme
@@ -25,7 +24,7 @@ Column {
 
         state: "medium"
 
-        onClicked: AApp.selectFileLocation()
+        onClicked: A.AApp.selectFileLocation()
     }
 
     Text {

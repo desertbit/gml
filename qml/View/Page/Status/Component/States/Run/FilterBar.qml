@@ -3,9 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventOverview as AEventOverview
-import Action.RunActive as ARunActive
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -26,7 +24,7 @@ VCC.Pane {
         id: _
 
         function updateFilter() {
-            ARunActive.setFilter(eventCodes.currentCodes, timeRange.currentValue, timeInterval.currentValue)
+            A.ARunActive.setFilter(eventCodes.currentCodes, timeRange.currentValue, timeInterval.currentValue)
         }
     }
 
@@ -111,7 +109,7 @@ VCC.Pane {
             verticalPadding: Theme.spacingXXS
             font.capitalization: Font.MixedCase
 
-            onClicked: AEventOverview.viewFromStatus()
+            onClicked: A.AEventOverview.viewFromStatus()
         }
     }
 }

@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventDetail as AEventDetail
 
 import Store
 import Theme
@@ -33,7 +32,7 @@ ListView {
         height: 100
         inset: Theme.spacingL
 
-        onTapped: id => AEventDetail.viewFromStatus(id, Store.state.runActive.id, Store.state.runActive.productID)
+        onTapped: id => A.AEventDetail.viewFromStatus(id, Store.state.runActive.id, Store.state.runActive.productID)
     }
 
     Text {

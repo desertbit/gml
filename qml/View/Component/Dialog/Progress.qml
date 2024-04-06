@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.Int as AInt
 
 import Theme
 
@@ -16,7 +15,7 @@ TrDialog {
 
     onAboutToShow: bar.value = 0
     // Abort the operation.
-    onRejected: AInt.emitCancel(type)
+    onRejected: A.AInternal.emitCancel(type)
 
     ColumnLayout {
         anchors.fill: parent

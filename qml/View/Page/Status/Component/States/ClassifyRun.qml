@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.State as AState
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -24,7 +23,7 @@ Base {
             text: qsTr("Cancel")
             state: "medium"
 
-            onClicked: AState.stopClassifyRuns()
+            onClicked: A.AState.stopClassifyRuns()
         }
     ]
 

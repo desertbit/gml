@@ -3,11 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.AppToast as AAppToast
-import Action.ClassificationImageCreate as AClassificationImageCreate
-import Action.ClassificationImageDetail as AClassificationImageDetail
-import Action.EventDetail as AEventDetail
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -36,7 +32,7 @@ VCC.Page {
                 target: classification
                 text: qsTr("View classification image") 
                 highlighted: false
-                onClicked: AClassificationImageDetail.viewFromEvent(Store.state.eventDetail.id)
+                onClicked: A.AClassificationImageDetail.viewFromEvent(Store.state.eventDetail.id)
             }
         }
     ]
@@ -113,7 +109,7 @@ VCC.Page {
 
                 onClicked: {
                     if (!Store.state.eventDetail.classifiable) {
-                        AAppToast.showWarning(qsTr("This event has been created before the classification update.\nIt can not be classified."))
+                        A.AAppToast.showWarning(qsTr("This event has been created before the classification update.\nIt can not be classified."))
                         return
                     }
 
@@ -123,7 +119,7 @@ VCC.Page {
                             boxToClassMapping[ab.id] = ab.anomalyClassID
                         }
                     })
-                    AClassificationImageCreate.view(Store.state.eventDetail.id, Store.state.eventDetail.productID)
+                    A.AClassificationImageCreate.view(Store.state.eventDetail.id, Store.state.eventDetail.productID)
                 }
             }
 
@@ -189,7 +185,7 @@ VCC.Page {
                         name: "arrow-left"
                     }
 
-                    onClicked: AEventDetail.viewPrev()
+                    onClicked: A.AEventDetail.viewPrev()
                 }
 
                 VCB.RoundIconButton {
@@ -200,7 +196,7 @@ VCC.Page {
                         name: "arrow-right"
                     }
 
-                    onClicked: AEventDetail.viewNext()
+                    onClicked: A.AEventDetail.viewNext()
                 }
             }
         }

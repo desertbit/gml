@@ -3,8 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.ClassificationImage as AClassificationImage
-import Action.ClassificationImageDetail as AClassificationImageDetail
 
 import Store
 import Theme
@@ -129,7 +127,7 @@ VCC.PageSelectionLayout {
 
                     onSelected: root.selector.select(delegate.modelData.id)
                     onDeselected: root.selector.deselect(delegate.modelData.id)
-                    onTapped: AClassificationImageDetail.view(delegate.modelData.id)
+                    onTapped: A.A.AClassificationImageDetail.view(delegate.modelData.id)
                 }
             }
         }
@@ -150,7 +148,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: AClassificationImage.remove(Store.state.classificationImageOverview.productID, root.selector.selectedIDs()).then(() => {
+            onClicked: A.AClassificationImage.remove(Store.state.classificationImageOverview.productID, root.selector.selectedIDs()).then(() => {
                 // Reset local state to first page.
                 pageCtrl.page = 1
                 root.selector.deselectAll()

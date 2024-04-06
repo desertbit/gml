@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.RunExport as ARunExport
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -31,7 +30,7 @@ VCC.IconPane {
         title: qsTr("Please choose a storage device to save the file to.")
         modal: true
 
-        onSelected: storageDeviceID => ARunExport.saveToStorage(
+        onSelected: storageDeviceID => A.ARunExport.saveToStorage(
             Store.state.runExport.runs.map(r => r.id), Store.state.locale, storageDeviceID, html.checked, pdf.checked, csv.checked
         )
     }
@@ -138,7 +137,7 @@ VCC.IconPane {
             if (Store.state.app.opts.withStorageDevices) {
                 dialog.open()
             } else {
-                ARunExport.download(Store.state.runExport.runs.map(r => r.id), Store.state.locale, html.checked, pdf.checked, csv.checked)
+                A.ARunExport.download(Store.state.runExport.runs.map(r => r.id), Store.state.locale, html.checked, pdf.checked, csv.checked)
             }
         }
     }

@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.RunActive as ARunActive
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -29,14 +28,14 @@ Base {
             state: "medium"
             text: qsTr("Pause")
 
-            onClicked: ARunActive.pause()
+            onClicked: A.ARunActive.pause()
         },
         VCB.Button {
             state: "medium"
             text: qsTr("Finish")
             highlighted: true
 
-            onClicked: ARunActive.finish()
+            onClicked: A.ARunActive.finish()
         }
     ]
 
@@ -44,7 +43,7 @@ Base {
         State {
             name: "paused"
             when: Store.state.nline.state === L.State.RunPaused
-            PropertyChanges { target: pause; text: qsTr("Resume"); onClicked: ARunActive.resume() }
+            PropertyChanges { target: pause; text: qsTr("Resume"); onClicked: A.ARunActive.resume() }
         }
     ]
 

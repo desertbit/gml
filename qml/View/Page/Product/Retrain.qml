@@ -3,10 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.CameraDetail as ACameraDetail
-import Action.CameraFocus as ACameraFocus
-import Action.ProductRetrain as AProductRetrain
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -46,7 +43,7 @@ VCC.Page {
         modal: true
         standardButtons: Dialog.Ok | Dialog.Cancel
 
-        onAccepted: AProductRetrain.start(Store.state.productRetrain.productID, !manualCamSetup.checked, true)
+        onAccepted: A.AProductRetrain.start(Store.state.productRetrain.productID, !manualCamSetup.checked, true)
 
         ColumnLayout {
             anchors.fill: parent
@@ -75,7 +72,7 @@ VCC.Page {
 
         // Camera column.
         VCCam.Cameras {
-            onCameraClicked: deviceID => ACameraDetail.view(deviceID)
+            onCameraClicked: deviceID => A.ACameraDetail.view(deviceID)
         }
 
         // Product info.
@@ -186,7 +183,7 @@ VCC.Page {
 
                     Layout.alignment: Qt.AlignRight
 
-                    onClicked: ACameraFocus.view()
+                    onClicked: A.ACameraFocus.view()
                 }
             }
 
@@ -236,7 +233,7 @@ VCC.Page {
                     if (recollectImages.checked) {
                         confirmDialog.open()
                     } else {
-                        AProductRetrain.start(Store.state.productRetrain.productID, !manualCamSetup.checked, false)
+                        A.AProductRetrain.start(Store.state.productRetrain.productID, !manualCamSetup.checked, false)
                     }
                 }
             }

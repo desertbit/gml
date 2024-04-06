@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.HelpNVision as AHelpNVision
 
 import Store
 import Theme
@@ -26,7 +25,7 @@ BasePane {
         if (Store.state.app.opts.withStorageDevices) {
             root.saveToStorage(_.selectedOS)
         } else {
-            AHelpNVision.download(_.selectedOS)
+            A.AHelpNVision.download(_.selectedOS)
         }
     }
 

@@ -3,12 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.App as AApp
-import Action.Help as AHelp
-import Action.Login as ALogin
-import Action.Notification as ANotification
-import Action.Settings as ASettings
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -99,7 +94,7 @@ ToolBar {
                     if (notifications.visible) {
                         notifications.close()
                     } else {
-                        ANotification.markRead()
+                        A.ANotification.markRead()
                         notifications.open()
                     }
                 }
@@ -118,7 +113,7 @@ ToolBar {
                 toolTipText: qsTr("Help")
                 visible: Store.state.loggedIn
 
-                onClicked: AHelp.view()
+                onClicked: A.AHelp.view()
             }
 
             VCB.ToolIconButton {
@@ -126,7 +121,7 @@ ToolBar {
                 toolTipText: qsTr("Settings")
                 visible: Store.state.app.showSettings
 
-                onClicked: ASettings.view()
+                onClicked: A.ASettings.view()
             }
 
             VCB.ToolButton {
@@ -148,7 +143,7 @@ ToolBar {
                         MenuItem {
                             text: L.Tr.locale(modelData)
 
-                            onTriggered: AApp.switchLocale(modelData)
+                            onTriggered: A.AApp.switchLocale(modelData)
                         }
                     }
                 }
@@ -215,14 +210,14 @@ ToolBar {
                         visible: Store.state.loggedIn && Store.state.app.opts.devMode
                         text: qsTr("nLine - Reboot")
 
-                        onTriggered: ASettings.rebootNLine()
+                        onTriggered: A.ASettings.rebootNLine()
                     }
 
                     MyMenuItem {
                         visible: Store.state.loggedIn
                         text: qsTr("nLine - Shutdown")
 
-                        onTriggered: ASettings.shutdownNLine()
+                        onTriggered: A.ASettings.shutdownNLine()
                     }
                 }
 
@@ -231,7 +226,7 @@ ToolBar {
 
                     text: qsTr("Logout?")
 
-                    onConfirmed: ALogin.logout()
+                    onConfirmed: A.ALogin.logout()
                 }
 
                 ConfirmPopup {
@@ -239,7 +234,7 @@ ToolBar {
 
                     text: qsTr("Quit?")
 
-                    onConfirmed: AApp.quit()
+                    onConfirmed: A.AApp.quit()
                 }
             }
         }

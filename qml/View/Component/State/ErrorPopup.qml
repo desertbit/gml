@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtGraphicalEffects
+import Qt5Compat.GraphicalEffects
 
+import Action as A
 import Lib as L
 import Store
 import Theme

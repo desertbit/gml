@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs as QD
 import Qt.labs.settings
-
+import Action as A
 import Lib as L
 import Theme
 

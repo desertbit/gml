@@ -3,12 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import Action.EventOverview as AEventOverview
-import Action.Run as ARun
-import Action.RunExport as ARunExport
-import Action.RunRecentDetail as ARunRecentDetail
-import Action.RunRecentOverview as ARunRecentOverview
-
+import Action as A
 import Lib as L
 import Store
 import Theme
@@ -26,7 +21,7 @@ VCC.PageSelectionLayout {
     title: qsTr("Latest batches")
     nonAvailableMessage: Store.state.runRecentOverview.page.empty() ? "- " + qsTr("No batch available") + " -" : ""
 
-    Component.onCompleted: ARunRecentOverview.setLimit(_.numItems)
+    Component.onCompleted: A.A.ARunRecentOverview.setLimit(_.numItems)
 
     QtObject {
         id: _
@@ -124,7 +119,7 @@ VCC.PageSelectionLayout {
 
                 onClicked: {
                     pageCtrl.page = 1
-                    ARunRecentOverview.setFilter(productName.text, runName.text, after.ts, before.ts)
+                    A.A.ARunRecentOverview.setFilter(productName.text, runName.text, after.ts, before.ts)
                 }
             }
 
@@ -139,7 +134,7 @@ VCC.PageSelectionLayout {
                     runName.text = ""
                     after.ts = L.LDate.Invalid
                     before.ts = L.LDate.Invalid
-                    ARunRecentOverview.setFilter("", "", "", "")
+                    A.A.ARunRecentOverview.setFilter("", "", "", "")
                 }
             }
 
@@ -152,8 +147,8 @@ VCC.PageSelectionLayout {
                 totalElements: Store.state.runRecentOverview.totalCount
                 remainingElements: Store.state.runRecentOverview.filteredCount
 
-                onPrev: ARunRecentOverview.loadPrevPage()
-                onNext: ARunRecentOverview.loadNextPage()
+                onPrev: A.A.ARunRecentOverview.loadPrevPage()
+                onNext: A.A.ARunRecentOverview.loadNextPage()
             }
         }
     }
@@ -183,8 +178,8 @@ VCC.PageSelectionLayout {
 
                 onSelected: id => root.selector.select(id)
                 onDeselected: id => root.selector.deselect(id)
-                onTapped: id => ARunRecentDetail.view(id)
-                onShowEvents: (productID, runID) => AEventOverview.viewFromRunRecentOverview(productID, runID)
+                onTapped: id => A.A.ARunRecentDetail.view(id)
+                onShowEvents: (productID, runID) => A.AEventOverview.viewFromRunRecentOverview(productID, runID)
             }
         }
 
@@ -201,7 +196,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: ARunExport.view(root.selector.selectedIDs())
+            onClicked: A.A.ARunExport.view(root.selector.selectedIDs())
         },
 
         Item { Layout.fillHeight: true }, // Filler
@@ -213,7 +208,7 @@ VCC.PageSelectionLayout {
 
             Layout.fillWidth: true
 
-            onClicked: ARun.remove(root.selector.selectedIDs()).then(() => {
+            onClicked: A.ARun.remove(root.selector.selectedIDs()).then(() => {
                 // Reset local state to first page.
                 pageCtrl.page = 1
                 root.selector.deselectAll()

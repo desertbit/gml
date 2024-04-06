@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtCharts
-
+import Action as A
 import Lib as L
 import Store
 import Theme

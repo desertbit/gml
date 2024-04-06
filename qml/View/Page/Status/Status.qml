@@ -3,17 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import Action.AnomalyClass as AAnomalyClass
-import Action.Camera as ACamera
-import Action.CameraDetail as ACameraDetail
-import Action.CameraFocus as ACameraFocus
-import Action.Dashboard as ADashboard
-import Action.ProductCreate as AProductCreate
-import Action.ProductOverview as AProductOverview
-import Action.RunCreate as ARunCreate
-import Action.RunRecentOverview as ARunRecentOverview
-import Action.Status as AStatus
-
+import Action as A
 import Lib as L
 import Theme
 import Store
@@ -40,7 +30,7 @@ VCC.Page {
 
         // Camera column.
         VCCam.Cameras {
-            onCameraClicked: deviceID => ACameraDetail.view(deviceID, Store.state.status.streamType)
+            onCameraClicked: deviceID => A.A.ACameraDetail.view(deviceID, Store.state.status.streamType)
 
             VCCam.StreamTypeComboBox {
                 id: streamTypeComboBox
@@ -54,7 +44,7 @@ VCC.Page {
                 Layout.alignment: Qt.AlignRight
 
                 // Update state.
-                onActivated: AStatus.setStreamType(currentValue)
+                onActivated: A.AStatus.setStreamType(currentValue)
             }
         }
 
@@ -79,7 +69,7 @@ VCC.Page {
                     fontColor: Theme.colorOnRun
                     backgroundColor: Theme.colorRunTier2
 
-                    onClicked: ARunCreate.view()
+                    onClicked: A.ARunCreate.view()
                 }
 
                 VCB.ActionButton {
@@ -88,7 +78,7 @@ VCC.Page {
                     fontColor: "white"
                     backgroundColor: Theme.colorRun
 
-                    onClicked: ARunRecentOverview.view()
+                    onClicked: A.ARunRecentOverview.view()
                 }
 
                 VCB.ActionButton {
@@ -97,7 +87,7 @@ VCC.Page {
                     fontColor: Theme.colorOnSettings
                     backgroundColor: Theme.colorProductTier2
 
-                    onClicked: AProductCreate.view()
+                    onClicked: A.AProductCreate.view()
                 }
 
                 VCB.ActionButton {
@@ -106,7 +96,7 @@ VCC.Page {
                     fontColor: Theme.colorOnProduct
                     backgroundColor: Theme.colorProduct
 
-                    onClicked: AProductOverview.view()
+                    onClicked: A.AProductOverview.view()
                 }
 
                 VCB.ActionButton {
@@ -116,7 +106,7 @@ VCC.Page {
                     fontColor: Theme.colorOnAnomalyClass
                     backgroundColor: Theme.colorAnomalyClass
 
-                    onClicked: AAnomalyClass.view()
+                    onClicked: A.AAnomalyClass.view()
                 }
 
                 VCB.ActionButton {
@@ -125,7 +115,7 @@ VCC.Page {
                     fontColor: Theme.colorForeground
                     backgroundColor: Theme.colorBackground
 
-                    onClicked: ADashboard.view()
+                    onClicked: A.ADashboard.view()
                 }
 
                 VCB.ActionButton {
@@ -135,7 +125,7 @@ VCC.Page {
                     backgroundColor: Theme.colorBackground
                     visible: Store.state.nline.hasMotorizedFocus
 
-                    onClicked: ACameraFocus.view()
+                    onClicked: A.A.ACameraFocus.view()
                 }
 
                 VCB.ActionButton {
@@ -146,7 +136,7 @@ VCC.Page {
                     visible: Store.state.nline.hasMotorizedFocus
                     enabled: Store.state.nline.state !== L.State.Setup
 
-                    onClicked: ACamera.autofocusAll()
+                    onClicked: A.ACamera.autofocusAll()
                 }
             }
         }

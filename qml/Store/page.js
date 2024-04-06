@@ -119,7 +119,7 @@ function loginDiscoveryPaused(state) {
 function pdfPreviewDestroyed(state) {
     if (state.pdfPreview.callID > 0) {
         // Cancel request.
-        A.AInt.emitCancel(state.pdfPreview.callID)
+        A.AInternal.emitCancel(state.pdfPreview.callID)
     } else {
         A.APDFPreview.cleanupFile(state.pdfPreview.source)
     }
