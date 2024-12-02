@@ -100,6 +100,10 @@ func SetApplicationVersion(version string) {
 	gapp.SetApplicationVersion(version)
 }
 
+func SetApplicationIcon(name string) {
+	gapp.SetApplicationIcon(name)
+}
+
 // AddImageProvider adds the image provider to the app engine for the given id.
 func AddImageProvider(id string, ip *ImageProvider) error {
 	return gapp.AddImageProvider(id, ip)
