@@ -1,6 +1,6 @@
 # Install the Go compiler.
-RUN export GO_VERSION="1.21.4" && \
-    export GO_CHECKSUM="73cac0215254d0c7d1241fa40837851f3b9a8a742d0b54714cbdfb3feaf8f0af" && \
+RUN export GO_VERSION="1.23.3" && \
+    export GO_CHECKSUM="a0afb9744c00648bafb1b90b4aba5bdb86f424f02f9275399ce0c20b93a2c3a8" && \
     mkdir -p /tmp/go && \
     cd /tmp/go && \
     wget -O go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -16,7 +16,7 @@ ENV PATH="$PATH:/usr/local/go/bin" \
 RUN export GOPATH="/tmp/gml/go" && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    export VERSION="v0.0.39" && \
+    export VERSION="v0.0.40" && \
     mkdir -p "${GOPATH}/bin" && \
     cd /tmp/gml && \
     go install "github.com/desertbit/gml/cmd/gml@${VERSION}" && \
