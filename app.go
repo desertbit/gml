@@ -324,6 +324,15 @@ func (a *app) SetApplicationVersion(version string) {
 	})
 }
 
+func (a *app) SetWindowIcon(name string) {
+	nameC := C.CString(name)
+	defer C.free(unsafe.Pointer(nameC))
+
+	a.RunMain(func() {
+		C.gml_app_set_window_icon(a.app, nameC)
+	})
+}
+
 func (a *app) SwitchLanguage(lang string) error {
 	langC := C.CString(lang)
 	defer C.free(unsafe.Pointer(langC))
