@@ -58,7 +58,7 @@ int     gml_app_set_root_context_property_variant(gml_app app, const char* name,
 void    gml_app_set_application_name(gml_app app, const char* name);
 void    gml_app_set_organization_name(gml_app app, const char* name);
 void    gml_app_set_application_version(gml_app app, const char* version);
-void    gml_app_set_application_icon(gml_app app, const char* name);
+void    gml_app_set_window_icon(gml_app app, const char* name);
 
 int     gml_app_switch_language(gml_app app, const char* language, gml_error err);
 

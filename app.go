@@ -324,12 +324,12 @@ func (a *app) SetApplicationVersion(version string) {
 	})
 }
 
-func (a *app) SetApplicationIcon(name string) {
+func (a *app) SetWindowIcon(name string) {
 	nameC := C.CString(name)
 	defer C.free(unsafe.Pointer(nameC))
 
 	a.RunMain(func() {
-		C.gml_app_set_application_icon(a.app, nameC)
+		C.gml_app_set_window_icon(a.app, nameC)
 	})
 }
 

@@ -252,7 +252,7 @@ void gml_app_set_application_version(gml_app app, const char* version) {
     }
 }
 
-void gml_app_set_application_icon(gml_app app, const char* name) {
+void gml_app_set_window_icon(gml_app app, const char* name) {
     try {
         GmlApp* a = (GmlApp*)app;
         a->app.setWindowIcon(QIcon(name));

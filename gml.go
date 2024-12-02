@@ -100,8 +100,8 @@ func SetApplicationVersion(version string) {
 	gapp.SetApplicationVersion(version)
 }
 
-func SetApplicationIcon(name string) {
-	gapp.SetApplicationIcon(name)
+func SetWindowIcon(name string) {
+	gapp.SetWindowIcon(name)
 }
 
 // AddImageProvider adds the image provider to the app engine for the given id.
